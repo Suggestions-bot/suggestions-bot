@@ -1,34 +1,20 @@
 {
-  "name": "suggester-bot",
-  "description": "A bot that manages suggestions on Discord",
-  "repository": "https://github.com/Suggester-Bot/Suggester",
-  "license": "MIT",
+  "name": "suggestion-bot",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "lint": "eslint .",
-    "dev": "npx nodemon --exec 'node --trace-warnings index.js' --ignore node_modules/ --ignore i18n/"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
   },
+  "keywords": [],
+  "author": "DEF",
+  "license": "ISC",
   "dependencies": {
-    "@sentry/node": "^5.16.0",
-    "axios": "^0.19.2",
-    "blapi": "^1.3.3",
-    "chalk": "^4.0.0",
-    "color-string": "^1.5.3",
-    "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "humanize-duration": "^3.23.0",
-    "languagedetect": "^2.0.0",
-    "mongoose": "^5.9.17",
-    "mongoose-sequence": "^5.2.2",
-    "ms": "^2.1.2",
-    "node-emoji": "^1.10.0",
-    "prettysize": "^2.0.0",
-    "string-similarity": "^4.0.1",
-    "valid-url": "1.0.9"
-  },
-  "devDependencies": {
-    "eslint": "^7.1.0",
-    "nodemon": "^2.0.3"
+    "chalk": "4",
+    "discord-modals": "1",
+    "discord.js": "^13.8.1",
+    "ora": "5",
+    "quick.db": "7"
   }
 }
