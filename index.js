@@ -21,10 +21,14 @@ client.on("ready", () => {
     let commands = [
         {name:"set-suggestion-channel",description:"set the suggestions channel",type:1},
         {name:"remove-suggestion-channel",description:"remove the suggestions channel",type:1},
-        {name:"vorschlag",description:"Einen vorschlag schicken",type:1},
+        {name:"vorschlag",description:"Einen Vorschlag schicken",type:1},
         {name:"get-user-suggestions",description:"get suggestions of any user",type:1,options:[
             {name:"user",description:"the user you will get the suggestion from",required:true,type:6}
-        ]},
+        ]}/*,
+        {name:"vorschlag-bearbeiten",description:"Einen deiner Vorschläge bearbeiten",type:1,options:[
+            {name:"nachrichten-id",description:"Die ID des Vorschlags den du bearbeiten willst.",required:true,type:3},
+            {name:"neuer-vorschlag",description:"Der ausgebesserte / ergänzte Vorschlag.",required:true,type:3}
+        ]}*/
     ];
     client.application.commands.set(commands)
 }).login(fs.readFileSync(__dirname+"/token.txt", {encoding:"utf-8"}));
@@ -107,6 +111,41 @@ client.on("interactionCreate", async(interaction) => {
             interaction: interaction
         });
         modalData;
+    }
+    else if (interaction.commandName == "vorschlag-bearbeiten") {
+        let   key         = "SuggestionsChannel_"+interaction.guild.id;
+        let   value       = data.fetch(key)?.channel
+        let   channel   = client.channels.cache.get(value);
+        let   userID    = interaction.user.id;
+        let   userKey  = "Suggestions_"+interaction.guild.id+"_"+userID.toString()+".sugs";
+        let   udata      = data.fetch(userKey);
+        
+        if (udata == null) return interaction.reply(
+            {content:"Du hast noch keinen Vorschlag gemacht. ",ephemeral:true}
+        )
+
+        let messageIdString = await udata.map((message, index) => `${message.id}`).join(" ");
+        let messageIdArray = messageIdString.split(" ");
+        let givenMessageID = interaction.options.getString("nachrichten-id",true);
+
+        if (!messageIdArray.includes(givenMessageID)) return interaction.reply(
+            {content:"Eine Nachricht von dir mit dieser ID existiert nicht im Vorschläge-Channel.",ephemeral:true}
+        );
+
+        let message = await channel.messages.fetch(givenMessageID);
+        let newMessage = interaction.options.getString("neuer-vorschlag",true);
+        let    embed    = message.embeds[0];
+
+        let editedEmbed = {author:embed.author,color:embed.color,timestamp:embed.timestamp,footer:embed.footer,
+            description:newMessage,fields:[
+            embed.fields[0],
+            embed.fields[1],
+        ]}
+
+        message.edit({components: message.components,embeds: [editedEmbed]})
+        interaction.reply(
+            {content:"Dein Vorschlag wurde erfolgreich bearbeitet.",ephemeral:true}
+        );
     }
 });
 
@@ -193,8 +232,8 @@ client.on("messageCreate", (msg) => {
                 iconURL: guild.iconURL({dynamic:true}),
                 text: guild.name
             },description:rawEContent,fields:[
-                {name:"👍 Up votes:",value:"```\n0```",inline:true},
-                {name:"👎 Down votes:",value:"```\n0```",inline:true},
+                {name:"👍 Upvotes:",value:"```\n0```",inline:true},
+                {name:"👎 Downvotes:",value:"```\n0```",inline:true},
             ]}
         ],
         components: [
