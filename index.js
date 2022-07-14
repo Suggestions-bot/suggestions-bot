@@ -128,11 +128,19 @@ client.on("interactionCreate", async(interaction) => {
         let messageUrlString = await udata.map((message, index) => `${message.url}`).join(" ");
         let messageUrlArray = messageUrlString.split(" ");
         let messageIdArray = messageUrlArray.map(message => message.split("/")[6]);
-        let givenMessageID = interaction.options.getString("nachrichten-id",true);
+        let givenMessageString = interaction.options.getString("nachrichten-id",true);
+        let givenMessageID = "";
+
+        if (givenMessageString.includes("/")) {
+            givenMessageID = givenMessageString.split("/")[6];
+        } else {
+            givenMessageID = givenMessageString;
+        }
 
         // console.log(messageUrlString);
         // console.log(messageUrlArray);
         // console.log(messageIdArray);
+
         if (!messageIdArray.includes(givenMessageID)) return interaction.reply(
             {content:"Eine Nachricht von dir mit dieser ID existiert nicht im Vorschläge-Channel.",ephemeral:true}
         );
