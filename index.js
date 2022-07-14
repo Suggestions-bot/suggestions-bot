@@ -24,11 +24,11 @@ client.on("ready", () => {
         {name:"vorschlag",description:"Einen Vorschlag schicken",type:1},
         {name:"get-user-suggestions",description:"get suggestions of any user",type:1,options:[
             {name:"user",description:"the user you will get the suggestion from",required:true,type:6}
-        ]}/*,
+        ]},
         {name:"vorschlag-bearbeiten",description:"Einen deiner Vorschläge bearbeiten",type:1,options:[
             {name:"nachrichten-id",description:"Die ID des Vorschlags den du bearbeiten willst.",required:true,type:3},
             {name:"neuer-vorschlag",description:"Der ausgebesserte / ergänzte Vorschlag.",required:true,type:3}
-        ]}*/
+        ]}
     ];
     client.application.commands.set(commands)
 }).login(fs.readFileSync(__dirname+"/.env", {encoding:"utf-8"}));
@@ -124,15 +124,20 @@ client.on("interactionCreate", async(interaction) => {
             {content:"Du hast noch keinen Vorschlag gemacht. ",ephemeral:true}
         )
 
-        let messageIdString = await udata.map((message, index) => `${message.id}`).join(" ");
-        let messageIdArray = messageIdString.split(" ");
+
+        let messageUrlString = await udata.map((message, index) => `${message.url}`).join(" ");
+        let messageUrlArray = messageUrlString.split(" ");
+        let messageIdArray = messageUrlArray.map(message => message.split("/")[6]);
         let givenMessageID = interaction.options.getString("nachrichten-id",true);
 
+        // console.log(messageUrlString);
+        // console.log(messageUrlArray);
+        // console.log(messageIdArray);
         if (!messageIdArray.includes(givenMessageID)) return interaction.reply(
             {content:"Eine Nachricht von dir mit dieser ID existiert nicht im Vorschläge-Channel.",ephemeral:true}
         );
 
-        let message = await channel.messages.fetch(givenMessageID);
+        let message = await channel.messages.fetch(givenMessageID.toString());
         let newMessage = interaction.options.getString("neuer-vorschlag",true);
         let    embed    = message.embeds[0];
 
@@ -283,7 +288,7 @@ async function buttons(interaction) {
             if (voter.includes(interaction.user.id)) return interaction.followUp({content:"Du hast schon gevoted!", ephemeral:true});
             let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
                 description:embed.description,fields:[
-                {name:"👍 Up votes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+                {name:"👍 Upvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
                 embed.fields[1],
             ]}
             await data.push(key, interaction.user.id);
@@ -305,7 +310,7 @@ async function buttons(interaction) {
             let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
                 description:embed.description,fields:[
                 embed.fields[0],
-                {name:"👎 Down votes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+                {name:"👎 Downvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
             ]}
             await data.push(key, interaction.user.id);
             await data.push(ke2, value)
@@ -317,7 +322,7 @@ async function buttons(interaction) {
             let   voters   = data.fetch(interaction.message.id.toString()).votersInfo;
             let    raws    = voters.map((voter, index) => `${index + 1}. ${voter.user.username} - ${voter.date}`).join("\n")
 
-            if (voters == []) return interaction.followUp({content:"there is no voters", ephemeral:true}); 
+            if (voters == []) return interaction.followUp({content:"Niemand hat gevoted!", ephemeral:true}); 
 
             interaction.followUp({content:raws, ephemeral:true}); 
         }
