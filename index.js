@@ -31,7 +31,7 @@ client.on("ready", () => {
         ]}*/
     ];
     client.application.commands.set(commands)
-}).login(fs.readFileSync(__dirname+"/token.txt", {encoding:"utf-8"}));
+}).login(fs.readFileSync(__dirname+"/.env", {encoding:"utf-8"}));
 
 // interactionDetected event
 client.on("interactionCreate", async(interaction) => {
