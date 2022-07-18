@@ -102,7 +102,7 @@ client.on("interactionCreate", async(interaction) => {
             .setStyle('LONG')
             .setMinLength(3)
             .setMaxLength(1024)
-            .setPlaceholder('Schreib dein vorschlag bitte hier hin!')
+            .setPlaceholder('Schreib deinen Vorschlag bitte hier hin!')
             .setRequired(true)
         );
 
@@ -255,11 +255,11 @@ client.on("messageCreate", (msg) => {
             new Discord.MessageButton()
             .setCustomId("up")
             .setStyle("SUCCESS")
-            .setLabel("👍 Up"),
+            .setLabel("👍 Upvote"),
             new Discord.MessageButton()
             .setCustomId("down")
             .setStyle("DANGER")
-            .setLabel("👎 Down"),
+            .setLabel("👎 Downvote"),
           )
         ]
     }).then(async message => {
