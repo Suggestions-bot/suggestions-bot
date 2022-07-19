@@ -165,58 +165,75 @@ client.on("interactionCreate", async(interaction) => {
 // respond for modals
 client.on('modalSubmit', async (modal) => {
     if (modal.customId == 'send') {
-      let         key         = "SuggestionsChannel_"+modal.guild?.id;
-      let         res         = modal.getTextInputValue('input');
-      let        value        = data.fetch(key)?.channel
-      let       channel       = client.channels.cache.get(value);
+        let         key         = "SuggestionsChannel_"+modal.guild?.id;
+        let         res         = modal.getTextInputValue('input');
+        let        value        = data.fetch(key)?.channel
+        let       channel       = client.channels.cache.get(value);
+        const badlinks = ["https://", "http://", "www."];
+        const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic"];
 
-      if (!channel) return modal.reply(
-        {content:'Sorry! Der suggestion-channel wurde noch nicht gesetzt!',ephemeral:true}
-      );
-
-      modal.reply(
-        {content:'Danke! Dein vorschlag wurde geschickt.',ephemeral:true}
-      );
-      channel.send({
-        embeds: [
-            {author:{
-                name: modal.user.username,
-                iconURL: modal.user.avatarURL({dynamic:true})
-            },color:0x2c2f33,timestamp: new Date(),footer:{
-                iconURL: modal.guild?.iconURL({dynamic:true}),
-                text: modal.guild?.name
-            },description:res,fields:[
-                {name:"👍 Upvotes:",value:"```\n0```",inline:true},
-                {name:"👎 Downvotes:",value:"```\n0```",inline:true},
-            ]}
-        ],
-        components: [
-        new Discord.MessageActionRow()
-          .addComponents(
-            new Discord.MessageButton()
-            .setCustomId("up")
-            .setStyle("SUCCESS")
-            .setLabel("👍 Upvote"),
-            new Discord.MessageButton()
-            .setCustomId("down")
-            .setStyle("DANGER")
-            .setLabel("👎 Downvote"),
-          )
-        ]
-    }).then(async message => {
+        if (badlinks.some(el => res.includes(el)) == true) {
+                modal.reply(
+                    {content:"Der Vorschlag wurde nicht gesendet, da er Links enthält.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Link war, wende dich bitte an einen Administrator.",ephemeral:true}
+                )
+                return;
+            }
         
-        let dataConstructor = {url:message.url.toString(),content:res}
-        let     userKey     = "Suggestions_"+modal.guild?.id+"_"+modal.user.id.toString()+".sugs";
-        let      udata      = data.fetch(userKey)
-        let      value      = {voters: [],votersInfo: []}
-        let       key       = message.id.toString()
 
-        if (udata == null) await data.set(userKey, [dataConstructor]);
-        else await data.push(userKey, dataConstructor)
+        if (res.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
+            modal.reply(
+                {content:"Der Vorschlag wurde nicht gesendet, da er zu viel Ähnlichkeit mit Nitro-Scam-Nachrichten hat.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Nitro-Scam war, wende dich bitte an einen Administrator.",ephemeral:true}
+            )
+            return;
+        }
 
-        data.set(key, value);
-        
-      });
+        if (!channel) return modal.reply(
+            {content:'Sorry! Der suggestion-channel wurde noch nicht gesetzt!',ephemeral:true}
+        );
+
+        modal.reply(
+            {content:'Danke! Dein Vorschlag wurde geschickt.',ephemeral:true}
+        );
+        channel.send({
+            embeds: [
+                {author:{
+                    name: modal.user.username,
+                    iconURL: modal.user.avatarURL({dynamic:true})
+                },color:0x2c2f33,timestamp: new Date(),footer:{
+                    iconURL: modal.guild?.iconURL({dynamic:true}),
+                    text: modal.guild?.name
+                },description:res,fields:[
+                    {name:"👍 Upvotes:",value:"```\n0```",inline:true},
+                    {name:"👎 Downvotes:",value:"```\n0```",inline:true},
+                ]}
+            ],
+            components: [
+            new Discord.MessageActionRow()
+            .addComponents(
+                new Discord.MessageButton()
+                .setCustomId("up")
+                .setStyle("SUCCESS")
+                .setLabel("👍 Upvote"),
+                new Discord.MessageButton()
+                .setCustomId("down")
+                .setStyle("DANGER")
+                .setLabel("👎 Downvote"),
+            )
+            ]
+        }).then(async message => {
+            
+            let dataConstructor = {url:message.url.toString(),content:res}
+            let     userKey     = "Suggestions_"+modal.guild?.id+"_"+modal.user.id.toString()+".sugs";
+            let      udata      = data.fetch(userKey)
+            let      value      = {voters: [],votersInfo: []}
+            let       key       = message.id.toString()
+
+            if (udata == null) await data.set(userKey, [dataConstructor]);
+            else data.push(userKey, dataConstructor)
+
+            data.set(key, value);
+            
+        });
     }  
   });
 
@@ -232,10 +249,40 @@ client.on("messageCreate", (msg) => {
     let      rawEContent    = msg["content"]
     let data2 = data.fetch(key);
     if (data2 == null) return;
+    const badlinks = ["https://", "http://", "www."];
+    const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic"];
 
     if (msg.channelId !== data2.channel) return;
+
+    if (badlinks.some(el => rawEContent.includes(el)) == true) {
+        if (msg.deletable) msg.delete();
+        try {
+            msgAuthor.send(
+                {content:"Der Vorschlag wurde nicht gesendet, da er zu viel Ähnlichkeit mit Nitro-Scam-Nachrichten hat.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Nitro-Scam war, wende dich bitte an einen Administrator."}
+            )
+        }
+        catch (e) {
+            return;
+        }
+        return;
+    }
+
+
+    if (rawEContent.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
+        if (msg.deletable) msg.delete();
+        try {
+            msgAuthor.send(
+                {content:"Der Vorschlag wurde nicht gesendet, da er zu viel Ähnlichkeit mit Nitro-Scam-Nachrichten hat.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Nitro-Scam war, wende dich bitte an einen Administrator."}
+            )
+        }
+        catch (e) {
+            return;
+        }
+        return;
+    }
+
     if (msg.deletable) msg.delete();
-    
+
     channel.send({
         embeds: [
             {author:{
