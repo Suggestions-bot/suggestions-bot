@@ -28,7 +28,15 @@ client.on("ready", () => {
         {name:"vorschlag-bearbeiten",description:"Einen deiner Vorschläge bearbeiten",type:1,options:[
             {name:"nachrichten-id",description:"Die ID des Vorschlags den du bearbeiten willst.",required:true,type:3},
             {name:"neuer-vorschlag",description:"Der ausgebesserte / ergänzte Vorschlag.",required:true,type:3}
-        ]}
+        ]},
+        {name:"manage-suggestions",description:"Manage a suggestion",type:1,options:[
+            {name:"message-id",description:"Message ID of the suggestion you want to manage",required:true,type:3},
+            {name:"action",description:"Action you want to do",required:true,type:3,choices:[
+                {name:"Accept",description:"Accept the suggestion", value:"accept"},
+                {name: "Reject", description: "Reject the suggestion", value: "reject"},
+                {name: "Reset", description: "Reset the Acception/Rejection to make users able to vote again.", value: "reset"},
+            ]},
+        ]},
     ];
     client.application.commands.set(commands)
 }).login(fs.readFileSync(__dirname+"/.env", {encoding:"utf-8"}));
@@ -160,7 +168,134 @@ client.on("interactionCreate", async(interaction) => {
             {content:"Dein Vorschlag wurde erfolgreich bearbeitet.",ephemeral:true}
         );
     }
+    else if (interaction.commandName == "manage-suggestions") {
+        let   givenMessageString = interaction.options.getString("message-id",true);
+        let   action = interaction.options.get("action",true).value;
+        let   key         = "SuggestionsChannel_"+interaction.guild.id;
+        let   value       = data.fetch(key)?.channel;
+        let   channel   = client.channels.cache.get(value);
+        // let   udata      = data.fetch(userKey);
+
+
+        // let messageUrlString = await udata.map((message, index) => `${message.url}`).join(" ");
+        // let messageUrlArray = messageUrlString.split(" ");
+        // let messageIdArray = messageUrlArray.map(message => message.split("/")[6]);
+        let givenMessageID = "";
+
+        if (givenMessageString.includes("/")) {
+            givenMessageID = givenMessageString.split("/")[6];
+        } else {
+            givenMessageID = givenMessageString;
+        };
+
+
+        let message = await channel.messages.fetch(givenMessageID.toString());
+
+        if (message.author.id.toString() != client.user.id.toString()) {
+            interaction.reply(
+                {content:"Diese Nachricht kann nicht bearbeitet werden da der Bot nicht der Author dieser Nachricht ist.",ephemeral:true}
+            );
+             return;
+        }
+        
+        if (action == "accept") {
+            let embed = message.embeds[0];
+            let newEmbed = {author:embed.author,color:embed.color,timestamp:embed.timestamp,footer:embed.footer,
+                description:embed.description,fields:[
+                embed.fields[0],
+                embed.fields[1],
+                {name:"**Angenommen** <a:Accept:959143988051468319>", value:"Dieser Vorschlag wurde angenommen.",inline:false},
+                ]
+            }
+
+            message.edit({components: [
+                new Discord.MessageActionRow()
+                .addComponents(
+                    new Discord.MessageButton()
+                    .setCustomId("up")
+                    .setStyle("SUCCESS")
+                    .setLabel("👍 Upvote")
+                    .setDisabled(true),
+                    new Discord.MessageButton()
+                    .setCustomId("down")
+                    .setStyle("DANGER")
+                    .setLabel("👎 Downvote")
+                    .setDisabled(true),
+                    new Discord.MessageButton()
+                    .setCustomId("accepted")
+                    .setStyle("PRIMARY")
+                    .setLabel("Angenommen")
+                    .setEmoji("<a:Accept:959143988051468319>")
+                )
+                ],embeds: [newEmbed]});
+            interaction.reply(
+                {content:"Vorschlag wurde als angenommen markiert.",ephemeral:true}
+            );
+        
+        } else if (action == "reject") {
+            let embed = message.embeds[0];
+            let newEmbed = {author:embed.author,color:embed.color,timestamp:embed.timestamp,footer:embed.footer,
+                description:embed.description,fields:[
+                embed.fields[0],
+                embed.fields[1],
+                {name:"**Abgelehnt** <a:Deny:959143988445716620>", value:"Dieser Vorschlag wurde abgelehnt.",inline:false},
+                ]
+            }
+
+            message.edit({components: [
+                new Discord.MessageActionRow()
+                .addComponents(
+                    new Discord.MessageButton()
+                    .setCustomId("up")
+                    .setStyle("SUCCESS")
+                    .setLabel("👍 Upvote")
+                    .setDisabled(true),
+                    new Discord.MessageButton()
+                    .setCustomId("down")
+                    .setStyle("DANGER")
+                    .setLabel("👎 Downvote")
+                    .setDisabled(true),
+                    new Discord.MessageButton()
+                    .setCustomId("rejected")
+                    .setStyle("PRIMARY")
+                    .setLabel("Abgelehnt")
+                    .setEmoji("<a:Deny:959143988445716620>")
+                )
+                ],embeds: [newEmbed]});
+            interaction.reply(
+                {content:"Vorschlag wurde als abgelehnt markiert.",ephemeral:true}
+            );
+        
+        } else if (action == "reset") {
+            let embed = message.embeds[0];
+            let newEmbed = {author:embed.author,color:embed.color,timestamp:embed.timestamp,footer:embed.footer,
+                description:embed.description,fields:[
+                embed.fields[0],
+                embed.fields[1],
+                ]
+            }
+
+            message.edit({components: [
+                new Discord.MessageActionRow()
+                .addComponents(
+                    new Discord.MessageButton()
+                    .setCustomId("up")
+                    .setStyle("SUCCESS")
+                    .setLabel("👍 Upvote"),
+                    new Discord.MessageButton()
+                    .setCustomId("down")
+                    .setStyle("DANGER")
+                    .setLabel("👎 Downvote"),
+                )
+                ],embeds: [newEmbed]});
+            interaction.reply(
+                {content:"Der Vorschlag wude auf seinen vorherigen Zustand zurückgesetzt.",ephemeral:true}
+            );
+        }
+    }
 });
+
+
 
 // respond for modals
 client.on('modalSubmit', async (modal) => {
@@ -380,6 +515,13 @@ async function buttons(interaction) {
             if (voters == []) return interaction.followUp({content:"Niemand hat gevoted!", ephemeral:true}); 
 
             interaction.followUp({content:raws, ephemeral:true}); 
+        }
+
+        case "accepted": {
+            interaction.followUp({content:"Dieser Vorschlag wurde angenommen, du kannst deshalb nicht mehr abstimmen.", ephemeral:true});
+        }
+        case "rejected": {
+            interaction.followUp({content:"Dieser Vorschlag wurde abgelehnt, du kannst deshalb nicht mehr abstimmen.", ephemeral:true});
         }
         break;
         default:
