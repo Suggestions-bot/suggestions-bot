@@ -19,16 +19,29 @@ client.on("ready", () => {
     setTimeout(() => _.color = "yellow", 430)
     setTimeout(() => _.succeed("Client has logged in as "+chalk.red.bold(client.user.username)),1200)
     let commands = [
+        //Sets the suggestion channel
         {name:"set-suggestion-channel",description:"set the suggestions channel",type:1},
+        //Removes the suggestion channel
         {name:"remove-suggestion-channel",description:"remove the suggestions channel",type:1},
+        //Makes a suggestion embed
         {name:"vorschlag",description:"Einen Vorschlag schicken",type:1},
+        //Gets the amount of user suggestions from a specific user
         {name:"get-user-suggestions",description:"get suggestions of any user",type:1,options:[
             {name:"user",description:"the user you will get the suggestion from",required:true,type:6}
         ]},
+        //Edits the suggestion
         {name:"vorschlag-bearbeiten",description:"Einen deiner Vorschläge bearbeiten",type:1,options:[
             {name:"nachrichten-id",description:"Die ID des Vorschlags den du bearbeiten willst.",required:true,type:3},
             {name:"neuer-vorschlag",description:"Der ausgebesserte / ergänzte Vorschlag.",required:true,type:3}
+        ]},
+        //Accepts the suggestion
+        {name:"vorschlag-annehmen",description:"Einen deiner Vorschläge annehmen",type:1,options:[
+            {name:"nachrichten-id",description:"Die ID des Vorschlags den du annehmen willst.",required:true,type:3}
+        ]},
+        {name:"vorschlag-ablehnen",description:"Einen deiner Vorschläge ablehnen",type:1,options:[
+            {name:"nachrichten-id",description:"Die ID des Vorschlags den du ablehnen willst.",required:true,type:3}
         ]}
+
     ];
     client.application.commands.set(commands)
 }).login(fs.readFileSync(__dirname+"/.env", {encoding:"utf-8"}));
@@ -50,6 +63,7 @@ client.on("interactionCreate", async(interaction) => {
         .has(Discord.Permissions.FLAGS.SEND_MESSAGES)
        )
     return;
+
     if (interaction.commandName == "set-suggestion-channel") {
         if (!interaction.member.permissions.has(Discord.Permissions.FLAGS.MANAGE_GUILD))
         return interaction.reply(
@@ -172,6 +186,7 @@ client.on('modalSubmit', async (modal) => {
         const badlinks = ["https://", "http://", "www."];
         const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic"];
 
+        //Removes bad links
         if (badlinks.some(el => res.includes(el)) == true) {
                 modal.reply(
                     {content:"Der Vorschlag wurde nicht gesendet, da er Links enthält.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Link war, wende dich bitte an einen Administrator.",ephemeral:true}
@@ -179,7 +194,7 @@ client.on('modalSubmit', async (modal) => {
                 return;
             }
         
-
+        //Removes nitro scams
         if (res.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
             modal.reply(
                 {content:"Der Vorschlag wurde nicht gesendet, da er zu viel Ähnlichkeit mit Nitro-Scam-Nachrichten hat.\nFalls du der Meinung bist, dass in diesem Vorschlag kein Nitro-Scam war, wende dich bitte an einen Administrator.",ephemeral:true}
@@ -187,10 +202,12 @@ client.on('modalSubmit', async (modal) => {
             return;
         }
 
+        //Message for channel not being set
         if (!channel) return modal.reply(
             {content:'Sorry! Der suggestion-channel wurde noch nicht gesetzt!',ephemeral:true}
         );
 
+        //Sends message to confirm the suggestion
         modal.reply(
             {content:'Danke! Dein Vorschlag wurde geschickt.',ephemeral:true}
         );
@@ -386,3 +403,4 @@ async function buttons(interaction) {
             break;
     }
 }
+
