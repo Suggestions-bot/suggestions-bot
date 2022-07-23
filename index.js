@@ -529,7 +529,7 @@ async function buttons(interaction) {
         case "accepted": {
             interaction.followUp({content:"Dieser Vorschlag wurde angenommen, du kannst deshalb nicht mehr abstimmen.", ephemeral:true});
         }
-        break:
+        break;
 
         case "rejected": {
             interaction.followUp({content:"Dieser Vorschlag wurde abgelehnt, du kannst deshalb nicht mehr abstimmen.", ephemeral:true});
