@@ -1,5 +1,5 @@
 {
-  "token": "OTYyODIwMzk5ODI4MTkzMjkw.GbtrUr.VPEn4e0Rk2uq9Fw3mTSctcwFLzE1ow5KUe-XDo",
+  "token": "",
   "bot_name": "Reactions",
   "loadSlashsGlobal": true, "_COMMENT_": "Set it to true, when your Slash Commands are ready, false loads instant true loads slow but stable! (GLOBAL/GUILD COMMANDS, DISCORD DOCS!)",
   "slashCommandsDirs": [
