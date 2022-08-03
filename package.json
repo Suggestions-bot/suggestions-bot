@@ -1,6 +1,6 @@
 {
   "name": "suggestion-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,10 +11,19 @@
   "author": "DEF",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/builders": "^0.6.0",
+    "beautify.log": "^3.0.4",
+    "bufferutil": "^4.0.6",
     "chalk": "4",
+    "colors": "^1.4.0",
     "discord-modals": "1",
-    "discord.js": "^13.8.1",
+    "discord.js": "^13.1.0",
+    "dotenv": "^16.0.1",
+    "moment": "^2.29.1",
+    "node-gyp": "^9.1.0",
     "ora": "5",
-    "quick.db": "7"
+    "quick.db": "7",
+    "require-all": "^3.0.0",
+    "utf-8-validate": "^5.0.9"
   }
 }
