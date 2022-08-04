@@ -709,7 +709,7 @@ function onCoolDown(message, command) {
   function change_status(client) {
     try {
       client.user.setActivity(`Suggestions`, {
-        type: "PLAYING",
+        type: "WATCHING",
       });
     } catch (e) {
       Logger.error(`Error whilst setting the Activity`, e);
