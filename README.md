@@ -7,5 +7,8 @@ This bot allows users to make suggestions as well as accept and deny, and revers
 ## Installation
 Use `node i`
 
+## Token
+Put token in `src/botconfig/config.json`
+
 ## To start
 Use `node index.js`
