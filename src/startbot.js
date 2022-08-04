@@ -33,8 +33,8 @@ const client = new Discord.Client({
     ],
     presence: {
       activity: {
-        name: `PC Creator 2`, 
-        type: "PLAYING", 
+        name: `Suggestions`, 
+        type: "WATCHING", 
       },
       status: "online"
     }

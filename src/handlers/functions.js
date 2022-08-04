@@ -708,7 +708,7 @@ function onCoolDown(message, command) {
    */
   function change_status(client) {
     try {
-      client.user.setActivity(`PC Creator 2 | Release on August 18th | ${Math.ceil(client.users.cache.size/1000)}k Members`, {
+      client.user.setActivity(`Suggestions`, {
         type: "PLAYING",
       });
     } catch (e) {
