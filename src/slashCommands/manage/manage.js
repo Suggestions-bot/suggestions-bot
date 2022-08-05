@@ -4,7 +4,7 @@ const db      = require("quick.db");
 const Discord = require("discord.js");
 const data    = new db.table("suggestion_def")
 module.exports = {
-  name: "manage", //the command name for the Slash Command
+  name: "suggestion", //the command name for the Slash Command
   description: "Manage a suggestion.", //the command description for Slash Command Overview
   cooldown: 5, //the cooldown for the command in seconds (max. 60) 
   memberpermissions: ["manage_server"], //Only allow members with specific Permissions to execute a Commmand [OPTIONAL]
