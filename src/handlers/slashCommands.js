@@ -13,7 +13,7 @@ module.exports = (client) => {
 				//If its a valid cmdsetup
 				if(cmdSetup && cmdSetup.Folder) {
 					//Set the SubCommand as a Slash Builder
-					const subCommand = new SlashCommandBuilder().setName(String(cmdSetup.CmdName).replace(/\s+/g, '_').toLowerCase()).setDescription(String(cmdSetup.CmdDescription));
+					const subCommand = new SlashCommandBuilder().setName(String(cmdSetup.CmdName).replace(/\s+/g, '_').toLowerCase()).setDescription(String(cmdSetup.CmdDescription)).setDefaultPermission(cmdSetup.activeByDefault);
 					//Now for each file in that subcommand, add a command!
 					const slashCommands = readdirSync(`./src/slashCommands/${dir}/`).filter((file) => file.endsWith(".js"));
 					for (let file of slashCommands) {
@@ -55,7 +55,7 @@ module.exports = (client) => {
 												.addChoices(option.IntChoices.choices.map(c=> [String(c[0]).replace(/\s+/g, '_').toLowerCase(),parseInt(c[1])] )),
 											)
 										} else {
-											Logger.info(`A Option is missing the Name and/or the Description of ${pull.name}`);
+											Logger.warn(`A Option is missing the Name and/or the Description of ${pull.name}`);
 										}
 									}
 								}
@@ -76,7 +76,7 @@ module.exports = (client) => {
 			} else {
 				let pull = require(`../slashCommands/${dir}`);
 				if (pull.name && pull.description) {
-					let Command = new SlashCommandBuilder().setName(String(pull.name).toLowerCase()).setDescription(pull.description);
+					let Command = new SlashCommandBuilder().setName(String(pull.name).toLowerCase()).setDescription(pull.description).setDefaultMemberPermissions(pull.memberpermissions).setDMPermission(pull.dmpermission).setCooldown(pull.cooldown);
 						if(pull.options && pull.options.length > 0){
 							for(const option of pull.options){
 								if(option.User && option.User.name && option.User.description){
