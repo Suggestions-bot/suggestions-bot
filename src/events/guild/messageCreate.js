@@ -13,25 +13,29 @@ module.exports = async (client, message) => {
     if(message.channel.partial) await message.channel.fetch();
     if(message.partial) await message.fetch();
 
+    let msg = message
+    let          key        = "SuggestionsChannel_"+msg.guild?.id;
+
+    let data2 = data.fetch(key);
+    if (data2 == null) return;
+    if (msg.channelId !== data2.channel) return;
+
     language = data.get("Language_"+message.guild?.id)
     if (language == null) {
         language = "lang_en"
     }
 
     const lang = require(`../../botconfig/languages/${language}.json`);
-    
-    let msg = message
-    let          key        = "SuggestionsChannel_"+msg.guild?.id;
+
     let         guild       = msg.guild
     let        channel      = msg.channel;
     let       msgAuthor     = msg.author;
     let      rawEContent    = msg["content"]
-    let data2 = data.fetch(key);
-    if (data2 == null) return;
+
     const badlinks = ["https://", "http://", "www."];
     const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic"];
 
-    if (msg.channelId !== data2.channel) return;
+
 
     if (badlinks.some(el => rawEContent.includes(el)) == true) {
         if (msg.deletable) msg.delete();
