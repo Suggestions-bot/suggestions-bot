@@ -25,5 +25,6 @@
     "suggest_accepted": "Aangenomen",
     "suggest_declined": "Afgekeurd",
     "suggest_accepted_text": "Dit voorstel is gemarkeerd als geaccepteerd.",
-    "suggest_declined_text": "Dit voorstel is gemarkeerd als afgewezen."
+    "suggest_declined_text": "Dit voorstel is gemarkeerd als afgewezen.",
+    "suggest_cannot_edit": "Deze suggestie kan niet worden bewerkt omdat deze al is beoordeeld door een Moderator."
 }

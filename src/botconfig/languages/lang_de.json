@@ -25,5 +25,6 @@
     "suggest_accepted": "Angenommen",
     "suggest_declined": "Abgelehnt",
     "suggest_accepted_text": "Dieser Vorschlag wurde als angenommen markiert.",
-    "suggest_declined_text": "Dieser Vorschlag wurde als abgelehnt markiert."
+    "suggest_declined_text": "Dieser Vorschlag wurde als abgelehnt markiert.",
+    "suggest_cannot_edit": "Dieser Vorschlag kann nicht bearbeitet werden, da er bereits von einem Moderator überprüft wurde."
 }
