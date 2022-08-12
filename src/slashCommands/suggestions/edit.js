@@ -75,7 +75,7 @@ module.exports = {
 
         //logger.info(embed.fields[2]);
 
-        if (!embed.fields[2] == null) {
+        if (embed.fields[2] != null) {
             return interaction.reply(
                 {content:lang.suggest_cannot_edit, ephemeral:true}
             );
