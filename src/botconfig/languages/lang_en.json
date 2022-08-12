@@ -20,10 +20,11 @@
     "user_has_no_suggestions": "has no suggestions yet on",
     "to_suggestion": "to the suggestion",
     "suggest_edit_success": "The suggestion was edited successfully.",
-    "suggest_none_found": "A message from you with this ID does not exist in the suggestion channel",
+    "suggest_none_found": "A message from you with this ID does not exist in the suggestions channel.",
     "suggest_none": "You haven't made a suggestion yet.",
     "suggest_accepted": "Suggested",
     "suggest_declined": "Declined",
     "suggest_accepted_text": "This suggestion has been marked as accepted.",
-    "suggest_declined_text": "This suggestion has been marked as declined."
+    "suggest_declined_text": "This suggestion has been marked as declined.",
+    "suggest_cannot_edit": "This suggestion cannot be edited because it has already been reviewed by a moderator."
 }

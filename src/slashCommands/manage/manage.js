@@ -44,7 +44,15 @@ module.exports = {
         };
 
 
-        let message = await channel.messages.fetch(givenMessageID.toString());
+        let message = await channel.messages.fetch(givenMessageID.toString())
+        .catch(err => {
+            interaction.reply(
+                {content:lang.suggest_none_found, ephemeral:true}
+            )
+            return false;
+        });
+
+        if (message == false) return;
 
         if (message.author.id.toString() != client.user.id.toString()) {
             interaction.reply(
