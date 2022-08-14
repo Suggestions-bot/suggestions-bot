@@ -10,7 +10,7 @@ module.exports = {
   alloweduserids: [], //Only allow specific Users to execute a Command [OPTIONAL]
   options: [
 
-    {"StringChoices": { name: "language", description: "Select your Preferred Language", required: true, choices: [["English", "lang_en"], ["German", "lang_de"], ["Dutch", "lang_nl"], ["Russian", "lang_ru"], ["Spanish", "lang_es"]] }}
+    {"StringChoices": { name: "language", description: "Select your preferred language", required: true, choices: [["English", "lang_en"], ["German", "lang_de"], ["Dutch", "lang_nl"], ["Russian", "lang_ru"], ["Spanish", "lang_es"]] }}
 
   ],
   run: async (client, interaction) => {
