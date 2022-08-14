@@ -26,5 +26,7 @@
     "suggest_declined": "Afgekeurd",
     "suggest_accepted_text": "Dit voorstel is gemarkeerd als geaccepteerd.",
     "suggest_declined_text": "Dit voorstel is gemarkeerd als afgewezen.",
-    "suggest_cannot_edit": "Deze suggestie kan niet worden bewerkt omdat deze al is beoordeeld door een Moderator."
+    "suggest_cannot_edit": "Deze suggestie kan niet worden bewerkt omdat deze al is beoordeeld door een moderator.",
+    "suggest_bot_not_author": "Deze suggestie kan niet worden bewerkt omdat de bot niet de auteur van het bericht is.",
+    "suggest_reset_to_og_state": "Het voorstel is teruggebracht in de oorspronkelijke staat."
 }
