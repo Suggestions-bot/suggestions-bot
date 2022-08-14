@@ -26,5 +26,7 @@
     "suggest_declined": "Declined",
     "suggest_accepted_text": "This suggestion has been marked as accepted.",
     "suggest_declined_text": "This suggestion has been marked as declined.",
-    "suggest_cannot_edit": "This suggestion cannot be edited because it has already been reviewed by a moderator."
+    "suggest_cannot_edit": "This suggestion cannot be edited because it has already been reviewed by a moderator.",
+    "suggest_bot_not_author": "This suggestion cannot be edited because the bot is not the author of the message.",
+    "suggest_reset_to_og_state": "The suggestion has been reset to its original state."
 }

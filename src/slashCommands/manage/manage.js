@@ -56,7 +56,7 @@ module.exports = {
 
         if (message.author.id.toString() != client.user.id.toString()) {
             interaction.reply(
-                {content:"Diese Nachricht kann nicht bearbeitet werden da der Bot nicht der Author dieser Nachricht ist.",ephemeral:true}
+                {content:lang.suggest_bot_not_author, ephemeral:true}
             );
              return;
         }
@@ -152,7 +152,7 @@ module.exports = {
                 )
                 ],embeds: [newEmbed]});
             interaction.reply(
-                {content:"Der Vorschlag wude auf seinen vorherigen Zustand zurückgesetzt.",ephemeral:true}
+                {content:lang.suggest_reset_to_og_state, ephemeral:true}
             );
         }
     } catch (e) {
