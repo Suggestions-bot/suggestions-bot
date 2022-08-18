@@ -28,5 +28,8 @@
     "suggest_declined_text": "This suggestion has been marked as declined.",
     "suggest_cannot_edit": "This suggestion cannot be edited because it has already been reviewed by a moderator.",
     "suggest_bot_not_author": "This suggestion cannot be edited because the bot is not the author of the message.",
-    "suggest_reset_to_og_state": "The suggestion has been reset to its original state."
+    "suggest_reset_to_og_state": "The suggestion has been reset to its original state.",
+    "embed_invalid_color": "The color you entered is invalid. Please enter a valid color. You can find valid colors here: https://www.hexcolortool.com/",
+    "embed_success": "The embed was successfully changed.",
+    "not_valid_option": "You didn't choose a valid option. Please choose at least one of the options given."
 }

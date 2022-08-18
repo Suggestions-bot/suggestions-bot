@@ -25,6 +25,17 @@ module.exports = async (client, message) => {
         language = "lang_en"
     }
 
+    let edata = data.get("CustomEmbed_"+message.guild?.id);
+    if (edata == null) {
+      var dicon = "👎"
+      var ecolor = "2C2F33"
+      var uicon = "👍"
+    } else {
+      var dicon = data.get("CustomEmbed_"+message.guild?.id+".dicon");
+      var ecolor = data.get("CustomEmbed_"+message.guild?.id+".color");
+      var uicon = data.get("CustomEmbed_"+message.guild?.id+".uicon");
+    }
+
     const lang = require(`../../botconfig/languages/${language}.json`);
 
     let         guild       = msg.guild
@@ -71,12 +82,12 @@ module.exports = async (client, message) => {
             {author:{
                 name: msgAuthor.username,
                 iconURL: msgAuthor.avatarURL({dynamic:true})
-            },color:0x2c2f33,timestamp: new Date(),footer:{
+            },color:ecolor,timestamp: new Date(),footer:{
                 iconURL: guild.iconURL({dynamic:true}),
                 text: guild.name
             },description:rawEContent,fields:[
-                {name:"👍 " + lang.suggest_upvotes,value:"```\n0```",inline:true},
-                {name:"👎 " + lang.suggest_downvotes,value:"```\n0```",inline:true},
+                {name:uicon + " " + lang.suggest_upvotes,value:"```\n0```",inline:true},
+                {name:dicon + " " + lang.suggest_downvotes,value:"```\n0```",inline:true},
             ]}
         ],
         components: [
@@ -85,11 +96,11 @@ module.exports = async (client, message) => {
             new Discord.MessageButton()
             .setCustomId("up")
             .setStyle("SUCCESS")
-            .setLabel("👍 " + lang.suggest_upvote),
+            .setLabel(uicon + " " + lang.suggest_upvote),
             new Discord.MessageButton()
             .setCustomId("down")
             .setStyle("DANGER")
-            .setLabel("👎 " + lang.suggest_downvote),
+            .setLabel(dicon + " " + lang.suggest_downvote),
           )
         ]
     }).then(async message => {

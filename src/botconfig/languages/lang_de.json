@@ -28,5 +28,8 @@
     "suggest_declined_text": "Dieser Vorschlag wurde als abgelehnt markiert.",
     "suggest_cannot_edit": "Dieser Vorschlag kann nicht bearbeitet werden, da er bereits von einem Moderator überprüft wurde.",
     "suggest_bot_not_author": "Dieser Vorschlag kann nicht bearbeitet werden, da der Bot nicht der Autor der Nachricht ist.",
-    "suggest_reset_to_og_state": "Der Vorschlag wurde auf seinen ursprünglichen Zustand zurückgesetzt."
+    "suggest_reset_to_og_state": "Der Vorschlag wurde auf seinen ursprünglichen Zustand zurückgesetzt.",
+    "embed_invalid_color": "Die eingegebene Farbe ist ungültig. Bitte gib eine gültige Farbe ein. Gültige Farben findest du hier: https://www.hexcolortool.com/",
+    "embed_success": "Die Embeds Formatierung wurden erfolgreich bearbeitet.",
+    "not_valid_option": "Du hast keine gültige Option gewählt. Bitte wähle mindestens eine der angegebenen Optionen."
 }

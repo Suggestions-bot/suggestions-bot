@@ -56,6 +56,19 @@ async function buttons(interaction) {
       language = "lang_en"
   }
   const lang = require(`../../botconfig/languages/${language}.json`);
+  let edata = data.get("CustomEmbed_"+interaction.guild?.id);
+  if (edata == null) {
+    var dicon = "👎"
+    var ecolor = "2C2F33"
+    var uicon = "👍"
+  } else {
+    var dicon = data.get("CustomEmbed_"+interaction.guild?.id+".dicon");
+    var ecolor = data.get("CustomEmbed_"+interaction.guild?.id+".color");
+    var uicon = data.get("CustomEmbed_"+interaction.guild?.id+".uicon");
+  }
+
+  // logger.info(uicon + " " + ecolor + " " + dicon);
+
 
   switch (interaction.customId) {
       case "up": {
@@ -73,7 +86,7 @@ async function buttons(interaction) {
           }
           let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
               description:embed.description,fields:[
-              {name:"👍 Upvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+              {name:uicon+" Upvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
               embed.fields[1],
           ]}
           data.push(key, interaction.user.id);
@@ -83,7 +96,7 @@ async function buttons(interaction) {
       break;
 
       case "down": {
-          logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
+          // logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
           let   message   = interaction.message;
           let    embed    = message.embeds[0];
           let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
@@ -99,7 +112,7 @@ async function buttons(interaction) {
           let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
               description:embed.description,fields:[
               embed.fields[0],
-              {name:"👎 Downvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+              {name:dicon+" " + lang.suggest_downvotes + ":",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
           ]}
           data.push(key, interaction.user.id);
           data.push(ke2, value)
@@ -145,6 +158,16 @@ async function modalSubmit(client, modal) {
         language = "lang_en"
     }
     const lang = require(`../../botconfig/languages/${language}.json`);
+    let edata = data.get("CustomEmbed_"+interaction.guild?.id);
+    if (edata == null) {
+      var dicon = "👎"
+      var ecolor = "2C2F33"
+      var uicon = "👍"
+    } else {
+      var dicon = data.get("CustomEmbed_"+interaction.guild?.id+".dicon");
+      var ecolor = data.get("CustomEmbed_"+interaction.guild?.id+".color");
+      var uicon = data.get("CustomEmbed_"+interaction.guild?.id+".uicon");
+    }
 
     //Removes bad links
     if (badlinks.some(el => res.includes(el)) == true) {
@@ -176,12 +199,12 @@ async function modalSubmit(client, modal) {
             {author:{
                 name: modal.user.username,
                 iconURL: modal.user.avatarURL({dynamic:true})
-            },color:0x2c2f33,timestamp: new Date(),footer:{
+            },color: ecolor,timestamp: new Date(),footer:{
                 iconURL: modal.guild?.iconURL({dynamic:true}),
                 text: modal.guild?.name
             },description:res,fields:[
-                {name:"👍 " + lang.suggest_upvotes ,value:"```\n0```",inline:true},
-                {name:"👎 " + lang.suggest_downvotes ,value:"```\n0```",inline:true},
+                {name:uicon + " " + lang.suggest_upvotes ,value:"```\n0```",inline:true},
+                {name:dicon + " " + lang.suggest_downvotes ,value:"```\n0```",inline:true},
             ]}
         ],
         components: [
@@ -190,11 +213,11 @@ async function modalSubmit(client, modal) {
             new Discord.MessageButton()
             .setCustomId("up")
             .setStyle("SUCCESS")
-            .setLabel("👍 " + lang.suggest_upvote),
+            .setLabel(uicon + " " + lang.suggest_upvote),
             new Discord.MessageButton()
             .setCustomId("down")
             .setStyle("DANGER")
-            .setLabel("👎 " + lang.suggest_downvote),
+            .setLabel(dicon + " " + lang.suggest_downvote),
         )
         ]
     }).then(async message => {
