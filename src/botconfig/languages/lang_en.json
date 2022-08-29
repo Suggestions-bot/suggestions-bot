@@ -7,6 +7,8 @@
     "add_suggestion_here": "Add your suggestion here.",
     "suggestion_name": "Suggestion",
     "already_voted": "You have already voted.",
+    "already_voted_rechoice": "You have already voted. If you changed your opinion, you can re-vote with the buttons below this message.",
+    "already_voted_option": "You have already voted for that option.",
     "nobody_voted": "Nobody voted.",
     "already_accepted": "This suggestion has been accepted, so you can no longer vote.",
     "already_declined": "This suggestion has been declined, so you can no longer vote.",

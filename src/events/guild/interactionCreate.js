@@ -6,6 +6,7 @@ const { onCoolDown, replacemsg } = require("../../handlers/functions");
 const Discord = require("discord.js");
 const db      = require("quick.db");
 const logger = require("../../handlers/logger");
+const { lang } = require("moment");
 const data    = new db.table("suggestion_def")
 
 
@@ -43,6 +44,30 @@ module.exports = (client, interaction) => {
 }
 
 
+
+async function confirmRevote(interaction, lang) {
+
+  await interaction.followUp({
+    content: lang.already_voted_rechoice, 
+    components: [
+      new Discord.MessageActionRow()
+        .addComponents(
+          new Discord.MessageButton()
+          .setCustomId("up-rechoice")
+          .setStyle("SUCCESS")
+          .setLabel(uicon + " " + lang.suggest_upvote),
+          new Discord.MessageButton()
+          .setCustomId("down-rechoice")
+          .setStyle("DANGER")
+          .setLabel(dicon + " " + lang.suggest_downvote),
+        )
+      ]
+    }
+  );
+
+
+}
+
 /**
  * 
  * @param {Discord.ButtonInteraction} interaction 
@@ -69,7 +94,6 @@ async function buttons(interaction) {
 
   // logger.info(uicon + " " + ecolor + " " + dicon);
 
-
   switch (interaction.customId) {
       case "up": {
           let   message   = interaction.message;
@@ -77,19 +101,27 @@ async function buttons(interaction) {
           let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
           let     key     = message.id.toString()+".voters";
           let     ke2     = message.id.toString()+".votersInfo";
+          let     key3     = message.id.toString()+".reVoters";
+          let     key4     = message.id.toString()+".upVoters";
           let    value    = {user:interaction.user,date: dater}
           let  newNumber  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
           let    voter   = data.fetch(message.id.toString()).voters;
           if (voter.includes(interaction.user.id)) {
-            await interaction.followUp({content:lang.already_voted, ephemeral:true});
-            return;
+            if (data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+              await confirmRevote(interaction, lang);
+            }
+            else {
+              await interaction.followUp({content:lang.already_voted, ephemeral:true});
+              return;
+            }
           }
           let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
               description:embed.description,fields:[
-              {name:uicon+" Upvotes:",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+              {name:uicon+" " + lang.suggest_upvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
               embed.fields[1],
           ]}
           data.push(key, interaction.user.id);
+          data.push(key4, interaction.user.id);
           data.push(ke2, value)
           await message.edit({components: message.components,embeds: [editedEmbed]})
       }
@@ -102,21 +134,64 @@ async function buttons(interaction) {
           let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
           let     key     = message.id.toString()+".voters";
           let     ke2     = message.id.toString()+".votersInfo";
+          let     key3     = message.id.toString()+".reVoters";
+          let     key4     = message.id.toString()+".downVoters";
           let    value    = {user:interaction.user,date: dater}
           let  newNumber  = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
           let    voter   = data.fetch(message.id.toString()).voters;
           if (voter.includes(interaction.user.id)) {
-            await interaction.followUp({content:lang.already_voted, ephemeral:true});
-            return;
+            if (data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+              await confirmRevote(interaction, lang);
+            }
+            else {
+              await interaction.followUp({content:lang.already_voted, ephemeral:true});
+              return;
+            }
           }
           let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
               description:embed.description,fields:[
               embed.fields[0],
-              {name:dicon+" " + lang.suggest_downvotes + ":",value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+              {name:dicon+" " + lang.suggest_downvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
           ]}
           data.push(key, interaction.user.id);
+          data.push(key4, interaction.user.id);
           data.push(ke2, value)
           await message.edit({components: message.components,embeds: [editedEmbed]})
+      }
+      break;
+
+      case "up-rechoice": {
+        let   message   = interaction.message;
+        let    embed    = message.embeds[0];
+        let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+        let     key     = message.id.toString()+".voters";
+        let     ke2     = message.id.toString()+".votersInfo";
+        let    value    = {user:interaction.user,date: dater}
+        let  newNumber  = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) - 1;
+        let  newNumber1  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
+        let    voter   = data.fetch(message.id.toString()).voters;
+        let     key4     = message.id.toString()+".downVoters";
+        let     key5     = message.id.toString()+".upVoters";
+
+        if (data.fetch(message.id.toString()).upVoters.includes(interaction.user.id)) {+
+          await interaction.followUp({content:lang.already_voted_option, ephemeral:true});
+          return;
+        } else if (data.fetch(message.id.toString()).downVoters.includes(interaction.user.id)) {
+          let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
+            description:embed.description,fields:[
+              {name:dicon+" " + lang.suggest_upvotes, value:`\`\`\`\n${newNumber1}\`\`\``,inline:true},
+            {name:dicon+" " + lang.suggest_downvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+        ]}
+        return;
+        } else {
+         await interaction.followUp({content:lang.already_voted, ephemeral:true});
+         return;
+        }
+      }
+      break;
+
+      case "down-rechoice": {
+
       }
       break;
   
@@ -128,6 +203,7 @@ async function buttons(interaction) {
 
           interaction.followUp({content:raws, ephemeral:true}); 
       }
+      break;
 
       case "accepted": {
         await interaction.followUp({content:lang.already_accepted , ephemeral:true});
