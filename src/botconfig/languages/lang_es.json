@@ -25,5 +25,8 @@
     "suggest_accepted": "Sugerido",
     "suggest_declined": "Rechazado",
     "suggest_accepted_text": "Esta sugerencia ha sido marcada como aceptada.",
-    "suggest_declined_text": "Esta sugerencia se ha marcado como rechazada"
+    "suggest_declined_text": "Esta sugerencia se ha marcado como rechazada",
+    "suggest_cannot_edit": "Esta sugerencia no se puede editar porque ya ha sido revisada por un moderador.",
+    "suggest_bot_not_author": "Esta sugerencia no se puede editar porque el bot no es el autor del mensaje.",
+    "suggest_reset_to_og_state": "La sugerencia se ha restablecido a su estado original."
 }

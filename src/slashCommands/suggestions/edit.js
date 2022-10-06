@@ -1,6 +1,7 @@
 const Logger = require("../../handlers/logger");
 const modals  = require("discord-modals");
 const db      = require("quick.db");
+const logger = require("../../handlers/logger");
 const data    = new db.table("suggestion_def")
 module.exports = {
   name: "edit", //the command name for the Slash Command
@@ -55,12 +56,32 @@ module.exports = {
         // console.log(messageIdArray);
 
         if (!messageIdArray.includes(givenMessageID)) return interaction.reply(
-            {content:lang.suggest_none_found ,ephemeral:true}
+            {content:lang.suggest_none_found, ephemeral:true}
         );
+        
+        // log an error whilst getting the message
+        let message = await channel.messages.fetch(givenMessageID.toString())
+        .catch(err => {
+            interaction.reply(
+                {content:lang.suggest_none_found, ephemeral:true}
+            )
+            return false;
+        });
 
-        let message = await channel.messages.fetch(givenMessageID.toString());
+        if (message == false) return;
+
         let newMessage = options.getString("new-suggestion");
         let    embed    = message.embeds[0];
+
+        //logger.info(embed.fields[2]);
+
+        if (embed.fields[2] != null) {
+            return interaction.reply(
+                {content:lang.suggest_cannot_edit, ephemeral:true}
+            );
+        }
+
+
 
         let editedEmbed = {author:embed.author,color:embed.color,timestamp:embed.timestamp,footer:embed.footer,
             description:newMessage,fields:[
