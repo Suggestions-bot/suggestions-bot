@@ -25,7 +25,7 @@
     "suggest_edit_success": "The suggestion was edited successfully.",
     "suggest_none_found": "A message from you with this ID does not exist in the suggestions channel.",
     "suggest_none": "You haven't made a suggestion yet.",
-    "suggest_accepted": "Suggested",
+    "suggest_accepted": "Accepted",
     "suggest_declined": "Declined",
     "suggest_accepted_text": "This suggestion has been marked as accepted.",
     "suggest_declined_text": "This suggestion has been marked as declined.",
