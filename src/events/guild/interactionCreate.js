@@ -47,8 +47,19 @@ module.exports = (client, interaction) => {
 
 async function confirmRevote(interaction, lang) {
 
+  let edata = data.get("CustomEmbed_"+interaction.guild?.id);
+  if (edata == null) {
+    var dicon = "👎"
+    var ecolor = "2C2F33"
+    var uicon = "👍"
+  } else {
+    var dicon = data.get("CustomEmbed_"+interaction.guild?.id+".dicon");
+    var ecolor = data.get("CustomEmbed_"+interaction.guild?.id+".color");
+    var uicon = data.get("CustomEmbed_"+interaction.guild?.id+".uicon");
+  }
+
   await interaction.followUp({
-    content: lang.already_voted_rechoice, 
+    content: lang.already_voted_rechoice,
     components: [
       new Discord.MessageActionRow()
         .addComponents(
@@ -61,7 +72,8 @@ async function confirmRevote(interaction, lang) {
           .setStyle("DANGER")
           .setLabel(dicon + " " + lang.suggest_downvote),
         )
-      ]
+      ],
+      ephemeral: true
     }
   );
 
@@ -69,8 +81,8 @@ async function confirmRevote(interaction, lang) {
 }
 
 /**
- * 
- * @param {Discord.ButtonInteraction} interaction 
+ *
+ * @param {Discord.ButtonInteraction} interaction
  */
 async function buttons(interaction) {
   // logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
@@ -107,11 +119,11 @@ async function buttons(interaction) {
           let  newNumber  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
           let    voter   = data.fetch(message.id.toString()).voters;
           if (voter.includes(interaction.user.id)) {
-            if (data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+            if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
               await confirmRevote(interaction, lang);
-            }
-            else {
-              await interaction.followUp({content:lang.already_voted, ephemeral:true});
+              return;
+            } else {
+              await interaction.followUp({content:lang.already_voted_again, ephemeral:true});
               return;
             }
           }
@@ -123,6 +135,12 @@ async function buttons(interaction) {
           data.push(key, interaction.user.id);
           data.push(key4, interaction.user.id);
           data.push(ke2, value)
+          if (!data.fetch(message.id.toString()).reVoters) {
+            data.set(message.id.toString()+".reVoters", [])
+          }
+          if (!data.fetch(message.id.toString()).downVoters) {
+            data.set(message.id.toString()+".downVoters", [])
+          }
           await message.edit({components: message.components,embeds: [editedEmbed]})
       }
       break;
@@ -140,11 +158,11 @@ async function buttons(interaction) {
           let  newNumber  = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
           let    voter   = data.fetch(message.id.toString()).voters;
           if (voter.includes(interaction.user.id)) {
-            if (data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+            if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
               await confirmRevote(interaction, lang);
-            }
-            else {
-              await interaction.followUp({content:lang.already_voted, ephemeral:true});
+              return;
+            } else {
+              await interaction.followUp({content:lang.already_voted_again, ephemeral:true});
               return;
             }
           }
@@ -156,52 +174,112 @@ async function buttons(interaction) {
           data.push(key, interaction.user.id);
           data.push(key4, interaction.user.id);
           data.push(ke2, value)
+          if (!data.fetch(message.id.toString()).reVoters) {
+            data.set(message.id.toString()+".reVoters", [])
+          }
+          if (!data.fetch(message.id.toString()).downVoters) {
+            data.set(message.id.toString()+".upVoters", [])
+          }
           await message.edit({components: message.components,embeds: [editedEmbed]})
       }
       break;
 
       case "up-rechoice": {
         let   message   = interaction.message;
+        //console.log(message)
+        //console.log(message.reference.messageId)
+        message = await message.channel.messages.fetch(message.reference.messageId);
+        //console.log(message)
         let    embed    = message.embeds[0];
-        let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-        let     key     = message.id.toString()+".voters";
-        let     ke2     = message.id.toString()+".votersInfo";
-        let    value    = {user:interaction.user,date: dater}
+        //let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+        //let     key     = message.id.toString()+".voters";
+        //let     ke2     = message.id.toString()+".votersInfo";
+        //let    value    = {user:interaction.user,date: dater}
         let  newNumber  = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) - 1;
         let  newNumber1  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
-        let    voter   = data.fetch(message.id.toString()).voters;
-        let     key4     = message.id.toString()+".downVoters";
+        //let    voter   = data.fetch(message.id.toString()).voters;
+        //let     key4     = message.id.toString()+".downVoters";
         let     key5     = message.id.toString()+".upVoters";
+        let     key3     = message.id.toString()+".reVoters";
 
-        if (data.fetch(message.id.toString()).upVoters.includes(interaction.user.id)) {+
-          await interaction.followUp({content:lang.already_voted_option, ephemeral:true});
+        if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+          if (data.fetch(message.id.toString()).upVoters.includes(interaction.user.id)) {
+            await interaction.followUp({content:lang.already_voted_option, ephemeral:true});
+            return;
+          } else if (data.fetch(message.id.toString()).downVoters.includes(interaction.user.id)) {
+            data.push(key3, interaction.user.id);
+            data.push(key5, interaction.user.id);
+            let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
+              description:embed.description,fields:[
+                {name:uicon+" " + lang.suggest_upvotes, value:`\`\`\`\n${newNumber1}\`\`\``,inline:true},
+              {name:dicon+" " + lang.suggest_downvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+            ]}
+            let tmp = data.fetch(message.id.toString()).downVoters;
+            tmp.splice(tmp.indexOf(interaction.user.id), 1);
+            data.set(message.id.toString()+".downVoters", tmp);
+            await message.edit({components: message.components,embeds: [editedEmbed]})
+            return;
+          } else {
+          await interaction.followUp({content:lang.already_voted, ephemeral:true});
           return;
-        } else if (data.fetch(message.id.toString()).downVoters.includes(interaction.user.id)) {
-          let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
-            description:embed.description,fields:[
-              {name:dicon+" " + lang.suggest_upvotes, value:`\`\`\`\n${newNumber1}\`\`\``,inline:true},
-            {name:dicon+" " + lang.suggest_downvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
-        ]}
-        return;
+          }
         } else {
-         await interaction.followUp({content:lang.already_voted, ephemeral:true});
-         return;
+          await interaction.followUp({content:lang.already_voted_again, ephemeral:true});
+          return;
         }
       }
       break;
 
       case "down-rechoice": {
+        let   message   = interaction.message;
+        message = await message.channel.messages.fetch(message.reference.messageId);
+        let    embed    = message.embeds[0];
+        //let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
+        //let     key     = message.id.toString()+".voters";
+        //let     ke2     = message.id.toString()+".votersInfo";
+        //let    value    = {user:interaction.user,date: dater}
+        let  newNumber  = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
+        let  newNumber1  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) - 1;
+        //let    voter   = data.fetch(message.id.toString()).voters;
+        let     key4     = message.id.toString()+".downVoters";
+        //let     key5     = message.id.toString()+".upVoters";
+        let     key3     = message.id.toString()+".reVoters";
 
+        if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
+          if (data.fetch(message.id.toString()).downVoters.includes(interaction.user.id)) {
+            await interaction.followUp({content:lang.already_voted_option, ephemeral:true});
+            return;
+          } else if (data.fetch(message.id.toString()).upVoters.includes(interaction.user.id)) {
+            data.push(key3, interaction.user.id);
+            data.push(key4, interaction.user.id);
+            let editedEmbed = {author:embed.author,color:embed.color,timestamp: embed.timestamp,footer:embed.footer,
+              description:embed.description,fields:[
+                {name:uicon+" " + lang.suggest_upvotes, value:`\`\`\`\n${newNumber1}\`\`\``,inline:true},
+              {name:dicon+" " + lang.suggest_downvotes, value:`\`\`\`\n${newNumber}\`\`\``,inline:true},
+            ]}
+            let tmp = data.fetch(message.id.toString()).upVoters;
+            tmp.splice(tmp.indexOf(interaction.user.id), 1);
+            data.set(message.id.toString()+".upVoters", tmp);
+            await message.edit({components: message.components,embeds: [editedEmbed]})
+            return;
+          } else {
+          await interaction.followUp({content:lang.already_voted, ephemeral:true});
+          return;
+          }
+        } else {
+          await interaction.followUp({content:lang.already_voted_again, ephemeral:true});
+          return;
+        }
       }
       break;
-  
+
       case "info": {
           let   voters   = data.fetch(interaction.message.id.toString()).votersInfo;
           let    raws    = voters.map((voter, index) => `${index + 1}. ${voter.user.username} - ${voter.date}`).join("\n")
 
-          if (voters == []) return await interaction.followUp({content:lang.already_voted, ephemeral:true}); 
+          if (voters == []) return await interaction.followUp({content:lang.already_voted, ephemeral:true});
 
-          interaction.followUp({content:raws, ephemeral:true}); 
+          interaction.followUp({content:raws, ephemeral:true});
       }
       break;
 
@@ -252,7 +330,7 @@ async function modalSubmit(client, modal) {
             )
             return;
         }
-    
+
     //Removes nitro scams
     if (res.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
         modal.reply(
