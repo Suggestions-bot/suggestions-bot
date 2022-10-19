@@ -11,6 +11,7 @@ module.exports = {
   alloweduserids: [], //Only allow specific Users to execute a Command [OPTIONAL]
   options: [
     {"User": { name: "user", description: "The user you want to get the suggestions from.", required: true }}, 
+    // {"String": { name: "message-id", description: "If you don't know the user's name or id.", required: false}}, 
   ],
   run: async (client, interaction) => {
     try{
@@ -21,20 +22,63 @@ module.exports = {
             language = "lang_en"
         }
         const lang = require(`../../botconfig/languages/${language}.json`);
+        const  userInfos  = options.getUser("user");
+        const givenMessageString = options.getString("message-id");
 
-        let  userInfos  = options.getUser("user");
-        let   userKey   = "Suggestions_"+interaction.guild.id+"_"+userInfos.id.toString()+".sugs";
-        let    udata    = data.fetch(userKey);
+        if (userInfos != null) {
+          let   userKey   = "Suggestions_"+interaction.guild.id+"_"+userInfos.id.toString()+".sugs";
+          let    udata    = data.fetch(userKey);
 
-        if (udata == null) return interaction.reply(
-            {content:"<@"+userInfos.id+"> " + lang.user_has_no_suggestions + "**" + +interaction.guild?.name + "**" ,ephemeral:true}
-        )
-        else {
-            let calSugs = await udata.map((message, index) => `${index + 1}. [${lang.to_suggestion}](${message.url})\n\`\`\`\n${message.content}\`\`\``).join("\n\n");
-            interaction.reply(
-                {content:calSugs,ephemeral:true}
-            )
-        }
+          if (udata == null) return interaction.reply(
+              {content:"<@"+userInfos.id+"> " + lang.user_has_no_suggestions + " **" + interaction.guild?.name + "**" ,ephemeral:true}
+          )
+          else {
+              let calSugs = await udata.map((message, index) => `${index + 1}. [${lang.to_suggestion}](${message.url})\n\`\`\`\n${message.content}\`\`\``).join("\n\n");
+              interaction.reply(
+                  {content:calSugs,ephemeral:true}
+              )
+          } 
+        } 
+        /*else if (givenMessageString != null) {
+          let givenMessageID = "";
+
+          if (givenMessageString.includes("/")) {
+              givenMessageID = givenMessageString.split("/")[6];
+          } else {
+              givenMessageID = givenMessageString;
+          }
+  
+          let   ckey         = "SuggestionsChannel_"+interaction.guild.id;
+          let   value       = data.fetch(ckey)?.channel
+          let   channel   = client.channels.cache.get(value);
+          let message = await channel.messages.fetch(givenMessageID.toString())
+          .catch(err => {
+              interaction.reply(
+                  {content:lang.suggest_none_found, ephemeral:true}
+              )
+              return false;
+          });
+
+          if (message == false) return;
+          
+          let userID = data.fetch(message.id.toString())
+          let   userKey   = "Suggestions_"+interaction.guild.id+"_"+message.author.id.toString()+".sugs";
+          let    udata    = data.fetch(userKey);
+
+          if (udata == null) return interaction.reply(
+              {content:"<@"+message.author.id+"> " + lang.user_has_no_suggestions + "**" + interaction.guild?.name + "**" ,ephemeral:true}
+          )
+          else {
+              let calSugs = await udata.map((message, index) => `${index + 1}. [${lang.to_suggestion}](${message.url})\n\`\`\`\n${message.content}\`\`\``).join("\n\n");
+              interaction.reply(
+                  {content:calSugs,ephemeral:true}
+              )
+          } 
+        } else {
+          interaction.reply(
+              {content:lang.not_valid_option, ephemeral:true}
+          )
+        }*/
     } catch (e) {
         Logger.error(e);
     }

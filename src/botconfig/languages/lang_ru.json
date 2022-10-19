@@ -7,6 +7,9 @@
     "add_suggestion_here": "Добавьте сюда свое предложение.",
     "suggestion_name": "Предложение",
     "already_voted": "Вы уже проголосовали.",
+    "already_voted_again": "You have already changed your choice.",
+    "already_voted_rechoice": "You have already voted. If you changed your opinion, you can re-vote with the buttons below this message.",
+    "already_voted_option": "You have already voted for that option.",
     "nobody_voted": "Никто не голосовал.",
     "already_accepted": "Это предложение было принято, поэтому вы больше не можете голосовать.",
     "already_declined": "Это предложение было отклонено, поэтому вы больше не можете голосовать.",
@@ -28,5 +31,8 @@
     "suggest_declined_text": "Это предложение помечено как отклоненное.",
     "suggest_cannot_edit": "Это предложение нельзя изменить, так как оно уже проверено модератором.",
     "suggest_bot_not_author": "Это предложение нельзя изменить, так как бот не является автором сообщения.",
-    "suggest_reset_to_og_state": "Предложение возвращено в исходное состояние."
+    "suggest_reset_to_og_state": "Предложение возвращено в исходное состояние.",
+    "embed_invalid_color": "Вы ввели неверный цвет. Пожалуйста, введите допустимый цвет. Вы можете найти допустимые цвета здесь: https://www.hexcolortool.com/",
+    "embed_success": "Форматирование вставки было успешно обработано.",
+    "not_valid_option": "Вы выбрали неверный вариант. Пожалуйста, выберите хотя бы один из предложенных вариантов."
 }
