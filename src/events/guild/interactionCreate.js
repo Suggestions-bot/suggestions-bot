@@ -312,15 +312,15 @@ async function modalSubmit(client, modal) {
         language = "lang_en"
     }
     const lang = require(`../../botconfig/languages/${language}.json`);
-    let edata = data.get("CustomEmbed_"+interaction.guild?.id);
+    let edata = data.get("CustomEmbed_"+modal.guild?.id);
     if (edata == null) {
       var dicon = "👎"
       var ecolor = "2C2F33"
       var uicon = "👍"
     } else {
-      var dicon = data.get("CustomEmbed_"+interaction.guild?.id+".dicon");
-      var ecolor = data.get("CustomEmbed_"+interaction.guild?.id+".color");
-      var uicon = data.get("CustomEmbed_"+interaction.guild?.id+".uicon");
+      var dicon = data.get("CustomEmbed_"+modal.guild?.id+".dicon");
+      var ecolor = data.get("CustomEmbed_"+modal.guild?.id+".color");
+      var uicon = data.get("CustomEmbed_"+modal.guild?.id+".uicon");
     }
 
     //Removes bad links
