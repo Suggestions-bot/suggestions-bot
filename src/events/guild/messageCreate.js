@@ -62,16 +62,20 @@ module.exports = async (client, message) => {
     }
 
 
-    if (rawEContent.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
-        if (msg.deletable) msg.delete();
-        try {
-            msgAuthor.send(
-                {content:lang.suggest_badlink}
-            )
-        }
-        catch (e) {
+    try {
+        if (rawEContent.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
+            if (msg.deletable) msg.delete();
+            try {
+                msgAuthor.send(
+                    {content: lang.suggest_badlink}
+                )
+            } catch (e) {
+                return;
+            }
             return;
         }
+    } catch (e) {
+        if (msg.deletable) msg.delete();
         return;
     }
 

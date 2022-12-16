@@ -347,12 +347,21 @@ async function modalSubmit(client, modal) {
         }
 
     //Removes nitro scams
-    if (res.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
-        modal.reply(
-            {content:lang.suggest_badlink ,ephemeral:true}
-        )
-        return;
-    }
+      try {
+          if (res.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
+              modal.reply(
+                  {content:lang.suggest_badlink ,ephemeral:true}
+              )
+              return;
+          }
+      } catch (error) {
+          //logger.error(error);
+          modal.reply(
+              {content:lang.suggest_badlink ,ephemeral:true}
+          )
+          return;
+      }
+
 
     //Message for channel not being set
     if (!channel) return modal.reply(
