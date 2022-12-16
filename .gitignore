@@ -140,3 +140,4 @@ dmypy.json
 
 # IDE
 .vscode/
+src/botconfig/config.json
