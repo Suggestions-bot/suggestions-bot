@@ -182,7 +182,7 @@ async function buttons(interaction) {
           if (!data.fetch(message.id.toString()).reVoters) {
             data.set(message.id.toString()+".reVoters", [])
           }
-          if (!data.fetch(message.id.toString()).downVoters) {
+          if (!data.fetch(message.id.toString()).upVoters) {
             data.set(message.id.toString()+".upVoters", [])
           }
           await message.edit({components: message.components,embeds: [editedEmbed]})
@@ -206,6 +206,10 @@ async function buttons(interaction) {
         //let     key4     = message.id.toString()+".downVoters";
         let     key5     = message.id.toString()+".upVoters";
         let     key3     = message.id.toString()+".reVoters";
+
+        /*logger.info(`${data.fetch(message.id.toString()).reVoters}`);
+        logger.info(`${data.fetch(message.id.toString()).upVoters}`);
+        logger.info(`${data.fetch(message.id.toString()).downVoters}`);*/
 
         if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
           if (data.fetch(message.id.toString()).upVoters.includes(interaction.user.id)) {
@@ -250,6 +254,10 @@ async function buttons(interaction) {
         let     key4     = message.id.toString()+".downVoters";
         //let     key5     = message.id.toString()+".upVoters";
         let     key3     = message.id.toString()+".reVoters";
+
+        /*logger.info(`${data.fetch(message.id.toString()).reVoters}`);
+        logger.info(`${data.fetch(message.id.toString()).upVoters}`);
+        logger.info(`${data.fetch(message.id.toString()).downVoters}`);*/
 
         if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
           if (data.fetch(message.id.toString()).downVoters.includes(interaction.user.id)) {
