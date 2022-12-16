@@ -7,9 +7,9 @@
     "add_suggestion_here":  "Schrijf hier je suggestie.",
     "suggestion_name": "Suggestie",
     "already_voted": "Je hebt al gestemd.",
-    "already_voted_again": "You have already changed your choice.",
-    "already_voted_rechoice": "You have already voted. If you changed your opinion, you can re-vote with the buttons below this message.",
-    "already_voted_option": "You have already voted for that option.",
+    "already_voted_again": "Je hebt je keuze al veranderd.",
+    "already_voted_rechoice": "Je heeft al gestemd. Als je van mening bent veranderd, kan je opnieuw stemmen met de knoppen onder dit bericht.",
+    "already_voted_option": "Je hebt al voor die optie gestemd.",
     "nobody_voted": "Niemand heeft gestemd.",
     "already_accepted": "Dit voorstel is aangenomen, je kan dus niet meer stemmen.",
     "already_declined": "Deze suggestie is afgewezen, dus je kunt niet meer stemmen.",
@@ -32,8 +32,8 @@
     "suggest_cannot_edit": "Deze suggestie kan niet worden bewerkt omdat deze al is beoordeeld door een moderator.",
     "suggest_bot_not_author": "Deze suggestie kan niet worden bewerkt omdat de bot niet de auteur van het bericht is.",
     "suggest_reset_to_og_state": "Het voorstel is teruggebracht in de oorspronkelijke staat.",
-    "embed_invalid_color": "The color you entered is invalid. Please enter a valid color. You can find valid colors here: https://www.hexcolortool.com/",
-    "embed_success": "The embed was successfully changed.",
-    "not_valid_option": "You didn't choose a valid option. Please choose at least one of the options given.",
-    "revote_success": "Your vote has been changed successfully."
+    "embed_invalid_color": "De ingevoerde kleur is ongeldig. Voer een geldige kleur in. Geldige kleuren vindt je hier: https://www.hexcolortool.com/",
+    "embed_success": "De embed is succesvol gewijzigd.",
+    "not_valid_option": "Je hebt geen geldige optie gekozen. Kies ten minste één van de gegeven opties.",
+    "revote_success": "Je stem is succesvol gewijzigd."
 }
