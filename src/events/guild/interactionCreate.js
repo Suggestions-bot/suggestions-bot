@@ -40,7 +40,7 @@ module.exports = (client, interaction) => {
 	}
   if (interaction.isButton()) return buttons(interaction);
   // logger.info(interaction.type + " " + interaction.guild.name + " " + interaction.user.username + " " + interaction.commandName + " " + interaction.options.getSubcommand());
-  if (interaction.type.toString() == "MODAL_SUBMIT") return modalSubmit(client, interaction);
+  if (interaction.type.toString() === "MODAL_SUBMIT") return modalSubmit(client, interaction);
 }
 
 
@@ -117,7 +117,12 @@ async function buttons(interaction) {
           let     key4     = message.id.toString()+".upVoters";
           let    value    = {user:interaction.user,date: dater}
           let  newNumber  = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
-          let    voter   = data.fetch(message.id.toString()).voters;
+          let    voter   = ""
+          try {
+            voter   = data.fetch(message.id.toString()).voters;
+            } catch {
+            voter   = "";
+          }
           if (voter.includes(interaction.user.id)) {
             if (!data.fetch(message.id.toString()).reVoters.includes(interaction.user.id)) {
               await confirmRevote(interaction, lang);
@@ -218,6 +223,7 @@ async function buttons(interaction) {
             tmp.splice(tmp.indexOf(interaction.user.id), 1);
             data.set(message.id.toString()+".downVoters", tmp);
             await message.edit({components: message.components,embeds: [editedEmbed]})
+            await interaction.followUp({content:lang.revote_success, ephemeral:true});
             return;
           } else {
           await interaction.followUp({content:lang.already_voted, ephemeral:true});
@@ -261,6 +267,7 @@ async function buttons(interaction) {
             tmp.splice(tmp.indexOf(interaction.user.id), 1);
             data.set(message.id.toString()+".upVoters", tmp);
             await message.edit({components: message.components,embeds: [editedEmbed]})
+            await interaction.followUp({content:lang.revote_success, ephemeral:true});
             return;
           } else {
           await interaction.followUp({content:lang.already_voted, ephemeral:true});
@@ -375,13 +382,14 @@ async function modalSubmit(client, modal) {
         )
         ]
     }).then(async message => {
-        
+
         let dataConstructor = {url:message.url.toString(),content:res}
         let     userKey     = "Suggestions_"+modal.guild?.id+"_"+modal.user.id.toString()+".sugs";
         let      udata      = data.fetch(userKey)
-        let      value      = {voters: [],votersInfo: []}
+        let      value      = {voters: [],votersInfo: [],reVoters: [],reVotersInfo: [],upvotes: 0,downvotes: 0}
         let       key       = message.id.toString()
 
+        //Logger.info(`New Suggestion by ${msgAuthor.tag} in ${guild.name} | ${message.url} | With Userdata: ${udata}`)
         if (udata == null) await data.set(userKey, [dataConstructor]);
         else data.push(userKey, dataConstructor)
 
