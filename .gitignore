@@ -1,5 +1,18 @@
 # Configuration
 bot-config.json
+**/*config.json
+
+# Local Folders
+**/node_modules
+**/bower_components
+**/.idea
+**/.vscode
+**/.sass-cache
+**/.cache
+**/.history
+**/.env
+**/.fleet
+
 
 
 # Byte-compiled / optimized / DLL files
@@ -127,3 +140,4 @@ dmypy.json
 
 # IDE
 .vscode/
+src/botconfig/config.json

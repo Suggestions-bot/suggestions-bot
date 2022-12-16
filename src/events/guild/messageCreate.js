@@ -62,16 +62,20 @@ module.exports = async (client, message) => {
     }
 
 
-    if (rawEContent.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
-        if (msg.deletable) msg.delete();
-        try {
-            msgAuthor.send(
-                {content:lang.suggest_badlink}
-            )
-        }
-        catch (e) {
+    try {
+        if (rawEContent.match(/\b\w+\b/g).filter(word => nitroscam.includes(word)).length > 1) {
+            if (msg.deletable) msg.delete();
+            try {
+                msgAuthor.send(
+                    {content: lang.suggest_badlink}
+                )
+            } catch (e) {
+                return;
+            }
             return;
         }
+    } catch (e) {
+        if (msg.deletable) msg.delete();
         return;
     }
 
@@ -108,11 +112,12 @@ module.exports = async (client, message) => {
         let dataConstructor = {url:message.url.toString(),content:rawEContent}
         let     userKey     = "Suggestions_"+msg.guild.id+"_"+msg.author.id.toString()+".sugs";
         let      udata      = data.fetch(userKey)
-        let      value      = {voters: [],votersInfo: []}
+        let      value      = {voters: [],votersInfo: [],reVoters: [],reVotersInfo: [],upvotes: 0,downvotes: 0}
         let       key       = message.id.toString()
 
+        //Logger.info(`New Suggestion by ${msgAuthor.tag} in ${guild.name} | ${message.url} | With Userdata: ${udata}`)
         if (udata == null) await data.set(userKey, [dataConstructor]);
-        else await data.push(userKey, dataConstructor)
+        else data.push(userKey, dataConstructor)
 
         data.set(key, value);
         

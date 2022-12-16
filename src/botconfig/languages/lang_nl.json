@@ -34,5 +34,6 @@
     "suggest_reset_to_og_state": "Het voorstel is teruggebracht in de oorspronkelijke staat.",
     "embed_invalid_color": "The color you entered is invalid. Please enter a valid color. You can find valid colors here: https://www.hexcolortool.com/",
     "embed_success": "The embed was successfully changed.",
-    "not_valid_option": "You didn't choose a valid option. Please choose at least one of the options given."
+    "not_valid_option": "You didn't choose a valid option. Please choose at least one of the options given.",
+    "revote_success": "Your vote has been changed successfully."
 }
