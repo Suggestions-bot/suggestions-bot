@@ -4,10 +4,10 @@ const ee = require(`../../botconfig/embed.json`);
 const settings = require(`../../botconfig/settings.json`);
 const { onCoolDown, replacemsg } = require("../../handlers/functions");
 const Discord = require("discord.js");
-const db      = require("quick.db");
+const db      = require("../../database/database");
 const logger = require("../../handlers/logger");
 const { lang } = require("moment");
-const data    = new db.table("suggestion_def")
+const data    = db
 
 
 module.exports = (client, interaction) => {

@@ -20,9 +20,9 @@
     "discord.js": "^13.1.0",
     "dotenv": "^16.0.1",
     "moment": "^2.29.1",
+    "mysql2": "^3.0.1",
     "node-gyp": "^9.1.0",
     "ora": "5",
-    "quick.db": "7",
     "require-all": "^3.0.0",
     "utf-8-validate": "^5.0.9"
   }

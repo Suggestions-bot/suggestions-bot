@@ -31,15 +31,15 @@ const {
   
   module.exports.replacemsg = replacedefaultmessages
   /**
-   * 
+   *
    * @param {*} text The Text that should be replaced, usually from /botconfig/settings.json
-   * @param {*} options Those Options are what are needed for the replaceMent! Valid ones are: { 
+   * @param o
    *   timeLeft: "",
-   *   commandmemberpermissions: { memberpermissions: [] }, 
-   *   commandalloweduserids: { alloweduserids: [] }, 
-   *   commandrequiredroles: { requiredroles: [] }, 
-   *   commandname: { name: "" }, 
-   *   commandaliases: { aliases: [] }, 
+   *   commandmemberpermissions: { memberpermissions: [] },
+   *   commandalloweduserids: { alloweduserids: [] },
+   *   commandrequiredroles: { requiredroles: [] },
+   *   commandname: { name: "" },
+   *   commandaliases: { aliases: [] },
    *   prefix: "",
    *   errormessage: { message: "" }
    *   errorstack: { stack: STACK }
@@ -48,9 +48,9 @@ const {
    * @returns STRING
    */
   function replacedefaultmessages(text, o = {}){
-      if(!text || text == undefined || text == null) throw "No Text for the replacedefault message added as First Parameter";
+      if(!text) throw "No Text for the replacedefault message added as First Parameter";
       const options = Object(o)
-      if(!options || options == undefined || options == null) return String(text)
+      if(!options) return String(text)
       return String(text)
         .replace(/%{timeleft}%/gi, options && options.timeLeft ? options.timeLeft.toFixed(1) : "%{timeleft}%")
         .replace(/%{commandname}%/gi, options && options.command && options.command.name ? options.command.name : "%{commandname}%")
@@ -85,9 +85,8 @@ function onCoolDown(message, command) {
     if (timestamps.has(message.member.id)) { //if the user is on cooldown
       const expirationTime = timestamps.get(message.member.id) + cooldownAmount; //get the amount of time he needs to wait until he can run the cmd again
       if (now < expirationTime) { //if he is still on cooldonw
-        const timeLeft = (expirationTime - now) / 1000; //get the lefttime
         //return true
-        return timeLeft
+        return (expirationTime - now) / 1000
       }
       else {
         //if he is not on cooldown, set it to the cooldown
@@ -160,9 +159,9 @@ function onCoolDown(message, command) {
     return new Promise(async (resolve, reject) => {
       var args = arg, client = message.client;
       if(!client || !message) return reject("CLIENT IS NOT DEFINED")
-      if(!args || args == null || args == undefined) args = message.content.trim().split(/ +/).slice(1);
+      if(!args) args = message.content.trim().split(/ +/).slice(1);
       let user = message.mentions.users.first();
-      if(!user && args[0] && args[0].length == 18) {
+      if(!user && args[0] && args[0].length === 18) {
         user = await client.users.fetch(args[0])
         if(!user) return reject(errormessage)
         return resolve(user);
@@ -171,11 +170,11 @@ function onCoolDown(message, command) {
         let alluser = message.guild.members.cache.map(member=> String(member.user.tag).toLowerCase())
         user = alluser.find(user => user.startsWith(args.join(" ").toLowerCase()))
         user = message.guild.members.cache.find(me => String(me.user.tag).toLowerCase() == user)
-        if(!user || user == null || !user.id) {
+        if(!user || !user.id) {
           alluser = message.guild.members.cache.map(member => String(member.displayName + "#" + member.user.discriminator).toLowerCase())
           user = alluser.find(user => user.startsWith(args.join(" ").toLowerCase()))
           user = message.guild.members.cache.find(me => String(me.displayName + "#" + me.user.discriminator).toLowerCase() == user)
-          if(!user || user == null || !user.id) return reject(errormessage)
+          if(!user || !user.id) return reject(errormessage)
         }
         user = await client.users.fetch(user.user.id)
         if(!user) return reject(errormessage)
@@ -195,9 +194,9 @@ function onCoolDown(message, command) {
    * @returns BOOLEAN/GUILDROLE
    */
   function GetRole(message, arg){
-    var errormessage = ":x: I failed finding that Role...";
+    const errormessage = ":x: I failed finding that Role...";
     return new Promise(async (resolve, reject) => {
-      var args = arg, client = message.client;
+      let args = arg, client = message.client;
       if(!client || !message) return reject("CLIENT IS NOT DEFINED")
       if(!args || args == null || args == undefined) args = message.content.trim().split(/ +/).slice(1);
       let user = message.mentions.roles.filter(role=>role.guild.id==message.guild.id).first();
