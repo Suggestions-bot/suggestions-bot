@@ -30,6 +30,12 @@ connection.query(
     id bigint AUTO_INCREMENT,
     server_id bigint NOT NULL,
     manager_role bigint NULL,
+    upvote_emoji varchar(255) NULL,
+    downvote_emoji varchar(255) NULL,
+    suggestion_channel bigint NULL,
+    suggestion_embed_color varchar(255) NULL,
+    accepted_emoji varchar(255) NULL,
+    denied_emoji varchar(255) NULL,
     CONSTRAINT server_id PRIMARY KEY (id)
   );`,
     function(err, results) {
