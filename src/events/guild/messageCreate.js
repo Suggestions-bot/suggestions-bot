@@ -43,7 +43,7 @@ module.exports = async (client, message) => {
   let msgAuthor = msg.author;
   let rawEContent = msg["content"];
 
-  const badlinks = ["https://", "http://", "www."];
+  const badlinks = ["http://", "www."];
   const nitroscam = [
     "free",
     "nitro",
