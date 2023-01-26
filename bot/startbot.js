@@ -10,11 +10,11 @@ const client = new Discord.Client({
 
     shards: "auto",
     allowedMentions: {
-      parse: [ ],
-      repliedUser: false,
+        parse: [],
+        repliedUser: false,
     },
     partials: ['MESSAGE', 'CHANNEL', 'REACTION'],
-    intents: [ 
+    intents: [
         Discord.Intents.FLAGS.GUILDS,
         Discord.Intents.FLAGS.GUILD_MEMBERS,
         //Discord.Intents.FLAGS.GUILD_BANS,
@@ -32,11 +32,11 @@ const client = new Discord.Client({
         //Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING
     ],
     presence: {
-      activity: {
-        name: `Suggestions`, 
-        type: "WATCHING", 
-      },
-      status: "online"
+        activity: {
+            name: `Suggestions`,
+            type: "WATCHING",
+        },
+        status: "online"
     }
 });
 

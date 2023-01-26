@@ -5,7 +5,9 @@ module.exports = async (client) => {
     try {
         try {
             Logger.chunkmessage("{reset} YSH loaded successfully!");
-        } catch(e) { Logger.error("Error printing startup message", e) }
+        } catch (e) {
+            Logger.error("Error printing startup message", e)
+        }
         let amount = 0;
         const load_dir = (dir) => {
             const event_files = fs.readdirSync(`./bot/events/${dir}`).filter((file) => file.endsWith(".js"));

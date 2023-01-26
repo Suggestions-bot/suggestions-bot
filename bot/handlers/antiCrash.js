@@ -1,7 +1,7 @@
 const Logger = require("./logger");
 
 module.exports = client => {
-   process.on('unhandledRejection', (reason, p) => {
+    process.on('unhandledRejection', (reason, p) => {
         Logger.warn(`Unhandled Rejection/Catch`, `${reason}\n${p}`);
     });
     process.on("uncaughtException", (err, origin) => {
