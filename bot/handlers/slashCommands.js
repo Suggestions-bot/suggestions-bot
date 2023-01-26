@@ -6,8 +6,8 @@ const dirSetup = config.slashCommandsDirs;
 module.exports = (client) => {
     try {
 		let allCommands = [];
-        readdirSync("./src/slashCommands/").forEach((dir) => {
-			if(lstatSync(`./src/slashCommands/${dir}`).isDirectory()) {
+        readdirSync("./bot/slashCommands/").forEach((dir) => {
+			if(lstatSync(`./bot/slashCommands/${dir}`).isDirectory()) {
 				const groupName = dir;
 				const cmdSetup = dirSetup.find(d=>d.Folder == dir);
 				//If its a valid cmdsetup
@@ -15,7 +15,7 @@ module.exports = (client) => {
 					//Set the SubCommand as a Slash Builder
 					const subCommand = new SlashCommandBuilder().setName(String(cmdSetup.CmdName).replace(/\s+/g, '_').toLowerCase()).setDescription(String(cmdSetup.CmdDescription)).setDefaultPermission(cmdSetup.activeByDefault);
 					//Now for each file in that subcommand, add a command!
-					const slashCommands = readdirSync(`./src/slashCommands/${dir}/`).filter((file) => file.endsWith(".js"));
+					const slashCommands = readdirSync(`./bot/slashCommands/${dir}/`).filter((file) => file.endsWith(".js"));
 					for (let file of slashCommands) {
 						let pull = require(`../slashCommands/${dir}/${file}`);
 						if (pull.name && pull.description) {

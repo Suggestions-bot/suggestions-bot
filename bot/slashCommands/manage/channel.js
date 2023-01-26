@@ -1,6 +1,6 @@
 const Logger = require("../../handlers/logger");
-const db      = require("quick.db");
-const data    = new db.table("suggestion_def")
+const db      = require("../../handlers/database");
+
 module.exports = {
   name: "channel", //the command name for the Slash Command
   description: "Manage the suggestions channel.", //the command description for Slash Command Overview

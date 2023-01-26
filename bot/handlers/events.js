@@ -8,7 +8,7 @@ module.exports = async (client) => {
         } catch(e) { Logger.error("Error printing startup message", e) }
         let amount = 0;
         const load_dir = (dir) => {
-            const event_files = fs.readdirSync(`./src/events/${dir}`).filter((file) => file.endsWith(".js"));
+            const event_files = fs.readdirSync(`./bot/events/${dir}`).filter((file) => file.endsWith(".js"));
             for (const file of event_files) {
                 try {
                     const event = require(`../events/${dir}/${file}`)

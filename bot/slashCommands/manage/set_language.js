@@ -1,6 +1,6 @@
 const Logger = require("../../handlers/logger");
-const db      = require("quick.db");
-const data    = new db.table("suggestion_def")
+const db      = require("../../handlers/database");
+
 module.exports = {
   name: "language", //the command name for the Slash Command
   description: "Set the language that the bot uses to communitate with you. (Commands stay in English)", //the command description for Slash Command Overview

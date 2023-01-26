@@ -1,8 +1,8 @@
 const Logger = require("../../handlers/logger");
 const modals  = require("discord-modals");
-const db      = require("quick.db");
+const db      = require("../../handlers/database");
 const logger = require("../../handlers/logger");
-const data    = new db.table("suggestion_def")
+
 module.exports = {
   name: "edit", //the command name for the Slash Command
   description: "Edit your suggestion.", //the command description for Slash Command Overview
