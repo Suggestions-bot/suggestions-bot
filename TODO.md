@@ -1,6 +1,7 @@
 # Things to do before the next release:
 
 ## Updating DB
+
 /src/slashCommands/manage/channel.js
 /src/slashCommands/manage/embed.js
 /src/slashCommands/manage/get_user.js
