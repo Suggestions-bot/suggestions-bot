@@ -19,3 +19,5 @@
 > /src/events/guild/interactionCreate.js
 
 > /src/events/guild/messageCreate.js
+
+## Converting existing data from SQlite to MariaDB
