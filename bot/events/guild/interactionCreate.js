@@ -1,12 +1,8 @@
 //Import Modules
-const config = require(`../../botconfig/config.json`);
 const ee = require(`../../botconfig/embed.json`);
-const settings = require(`../../botconfig/settings.json`);
 const {onCoolDown, replacemsg} = require("../../handlers/functions");
 const Discord = require("discord.js");
 const db = require("../../../database");
-const logger = require("../../handlers/logger");
-const {lang} = require("moment");
 
 module.exports = (client, interaction) => {
     const CategoryName = interaction.commandName;
@@ -27,42 +23,22 @@ module.exports = (client, interaction) => {
         }
     }
     if (command) {
-        if (onCoolDown(interaction, command)) {
-            return interaction.reply({
-                ephemeral: true,
-                embeds: [
-                    new Discord.MessageEmbed()
-                        .setColor(ee.wrongcolor)
-                        .setFooter(ee.footertext, ee.footericon)
-                        .setTitle(
-                            replacemsg(settings.messages.cooldown, {
-                                prefix: prefix,
-                                command: command,
-                                timeLeft: onCoolDown(interaction, command),
-                            })
-                        ),
-                ],
-            });
-        }
         //execute the Command
         command.run(client, interaction, interaction.member, interaction.guild);
     }
     if (interaction.isButton()) return buttons(interaction);
-    // logger.info(interaction.type + " " + interaction.guild.name + " " + interaction.user.username + " " + interaction.commandName + " " + interaction.options.getSubcommand());
+
     if (interaction.type.toString() === "MODAL_SUBMIT")
         return modalSubmit(client, interaction);
 };
 
 async function confirmRevote(interaction, lang) {
-    let edata = data.get("CustomEmbed_" + interaction.guild?.id);
-    if (edata == null) {
-        var dicon = "👎";
-        var ecolor = "2C2F33";
-        var uicon = "👍";
-    } else {
-        var dicon = data.get("CustomEmbed_" + interaction.guild?.id + ".dicon");
-        var ecolor = data.get("CustomEmbed_" + interaction.guild?.id + ".color");
-        var uicon = data.get("CustomEmbed_" + interaction.guild?.id + ".uicon");
+    let edata = db.getServerEmbedData(interaction.guild?.id);
+    let dicon = "👎";
+    let uicon = "👍";
+    if (edata !== null) {
+        dicon = edata["downvote_emoji"];
+        uicon = edata["upvote_emoji"];
     }
 
     await interaction.followUp({
@@ -87,49 +63,37 @@ async function confirmRevote(interaction, lang) {
 
 /**
  *
- * @param {Discord.ButtonInteraction} interaction
+ * @param {Discord.interaction} interaction
  */
 async function buttons(interaction) {
-    // logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
+
     await interaction.deferUpdate().catch(() => {
     });
 
-    language = data.get("Language_" + interaction.guild?.id);
-    if (language == null) {
-        language = "lang_en";
-    }
+    const language = db.getServerLanguage(interaction.guild?.id)
     const lang = require(`../../botconfig/languages/${language}.json`);
-    let edata = data.get("CustomEmbed_" + interaction.guild?.id);
-    if (edata == null) {
-        var dicon = "👎";
-        var ecolor = "2C2F33";
-        var uicon = "👍";
-    } else {
-        var dicon = data.get("CustomEmbed_" + interaction.guild?.id + ".dicon");
-        var ecolor = data.get("CustomEmbed_" + interaction.guild?.id + ".color");
-        var uicon = data.get("CustomEmbed_" + interaction.guild?.id + ".uicon");
+    let edata = db.getServerEmbedData(interaction.guild?.id);
+    let dicon = "👎";
+    let ecolor = "2C2F33";
+    let uicon = "👍";
+    if (edata !== null) {
+        dicon = edata["downvote_emoji"];
+        ecolor = edata["suggestion_embed_color"];
+        uicon = edata["upvote_emoji"];
     }
 
-    // logger.info(uicon + " " + ecolor + " " + dicon);
 
     switch (interaction.customId) {
         case "up": {
             let message = interaction.message;
             let embed = message.embeds[0];
             let dater = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
-            let key = message.id.toString() + ".voters";
-            let ke2 = message.id.toString() + ".votersInfo";
-            let key3 = message.id.toString() + ".reVoters";
-            let key4 = message.id.toString() + ".upVoters";
             let value = {user: interaction.user, date: dater};
             let newNumber =
                 Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
             let voter = "";
-            try {
-                voter = data.fetch(message.id.toString()).voters;
-            } catch {
-                voter = "";
-            }
+            voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
+            voter = voter["upvoters"]
             if (voter.includes(interaction.user.id)) {
                 if (
                     !data
@@ -161,15 +125,7 @@ async function buttons(interaction) {
                     embed.fields[1],
                 ],
             };
-            data.push(key, interaction.user.id);
-            data.push(key4, interaction.user.id);
-            data.push(ke2, value);
-            if (!data.fetch(message.id.toString()).reVoters) {
-                data.set(message.id.toString() + ".reVoters", []);
-            }
-            if (!data.fetch(message.id.toString()).downVoters) {
-                data.set(message.id.toString() + ".downVoters", []);
-            }
+            await db.addSuggestionUpvote(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
             await message.edit({
                 components: message.components,
                 embeds: [editedEmbed],

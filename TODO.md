@@ -2,11 +2,8 @@
 
 ## Updating DB
 
-> /src/slashCommands/suggestions/add.js
-
-> /src/slashCommands/suggestions/edit.js
-
 > /src/events/guild/interactionCreate.js
+>> Downvotes...
 
 > /src/events/guild/messageCreate.js
 

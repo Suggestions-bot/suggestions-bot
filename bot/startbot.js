@@ -1,7 +1,4 @@
 const Discord = require("discord.js");
-const config = require(`./botconfig/config.json`);
-const settings = require(`./botconfig/settings.json`);
-const colors = require("colors");
 const client = new Discord.Client({
 
     //fetchAllMembers: false,
@@ -46,11 +43,11 @@ client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
 client.slashCommands = new Discord.Collection();
 client.aliases = new Discord.Collection();
-// client.categories = require("fs").readdirSync(`./src/commands`);
+
 
 //Require the Handlers                  Add the antiCrash file too, if its enabled
 
-["events", "commands", "slashCommands", settings.antiCrash ? "antiCrash" : null]
+["events", "commands", "slashCommands", process.env.ANTI_CRASH ? "antiCrash" : null]
     .filter(Boolean)
     .forEach(h => {
         require(`./handlers/${h}`)(client);
@@ -58,4 +55,4 @@ client.aliases = new Discord.Collection();
 
 //Start the Bot
 
-client.login(config.token)
+client.login(process.env.DISCORD_TOKEN).then(() => console.log("Started Bot")).catch(e => console.log(e));

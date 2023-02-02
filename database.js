@@ -94,6 +94,47 @@ const getServerSuggestionChannel = async (guildId) => {
     });
 }
 
+const getServerEmbedData = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT suggestion_embed_color, upvote_emoji, downvote_emoji
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0) {
+                        resolve(null);
+                    } else {
+                        resolve(results[0]);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const getSuggestionVoters = async (serverId, messageId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT upvoters, downvoters, re_voters
+             FROM suggestions
+             WHERE server_id = ?
+               AND message_id = ?`,
+            [serverId, messageId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            }
+        );
+    });
+}
+
 const setServerLanguage = async (guildId, language) => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -363,8 +404,8 @@ const setServerEmbedSettings = async (guildId, color, downvote, upvote) => {
         pool.query(
             `UPDATE servers
              SET suggestion_embed_color = ?,
-                 downvote_emoji = ?,
-                 upvote_emoji = ?
+                 downvote_emoji         = ?,
+                 upvote_emoji           = ?
              WHERE server_id = ?`,
             [color, downvote, upvote, guildId],
             (err, results) => {
@@ -505,7 +546,7 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE suggestions
-             SET upvotes = upvotes + 1,
+             SET upvotes  = upvotes + 1,
                  upvoters = JSON_ARRAY_APPEND(upvoters, '$', ?)
              WHERE server_id = ?
                AND message_id = ?
@@ -532,7 +573,7 @@ const addSuggestionDownvote = async (guildId, suggestionId, userId) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE suggestions
-             SET downvotes = downvotes + 1,
+             SET downvotes  = downvotes + 1,
                  downvoters = JSON_ARRAY_APPEND(downvoters, '$', ?)
              WHERE server_id = ?
                AND message_id = ?
@@ -559,10 +600,10 @@ const addSuggestionUpvoteRevoteDown = async (guildId, suggestionId, userId) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE suggestions
-             SET upvotes = upvotes - 1,
-                 downvotes = downvotes + 1,
-                 upvoters = JSON_REMOVE(upvoters, JSON_UNQUOTE(JSON_SEARCH(upvoters, 'one', ?))),
-                 re_voters = JSON_ARRAY_APPEND(re_voters, '$', ?),
+             SET upvotes    = upvotes - 1,
+                 downvotes  = downvotes + 1,
+                 upvoters   = JSON_REMOVE(upvoters, JSON_UNQUOTE(JSON_SEARCH(upvoters, 'one', ?))),
+                 re_voters  = JSON_ARRAY_APPEND(re_voters, '$', ?),
                  downvoters = JSON_ARRAY_APPEND(downvoters, '$', ?)
              WHERE server_id = ?
                AND message_id = ?
@@ -589,11 +630,11 @@ const addSuggestionDownvoteRevoteUp = async (guildId, suggestionId, userId) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE suggestions
-             SET downvotes = downvotes - 1,
-                 upvotes = upvotes + 1,
+             SET downvotes  = downvotes - 1,
+                 upvotes    = upvotes + 1,
                  downvoters = JSON_REMOVE(downvoters, JSON_UNQUOTE(JSON_SEARCH(downvoters, 'one', ?))),
-                 re_voters = JSON_ARRAY_APPEND(re_voters, '$', ?),
-                 upvoters = JSON_ARRAY_APPEND(upvoters, '$', ?)
+                 re_voters  = JSON_ARRAY_APPEND(re_voters, '$', ?),
+                 upvoters   = JSON_ARRAY_APPEND(upvoters, '$', ?)
              WHERE server_id = ?
                AND message_id = ?
                AND JSON_CONTAINS(downvoters, ?)
@@ -652,6 +693,8 @@ module.exports = {
     getAllServerSettings,
     getAllUserSuggestions,
     getServerSuggestionChannel,
+    getServerEmbedData,
+    getSuggestionVoters,
 
     setServerLanguage,
     setServerManagerRole,
