@@ -4,7 +4,7 @@ const ee = require(`../../botconfig/embed.json`);
 const settings = require(`../../botconfig/settings.json`);
 const {onCoolDown, replacemsg} = require("../../handlers/functions");
 const Discord = require("discord.js");
-const db = require("../../handlers/database");
+const db = require("../../../database");
 const logger = require("../../handlers/logger");
 const {lang} = require("moment");
 

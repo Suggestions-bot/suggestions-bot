@@ -1,5 +1,5 @@
 const Logger = require("../../handlers/logger");
-const db = require("../../handlers/database");
+const db = require("../../../database");
 
 module.exports = {
     name: "channel", //the command name for the Slash Command

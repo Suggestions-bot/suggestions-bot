@@ -5,11 +5,11 @@ const mysql = require("mysql2"),
 
 validateDatabase().then(() => {
     let foundBot = fs.existsSync(`${__dirname}/bot/startbot.js`),
-        foundDashboard = fs.existsSync(`${__dirname}/web/index.js`);
+        foundDashboard = fs.existsSync(`${__dirname}/web/startweb.js`);
     if (foundBot || foundDashboard) {
         if (foundBot && ["both", "bot"].includes(process.env.RUN))
             require("./bot/startbot.js");
-        if (foundDashboard && ["both", "dashboard"].includes(process.env.RUN))
+        if (foundDashboard && ["both", "dashboard", "web"].includes(process.env.RUN))
             import("./web/startweb.js");
     } else {
         console.log("Bot and dashboard not found");
@@ -43,13 +43,15 @@ function validateDatabase() {
                         CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.suggestions
                         (
                             id            bigint AUTO_INCREMENT,
+                            message_id    bigint    NOT NULL,
                             user_id       bigint    NOT NULL,
                             server_id     bigint    NOT NULL,
                             upvotes       int       NULL,
                             upvoters      json      NULL,
                             downvotes     int       NULL,
                             downvoters    json      NULL,
-                            content       int       NOT NULL,
+                            content       text      NOT NULL,
+                            re_voters     json      NULL,
                             creation_date timestamp NOT NULL,
                             accepted      boolean   NULL,
                             CONSTRAINT suggestion_id PRIMARY KEY (id)
@@ -68,6 +70,7 @@ function validateDatabase() {
                             suggestion_embed_color varchar(255) NULL,
                             accepted_emoji         varchar(255) NULL,
                             denied_emoji           varchar(255) NULL,
+                            language               varchar(255) NULL,
                             CONSTRAINT server_id PRIMARY KEY (id)
                         );`
                 , (err) => err ? console.log(err) : resolve()));

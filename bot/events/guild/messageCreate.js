@@ -5,7 +5,7 @@ const settings = require(`../../botconfig/settings.json`);
 const {onCoolDown, replacemsg} = require("../../handlers/functions");
 const Discord = require("discord.js");
 const Logger = require("../../handlers/logger");
-const db = require("../../handlers/database");
+const db = require("../../../database");
 
 module.exports = async (client, message) => {
     if (!message.guild || !message.channel || message.author.bot) return;

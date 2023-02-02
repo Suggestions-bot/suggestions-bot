@@ -1,6 +1,6 @@
 const Logger = require("../../handlers/logger");
 const modals = require("discord-modals");
-const db = require("../../handlers/database");
+const db = require("../../../database");
 
 module.exports = {
     name: "get_user", //the command name for the Slash Command

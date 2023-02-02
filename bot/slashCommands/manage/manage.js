@@ -1,6 +1,6 @@
 const Logger = require("../../handlers/logger");
 const modals = require("discord-modals");
-const db = require("../../handlers/database");
+const db = require("../../../database");
 const Discord = require("discord.js");
 
 module.exports = {
