@@ -2,16 +2,6 @@
 
 ## Updating DB
 
-> /src/slashCommands/manage/channel.js
-
-> /src/slashCommands/manage/embed.js
-
-> /src/slashCommands/manage/get_user.js
-
-> /src/slashCommands/manage/manage.js
-
-> /src/slashCommands/manage/set_language.js
-
 > /src/slashCommands/suggestions/add.js
 
 > /src/slashCommands/suggestions/edit.js
@@ -20,4 +10,6 @@
 
 > /src/events/guild/messageCreate.js
 
-## Converting existing data from SQlite to MariaDB
+## Converting existing data from SQLite to MariaDB
+
+## Resolving any issues that may appear after conversion!!!!

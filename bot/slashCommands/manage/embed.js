@@ -1,5 +1,4 @@
 const Logger = require("../../handlers/logger");
-const modals = require("discord-modals");
 const db = require("../../../database");
 
 module.exports = {
@@ -17,17 +16,13 @@ module.exports = {
                 required: true
             }
         },
-        {"String": {name: "icon_down", description: "The default is 👎", required: true}},
         {"String": {name: "icon_up", description: "The default is 👍", required: true}},
+        {"String": {name: "icon_down", description: "The default is 👎", required: true}},
     ],
     run: async (client, interaction) => {
         try {
             const {options} = interaction;
-
-            language = data.get("Language_" + interaction.guild?.id)
-            if (language == null) {
-                language = "lang_en"
-            }
+            const language = await db.getServerLanguage(interaction.guild?.id)
             const lang = require(`../../botconfig/languages/${language}.json`);
 
             let gcolor = options.getString("color");
@@ -35,7 +30,7 @@ module.exports = {
                 if (gcolor.includes("#")) {
                     gcolor = gcolor.replace("#", "")
                 }
-                if (gcolor.length != 6) {
+                if (gcolor.length !== 6) {
                     interaction.reply(
                         {content: lang.embed_invalid_color, ephemeral: true}
                     )
@@ -64,9 +59,8 @@ module.exports = {
                 uicon = "👍"
             }
 
-            let key = "CustomEmbed_" + interaction.guild?.id;
-            let edataConstructor = {color: gcolor, dicon: dicon, uicon: uicon}
-            await data.set(key, edataConstructor);
+
+            await db.setServerEmbedSettings(interaction.guild?.id, gcolor, uicon, dicon)
 
             interaction.reply(
                 {content: lang.embed_success, ephemeral: true}

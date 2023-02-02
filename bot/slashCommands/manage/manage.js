@@ -31,23 +31,15 @@ module.exports = {
         try {
             const {options} = interaction;
 
-            language = data.get("Language_" + interaction.guild?.id)
-            if (language == null) {
-                language = "lang_en"
-            }
+            const language = await db.getServerLanguage(interaction.guild.id)
             const lang = require(`../../botconfig/languages/${language}.json`);
 
             let givenMessageString = options.getString("message-id");
             let action = options.getString("options");
-            let key = "SuggestionsChannel_" + interaction.guild.id;
-            let value = data.fetch(key)?.channel;
+            let value = await db.getServerSuggestionChannel(interaction.guild.id)
             let channel = client.channels.cache.get(value);
-            // let   udata      = data.fetch(userKey);
 
 
-            // let messageUrlString = await udata.map((message, index) => `${message.url}`).join(" ");
-            // let messageUrlArray = messageUrlString.split(" ");
-            // let messageIdArray = messageUrlArray.map(message => message.split("/")[6]);
             let givenMessageID = "";
 
             if (givenMessageString.includes("/")) {
@@ -65,16 +57,16 @@ module.exports = {
                     return false;
                 });
 
-            if (message == false) return;
+            if (message === false) return;
 
-            if (message.author.id.toString() != client.user.id.toString()) {
+            if (message.author.id.toString() !== client.user.id.toString()) {
                 interaction.reply(
                     {content: lang.suggest_bot_not_author, ephemeral: true}
                 );
                 return;
             }
 
-            if (action == "accept") {
+            if (action === "accept") {
                 let embed = message.embeds[0];
                 let newEmbed = {
                     author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
@@ -111,11 +103,12 @@ module.exports = {
                             )
                     ], embeds: [newEmbed]
                 });
+                await db.setSuggestionAccepted(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_accepted_text, ephemeral: true}
                 );
 
-            } else if (action == "reject") {
+            } else if (action === "reject") {
                 let embed = message.embeds[0];
                 let newEmbed = {
                     author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
@@ -152,11 +145,12 @@ module.exports = {
                             )
                     ], embeds: [newEmbed]
                 });
+                await db.setSuggestionDenied(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_declined_text, ephemeral: true}
                 );
 
-            } else if (action == "reset") {
+            } else if (action === "reset") {
                 let embed = message.embeds[0];
                 let newEmbed = {
                     author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
@@ -181,6 +175,7 @@ module.exports = {
                             )
                     ], embeds: [newEmbed]
                 });
+                await db.setSuggestionPending(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_reset_to_og_state, ephemeral: true}
                 );

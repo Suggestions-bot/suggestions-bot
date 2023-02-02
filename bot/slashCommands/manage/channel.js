@@ -33,20 +33,13 @@ module.exports = {
 
             let channel = options.getChannel("channel").id;
             let remove = options.getString("remove");
-            let value = {channel: channel}
-            let key = "SuggestionsChannel_" + interaction.guild?.id;
+            let language = await db.getServerLanguage(interaction.guild?.id)
 
-            if (remove == "true") {
-                language = data.get("Language_" + interaction.guild?.id)
-                if (language == null) {
-                    language = "lang_en"
-                }
+            if (remove === "true") {
                 const lang = require(`../../botconfig/languages/${language}.json`);
 
                 try {
-                    let key = "SuggestionsChannel_" + interaction.guild?.id;
-
-                    data.delete(key)
+                    await db.setServerSuggestionChannel(interaction.guild?.id, null)
                     interaction.reply(
                         {content: lang.reset_suggestion_channel, ephemeral: true}
                     )
@@ -56,8 +49,7 @@ module.exports = {
                     )
                 }
             } else {
-                data.set(key, value)
-                language = data.get("Language_" + interaction.guild?.id)
+                await db.setServerSuggestionChannel(interaction.guild?.id, channel)
                 if (language == null) {
                     language = "lang_en"
                 }

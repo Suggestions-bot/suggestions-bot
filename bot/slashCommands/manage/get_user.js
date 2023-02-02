@@ -17,17 +17,13 @@ module.exports = {
         try {
             const {options} = interaction;
 
-            language = data.get("Language_" + interaction.guild?.id)
-            if (language == null) {
-                language = "lang_en"
-            }
+            const language = await db.getServerLanguage(interaction.guild.id);
             const lang = require(`../../botconfig/languages/${language}.json`);
             const userInfos = options.getUser("user");
-            const givenMessageString = options.getString("message-id");
+            //const givenMessageString = options.getString("message-id");
 
             if (userInfos != null) {
-                let userKey = "Suggestions_" + interaction.guild.id + "_" + userInfos.id.toString() + ".sugs";
-                let udata = data.fetch(userKey);
+                let udata = await db.getAllUserSuggestions(interaction.guild.id, userInfos.id);
 
                 if (udata == null) return interaction.reply(
                     {
@@ -36,7 +32,7 @@ module.exports = {
                     }
                 )
                 else {
-                    let calSugs = await udata.map((message, index) => `${index + 1}. [${lang.to_suggestion}](${message.url})\n\`\`\`\n${message.content}\`\`\``).join("\n\n");
+                    let calSugs = await udata.map((message, index) => `**${index + 1}.** [${lang.to_suggestion}](https://discord.com/channels/${message.server_id}/${message.channel_id}/${message.message_id})\n\`\`\`\n${message.content}\n\`\`\``).join("\n\n");
                     interaction.reply(
                         {content: calSugs, ephemeral: true}
                     )
