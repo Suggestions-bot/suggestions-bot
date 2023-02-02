@@ -26,29 +26,23 @@ module.exports = {
         try {
             const {options} = interaction;
 
-            language = data.get("Language_" + interaction.guild?.id)
-            if (language == null) {
-                language = "lang_en"
-            }
+            const language = await db.getServerLanguage(interaction.guild.id)
             const lang = require(`../../botconfig/languages/${language}.json`);
 
-            let key = "SuggestionsChannel_" + interaction.guild.id;
-            let value = data.fetch(key)?.channel
+            let value = await db.getServerSuggestionChannel(interaction.guild.id)
             let channel = client.channels.cache.get(value);
             let userID = interaction.user.id;
-            let userKey = "Suggestions_" + interaction.guild.id + "_" + userID.toString() + ".sugs";
-            let udata = data.fetch(userKey);
+            let udata = db.getAllUserSuggestions(interaction.guild.id, userID);
 
             if (udata == null) return interaction.reply(
                 {content: lang.suggest_none, ephemeral: true}
             )
 
 
-            let messageUrlString = await udata.map((message, index) => `${message.url}`).join(" ");
-            let messageUrlArray = messageUrlString.split(" ");
-            let messageIdArray = messageUrlArray.map(message => message.split("/")[6]);
+
+            let messageIdArray = udata.map(x => x.message_id);
             let givenMessageString = options.getString("message-id");
-            // Logger.info(givenMessageString);
+
             let givenMessageID = "";
 
             if (givenMessageString.includes("/")) {
@@ -56,10 +50,6 @@ module.exports = {
             } else {
                 givenMessageID = givenMessageString;
             }
-
-            // console.log(messageUrlString);
-            // console.log(messageUrlArray);
-            // console.log(messageIdArray);
 
             if (!messageIdArray.includes(givenMessageID)) return interaction.reply(
                 {content: lang.suggest_none_found, ephemeral: true}
@@ -74,7 +64,7 @@ module.exports = {
                     return false;
                 });
 
-            if (message == false) return;
+            if (message === false) return;
 
             let newMessage = options.getString("new-suggestion");
             let embed = message.embeds[0];

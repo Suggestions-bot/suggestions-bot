@@ -13,10 +13,7 @@ module.exports = {
     run: async (client, interaction) => {
         try {
 
-            language = data.get("Language_" + interaction.guild?.id)
-            if (language == null) {
-                language = "lang_en"
-            }
+            const language = await db.getServerLanguage(interaction.guild.id)
             const lang = require(`../../botconfig/languages/${language}.json`);
 
             const modal = new modals.Modal()

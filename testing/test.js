@@ -25,6 +25,9 @@ async function main() {
     console.log("------------------");
     const res7 = await getAllUserSuggestions(1234, 3333)
     console.log(res7);
+    let messageIdArray = res7.map(x => x.message_id);
+    console.log(messageIdArray.toString());
+    console.log("------------------");
     const udata = await db.getAllUserSuggestions(1234, 3333);
     let calSugs = await udata.map((message, index) => `${index + 1}. [aaa](https://discord.com/channels/${message.server_id}/${message.channel_id}/${message.message_id})\n\`\`\`\n${message.content}\n\`\`\``).join("\n\n");
     console.log(calSugs);
