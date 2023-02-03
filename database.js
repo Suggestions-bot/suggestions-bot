@@ -87,7 +87,12 @@ const getServerSuggestionChannel = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(results[0]["suggestion_channel"]);
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        resolve(null);
+                    } else {
+                        //console.log(results.affectedRows);
+                        resolve(results[0]["suggestion_channel"]);
+                    }
                 }
             }
         );
@@ -105,7 +110,7 @@ const getServerEmbedData = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(null);
                     } else {
                         resolve(results[0]);
@@ -135,6 +140,32 @@ const getSuggestionVoters = async (serverId, messageId) => {
     });
 }
 
+const getServerAllowsLinks = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT allow_links
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        resolve(null);
+                    } else {
+                        if (results[0]["allow_links"] === 1) {
+                            resolve(true)
+                        } else {
+                            resolve(false)
+                        }
+                    }
+                }
+            }
+        );
+    });
+}
+
 const setServerLanguage = async (guildId, language) => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -146,7 +177,7 @@ const setServerLanguage = async (guildId, language) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, language)
                              VALUES (?, ?)`,
@@ -179,7 +210,7 @@ const setServerManagerRole = async (guildId, roleId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, manager_role)
                              VALUES (?, ?)`,
@@ -212,7 +243,7 @@ const setServerUpvoteEmoji = async (guildId, emoji) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, upvote_emoji)
                              VALUES (?, ?)`,
@@ -245,7 +276,7 @@ const setServerDownvoteEmoji = async (guildId, emoji) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, downvote_emoji)
                              VALUES (?, ?)`,
@@ -278,7 +309,7 @@ const setServerSuggestionChannel = async (guildId, channelId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, suggestion_channel)
                              VALUES (?, ?)`,
@@ -311,7 +342,7 @@ const setServerAcceptedEmoji = async (guildId, emoji) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, accepted_emoji)
                              VALUES (?, ?)`,
@@ -344,7 +375,7 @@ const setServerDeniedEmoji = async (guildId, emoji) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, denied_emoji)
                              VALUES (?, ?)`,
@@ -377,7 +408,7 @@ const setServerEmbedColor = async (guildId, color) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, suggestion_embed_color)
                              VALUES (?, ?)`,
@@ -412,7 +443,7 @@ const setServerEmbedSettings = async (guildId, color, downvote, upvote) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
                             `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji)
                              VALUES (?, ?, ?, ?)`,
@@ -446,7 +477,7 @@ const setSuggestionDenied = async (guildId, suggestionId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -469,7 +500,7 @@ const setSuggestionAccepted = async (guildId, suggestionId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -492,7 +523,7 @@ const setSuggestionPending = async (guildId, suggestionId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -530,7 +561,7 @@ const addNewSuggestion = async (guildId, suggestionId, channelId, suggestion, au
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -557,7 +588,7 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -584,7 +615,7 @@ const addSuggestionDownvote = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -614,7 +645,7 @@ const addSuggestionUpvoteRevoteDown = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -644,7 +675,7 @@ const addSuggestionDownvoteRevoteUp = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0) {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
                         resolve(true);
@@ -689,12 +720,14 @@ const checkForUserVote = async (guildId, suggestionId, userId) => {
 
 module.exports = {
     pool,
+    getCurrentDate,
     getServerLanguage,
     getAllServerSettings,
     getAllUserSuggestions,
     getServerSuggestionChannel,
     getServerEmbedData,
     getSuggestionVoters,
+    getServerAllowsLinks,
 
     setServerLanguage,
     setServerManagerRole,

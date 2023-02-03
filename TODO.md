@@ -2,9 +2,6 @@
 
 ## Updating DB
 
-> /src/events/guild/interactionCreate.js
->> Downvotes...
-
 > /src/events/guild/messageCreate.js
 
 ## Converting existing data from SQLite to MariaDB

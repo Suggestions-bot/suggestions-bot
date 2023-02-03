@@ -89,17 +89,10 @@ async function buttons(interaction) {
             let embed = message.embeds[0];
             let dater = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
             let value = {user: interaction.user, date: dater};
-            let newNumber =
-                Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
-            let voter = "";
-            voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
-            voter = voter["upvoters"]
-            if (voter.includes(interaction.user.id)) {
-                if (
-                    !data
-                        .fetch(message.id.toString())
-                        .reVoters.includes(interaction.user.id)
-                ) {
+            let newNumber = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
+            let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
+            if (voter["upvoters"].includes(interaction.user.id)) {
+                if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);
                     return;
                 } else {
@@ -137,21 +130,10 @@ async function buttons(interaction) {
             // logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
             let message = interaction.message;
             let embed = message.embeds[0];
-            let dater = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
-            let key = message.id.toString() + ".voters";
-            let ke2 = message.id.toString() + ".votersInfo";
-            let key3 = message.id.toString() + ".reVoters";
-            let key4 = message.id.toString() + ".downVoters";
-            let value = {user: interaction.user, date: dater};
-            let newNumber =
-                Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
-            let voter = data.fetch(message.id.toString()).voters;
-            if (voter.includes(interaction.user.id)) {
-                if (
-                    !data
-                        .fetch(message.id.toString())
-                        .reVoters.includes(interaction.user.id)
-                ) {
+            let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
+            let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
+            if (voter["downvoters"].includes(interaction.user.id)) {
+                if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);
                     return;
                 } else {
@@ -177,15 +159,7 @@ async function buttons(interaction) {
                     },
                 ],
             };
-            data.push(key, interaction.user.id);
-            data.push(key4, interaction.user.id);
-            data.push(ke2, value);
-            if (!data.fetch(message.id.toString()).reVoters) {
-                data.set(message.id.toString() + ".reVoters", []);
-            }
-            if (!data.fetch(message.id.toString()).upVoters) {
-                data.set(message.id.toString() + ".upVoters", []);
-            }
+            await db.addSuggestionDownvote(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
             await message.edit({
                 components: message.components,
                 embeds: [editedEmbed],
@@ -194,40 +168,16 @@ async function buttons(interaction) {
             break;
 
         case "up-rechoice": {
-            let message = interaction.message;
-            //console.log(message)
-            //console.log(message.reference.messageId)
-            message = await message.channel.messages.fetch(
-                message.reference.messageId
-            );
-            //console.log(message)
+            let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
-            //let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-            //let     key     = message.id.toString()+".voters";
-            //let     ke2     = message.id.toString()+".votersInfo";
-            //let    value    = {user:interaction.user,date: dater}
-            let newNumber =
-                Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) - 1;
-            let newNumber1 =
-                Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
-            //let    voter   = data.fetch(message.id.toString()).voters;
-            //let     key4     = message.id.toString()+".downVoters";
-            let key5 = message.id.toString() + ".upVoters";
-            let key3 = message.id.toString() + ".reVoters";
-
-            /*logger.info(`${data.fetch(message.id.toString()).reVoters}`);
-            logger.info(`${data.fetch(message.id.toString()).upVoters}`);
-            logger.info(`${data.fetch(message.id.toString()).downVoters}`);*/
-
+            let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) - 1;
+            let newNumber1 = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
+            let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             if (
-                !data
-                    .fetch(message.id.toString())
-                    .reVoters.includes(interaction.user.id)
+                !voters["re_voters"].includes(interaction.user.id)
             ) {
                 if (
-                    data
-                        .fetch(message.id.toString())
-                        .upVoters.includes(interaction.user.id)
+                    voters["upvoters"].includes(interaction.user.id)
                 ) {
                     await interaction.followUp({
                         content: lang.already_voted_option,
@@ -235,12 +185,9 @@ async function buttons(interaction) {
                     });
                     return;
                 } else if (
-                    data
-                        .fetch(message.id.toString())
-                        .downVoters.includes(interaction.user.id)
+                    voters["downvoters"].includes(interaction.user.id)
                 ) {
-                    data.push(key3, interaction.user.id);
-                    data.push(key5, interaction.user.id);
+                    await db.addSuggestionDownvoteRevoteUp(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
                     let editedEmbed = {
                         author: embed.author,
                         color: embed.color,
@@ -260,9 +207,6 @@ async function buttons(interaction) {
                             },
                         ],
                     };
-                    let tmp = data.fetch(message.id.toString()).downVoters;
-                    tmp.splice(tmp.indexOf(interaction.user.id), 1);
-                    data.set(message.id.toString() + ".downVoters", tmp);
                     await message.edit({
                         components: message.components,
                         embeds: [editedEmbed],
@@ -287,40 +231,18 @@ async function buttons(interaction) {
                 return;
             }
         }
-            break;
 
         case "down-rechoice": {
-            let message = interaction.message;
-            message = await message.channel.messages.fetch(
-                message.reference.messageId
-            );
+            let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
-            //let    dater    = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
-            //let     key     = message.id.toString()+".voters";
-            //let     ke2     = message.id.toString()+".votersInfo";
-            //let    value    = {user:interaction.user,date: dater}
-            let newNumber =
-                Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
-            let newNumber1 =
-                Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) - 1;
-            //let    voter   = data.fetch(message.id.toString()).voters;
-            let key4 = message.id.toString() + ".downVoters";
-            //let     key5     = message.id.toString()+".upVoters";
-            let key3 = message.id.toString() + ".reVoters";
-
-            /*logger.info(`${data.fetch(message.id.toString()).reVoters}`);
-            logger.info(`${data.fetch(message.id.toString()).upVoters}`);
-            logger.info(`${data.fetch(message.id.toString()).downVoters}`);*/
-
+            let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
+            let newNumber1 = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) - 1;
+            let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             if (
-                !data
-                    .fetch(message.id.toString())
-                    .reVoters.includes(interaction.user.id)
+                !voters["re_voters"].includes(interaction.user.id)
             ) {
                 if (
-                    data
-                        .fetch(message.id.toString())
-                        .downVoters.includes(interaction.user.id)
+                    voters["downvoters"].includes(interaction.user.id)
                 ) {
                     await interaction.followUp({
                         content: lang.already_voted_option,
@@ -328,12 +250,9 @@ async function buttons(interaction) {
                     });
                     return;
                 } else if (
-                    data
-                        .fetch(message.id.toString())
-                        .upVoters.includes(interaction.user.id)
+                    voters["upvoters"].includes(interaction.user.id)
                 ) {
-                    data.push(key3, interaction.user.id);
-                    data.push(key4, interaction.user.id);
+                    await db.addSuggestionUpvoteRevoteDown(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
                     let editedEmbed = {
                         author: embed.author,
                         color: embed.color,
@@ -353,9 +272,6 @@ async function buttons(interaction) {
                             },
                         ],
                     };
-                    let tmp = data.fetch(message.id.toString()).upVoters;
-                    tmp.splice(tmp.indexOf(interaction.user.id), 1);
-                    data.set(message.id.toString() + ".upVoters", tmp);
                     await message.edit({
                         components: message.components,
                         embeds: [editedEmbed],
@@ -380,24 +296,10 @@ async function buttons(interaction) {
                 return;
             }
         }
-            break;
 
         case "info": {
-            let voters = data.fetch(interaction.message.id.toString()).votersInfo;
-            let raws = voters
-                .map(
-                    (voter, index) =>
-                        `${index + 1}. ${voter.user.username} - ${voter.date}`
-                )
-                .join("\n");
-
-            if (voters == [])
-                return await interaction.followUp({
-                    content: lang.already_voted,
-                    ephemeral: true,
-                });
-
-            interaction.followUp({content: raws, ephemeral: true});
+            let voters = await db.getSuggestionVoters(interaction.guild.id.toString(), interaction.message.id.toString());
+            interaction.followUp({content: voters, ephemeral: true});
         }
             break;
 
@@ -423,10 +325,9 @@ async function buttons(interaction) {
 }
 
 async function modalSubmit(client, modal) {
-    if (modal.customId == "send") {
-        let key = "SuggestionsChannel_" + modal.guild?.id;
+    if (modal.customId === "send") {
         let res = modal.fields.getTextInputValue("input");
-        let value = data.fetch(key)?.channel;
+        let value = await db.getServerSuggestionChannel(modal.guild?.id);
         let channel = client.channels.cache.get(value);
         const badlinks = ["https://", "http://", "www."];
         const nitroscam = [
@@ -437,26 +338,39 @@ async function modalSubmit(client, modal) {
             "gift",
             "minecraft",
             "epic",
+            "tiktok", // somehow servers with TikTok etc. in their name are still getting advertised
         ];
-
-        language = data.get("Language_" + modal.guild?.id);
+        const serverdata = await db.getAllServerSettings(modal.guild?.id);
+        let language = serverdata.language;
         if (language == null) {
             language = "lang_en";
         }
         const lang = require(`../../botconfig/languages/${language}.json`);
-        let edata = data.get("CustomEmbed_" + modal.guild?.id);
-        if (edata == null) {
-            var dicon = "👎";
-            var ecolor = "2C2F33";
-            var uicon = "👍";
+
+        // too lazy to make this better, sorry
+        let dicon;
+        let ecolor;
+        let uicon;
+        if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "")
+        {
+            ecolor = serverdata["suggestion_embed_color"];
         } else {
-            var dicon = data.get("CustomEmbed_" + modal.guild?.id + ".dicon");
-            var ecolor = data.get("CustomEmbed_" + modal.guild?.id + ".color");
-            var uicon = data.get("CustomEmbed_" + modal.guild?.id + ".uicon");
+            ecolor = "2C2F33";
+        }
+        if (serverdata["upvote_emoji"] !== null && serverdata["upvote_emoji"] !== undefined && serverdata["upvote_emoji"] !== "") {
+            uicon = serverdata["upvote_emoji"];
+        } else {
+            uicon = "👍";
+        }
+        if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
+            dicon = serverdata["downvote_emoji"];
+        } else {
+            dicon = "👎";
         }
 
         //Removes bad links
-        if (badlinks.some((el) => res.includes(el)) == true) {
+        let allowlinks = await db.getServerAllowsLinks(modal.guild?.id);
+        if (badlinks.some((el) => res.includes(el)) === true && allowlinks !== true) {
             modal.reply({content: lang.suggest_badlink, ephemeral: true});
             return;
         }
@@ -530,29 +444,7 @@ async function modalSubmit(client, modal) {
                 ],
             })
             .then(async (message) => {
-                let dataConstructor = {url: message.url.toString(), content: res};
-                let userKey =
-                    "Suggestions_" +
-                    modal.guild?.id +
-                    "_" +
-                    modal.user.id.toString() +
-                    ".sugs";
-                let udata = data.fetch(userKey);
-                let value = {
-                    voters: [],
-                    votersInfo: [],
-                    reVoters: [],
-                    reVotersInfo: [],
-                    upvotes: 0,
-                    downvotes: 0,
-                };
-                let key = message.id.toString();
-
-                //Logger.info(`New Suggestion by ${msgAuthor.tag} in ${guild.name} | ${message.url} | With Userdata: ${udata}`)
-                if (udata == null) await data.set(userKey, [dataConstructor]);
-                else data.push(userKey, dataConstructor);
-
-                data.set(key, value);
+                await db.addNewSuggestion(modal.guild?.id, message.id, modal.user.id);
             });
     }
 }

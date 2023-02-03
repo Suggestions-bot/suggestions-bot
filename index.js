@@ -75,6 +75,7 @@ function validateDatabase() {
                             accepted_emoji         varchar(255) NULL,
                             denied_emoji           varchar(255) NULL,
                             language               varchar(255) NULL,
+                            allow_links            boolean      NULL,
                             CONSTRAINT server_id PRIMARY KEY (id)
                         );`
                 , (err) => err ? console.log(err) : resolve()));
