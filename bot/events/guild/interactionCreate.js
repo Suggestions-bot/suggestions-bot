@@ -70,9 +70,9 @@ async function buttons(interaction) {
     await interaction.deferUpdate().catch(() => {
     });
 
-    const language = db.getServerLanguage(interaction.guild?.id)
+    const language = await db.getServerLanguage(interaction.guild?.id)
     const lang = require(`../../botconfig/languages/${language}.json`);
-    let edata = db.getServerEmbedData(interaction.guild?.id);
+    let edata = await db.getServerEmbedData(interaction.guild?.id);
     let dicon = "👎";
     let ecolor = "2C2F33";
     let uicon = "👍";
@@ -87,10 +87,17 @@ async function buttons(interaction) {
         case "up": {
             let message = interaction.message;
             let embed = message.embeds[0];
-            let dater = `${new Date().getFullYear()}/${new Date().getMonth()}/${new Date().getDay()} ${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`;
-            let value = {user: interaction.user, date: dater};
             let newNumber = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
+            console.log(voter);
+            if (voter.toString() ===  "") {
+                console.log("voter is null");
+                voter = {
+                    upvoters: [],
+                    downvoters: [],
+                    re_voters: [],
+                };
+            }
             if (voter["upvoters"].includes(interaction.user.id)) {
                 if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);
@@ -118,6 +125,7 @@ async function buttons(interaction) {
                     embed.fields[1],
                 ],
             };
+            console.log(interaction.user.id);
             await db.addSuggestionUpvote(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
             await message.edit({
                 components: message.components,
@@ -132,6 +140,15 @@ async function buttons(interaction) {
             let embed = message.embeds[0];
             let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
+            console.log(voter);
+            if (voter.toString() ===  "") {
+                console.log("voter is null");
+                voter = {
+                    upvoters: [],
+                    downvoters: [],
+                    re_voters: [],
+                };
+            }
             if (voter["downvoters"].includes(interaction.user.id)) {
                 if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);

@@ -23,7 +23,7 @@ module.exports = async (client) => {
                 }
             }
         }
-        await ["client", "guild"].forEach(e => load_dir(e));
+        ["client", "guild"].forEach(e => load_dir(e));
         Logger.info(`Loaded ${amount} events.`);
 
     } catch (e) {

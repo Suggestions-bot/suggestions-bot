@@ -79,7 +79,7 @@ const getAllUserSuggestions = async (guildId, userId) => {
 const getServerSuggestionChannel = async (guildId) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            `SELECT suggestion_channel
+            `SELECT CAST(suggestion_channel AS VARCHAR(255)) AS suggestion_channel
              FROM servers
              WHERE server_id = ?`,
             [guildId],
@@ -87,10 +87,11 @@ const getServerSuggestionChannel = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                    console.log(results);
+                    if (results.length === 0 || results[0]["suggestion_channel"] === null) {
                         resolve(null);
                     } else {
-                        //console.log(results.affectedRows);
+                        console.log(results[0]["suggestion_channel"]);
                         resolve(results[0]["suggestion_channel"]);
                     }
                 }
@@ -578,7 +579,7 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
         pool.query(
             `UPDATE suggestions
              SET upvotes  = upvotes + 1,
-                 upvoters = JSON_ARRAY_APPEND(upvoters, '$', ?)
+                 upvoters = JSON_ARRAY_APPEND(IFNULL(upvoters, '[]'), '$', ?)
              WHERE server_id = ?
                AND message_id = ?
                AND NOT JSON_CONTAINS(upvoters, ?)
@@ -588,6 +589,10 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
+                    console.log(results);
+                    console.log(userId);
+                    console.log(guildId);
+                    console.log(suggestionId);
                     if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {

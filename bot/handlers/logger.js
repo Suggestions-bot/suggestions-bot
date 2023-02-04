@@ -1,8 +1,7 @@
 const beautify = require('beautify.log').default;
-const bot_name = require('../botconfig/config.json').bot_name;
 
 function formatText(text) {
-    return text.replace('BOTNAME', bot_name);
+    return text.replace("", "");
 }
 
 // beautify is used to colorize console logs (https://github.com/lucasgdb/beautify.log)

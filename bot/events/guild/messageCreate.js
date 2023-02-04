@@ -13,36 +13,19 @@ module.exports = async (client, message) => {
     if (message.partial) await message.fetch();
 
     let msg = message;
-    let key = "SuggestionsChannel_" + msg.guild?.id;
-
-    let data2 = data.fetch(key);
+    // really unoptimized, one db call for each message
+    console.log(msg.guild?.id)
+    let data2 = await db.getServerSuggestionChannel(msg.guild?.id)
+    console.log(data2)
     if (data2 == null) return;
-    if (msg.channelId !== data2.channel) return;
-
-    language = data.get("Language_" + message.guild?.id);
-    if (language == null) {
-        language = "lang_en";
-    }
-
-    let edata = data.get("CustomEmbed_" + message.guild?.id);
-    if (edata == null) {
-        var dicon = "👎";
-        var ecolor = "2C2F33";
-        var uicon = "👍";
-    } else {
-        var dicon = data.get("CustomEmbed_" + message.guild?.id + ".dicon");
-        var ecolor = data.get("CustomEmbed_" + message.guild?.id + ".color");
-        var uicon = data.get("CustomEmbed_" + message.guild?.id + ".uicon");
-    }
-
-    const lang = require(`../../botconfig/languages/${language}.json`);
+    if (msg.channelId !== data2) return;
 
     let guild = msg.guild;
     let channel = msg.channel;
     let msgAuthor = msg.author;
     let rawEContent = msg["content"];
 
-    const badlinks = ["http://", "www."];
+    const badlinks = ["https://", "http://", "www."];
     const nitroscam = [
         "free",
         "nitro",
@@ -51,16 +34,49 @@ module.exports = async (client, message) => {
         "gift",
         "minecraft",
         "epic",
+        "tiktok", // somehow servers with TikTok etc. in their name are still getting advertised
     ];
+    const serverdata = await db.getAllServerSettings(msg.guild?.id);
 
-    if (badlinks.some((el) => rawEContent.includes(el)) == true) {
-        if (msg.deletable) msg.delete();
-        try {
-            msgAuthor.send({content: lang.suggest_badlink});
-        } catch (e) {
+    let language = serverdata.language;
+    if (language == null) {
+        language = "lang_en";
+    }
+    const lang = require(`../../botconfig/languages/${language}.json`);
+
+    // too lazy to make this better, sorry
+    let dicon;
+    let ecolor;
+    let uicon;
+    if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "")
+    {
+        ecolor = serverdata["suggestion_embed_color"];
+    } else {
+        ecolor = "2C2F33";
+    }
+    if (serverdata["upvote_emoji"] !== null && serverdata["upvote_emoji"] !== undefined && serverdata["upvote_emoji"] !== "") {
+        uicon = serverdata["upvote_emoji"];
+    } else {
+        uicon = "👍";
+    }
+    if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
+        dicon = serverdata["downvote_emoji"];
+    } else {
+        dicon = "👎";
+    }
+
+    //Removes bad links
+    let allowlinks = await db.getServerAllowsLinks(msg.guild?.id);
+    if (badlinks.some((el) => rawEContent.includes(el)) === true && allowlinks !== true) {
+        if (badlinks.some((el) => rawEContent.includes(el)) === true) {
+            if (msg.deletable) msg.delete();
+            try {
+                msgAuthor.send({content: lang.suggest_badlink});
+            } catch (e) {
+                return;
+            }
             return;
         }
-        return;
     }
 
     try {
@@ -128,32 +144,7 @@ module.exports = async (client, message) => {
             ],
         })
         .then(async (message) => {
-            let dataConstructor = {
-                url: message.url.toString(),
-                content: rawEContent,
-            };
-            let userKey =
-                "Suggestions_" +
-                msg.guild.id +
-                "_" +
-                msg.author.id.toString() +
-                ".sugs";
-            let udata = data.fetch(userKey);
-            let value = {
-                voters: [],
-                votersInfo: [],
-                reVoters: [],
-                reVotersInfo: [],
-                upvotes: 0,
-                downvotes: 0,
-            };
-            let key = message.id.toString();
-
-            //Logger.info(`New Suggestion by ${msgAuthor.tag} in ${guild.name} | ${message.url} | With Userdata: ${udata}`)
-            if (udata == null) await data.set(userKey, [dataConstructor]);
-            else data.push(userKey, dataConstructor);
-
-            data.set(key, value);
+            await db.addNewSuggestion(msg.guild?.id, message.id, message.channel.id, rawEContent, msgAuthor.id);
         });
 };
 
