@@ -60,7 +60,7 @@ module.exports = {
             }
 
 
-            await db.setServerEmbedSettings(interaction.guild?.id, gcolor, uicon, dicon)
+            await db.setServerEmbedSettings(interaction.guild?.id, gcolor, dicon, uicon)
 
             interaction.reply(
                 {content: lang.embed_success, ephemeral: true}

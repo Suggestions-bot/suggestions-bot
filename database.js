@@ -87,11 +87,11 @@ const getServerSuggestionChannel = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    console.log(results);
+                    // console.log(results);
                     if (results.length === 0 || results[0]["suggestion_channel"] === null) {
                         resolve(null);
                     } else {
-                        console.log(results[0]["suggestion_channel"]);
+                        // console.log(results[0]["suggestion_channel"]);
                         resolve(results[0]["suggestion_channel"]);
                     }
                 }
@@ -108,11 +108,12 @@ const getServerEmbedData = async (guildId) => {
              WHERE server_id = ?`,
             [guildId],
             (err, results) => {
+                //console.log(results);
                 if (err) {
                     reject(err);
                 } else {
-                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
-                        resolve(null);
+                    if (resolve.length === 0 || results[0]["suggestion_embed_color"] === null) {
+                        resolve(undefined);
                     } else {
                         resolve(results[0]);
                     }
@@ -125,7 +126,7 @@ const getServerEmbedData = async (guildId) => {
 const getSuggestionVoters = async (serverId, messageId) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            `SELECT upvoters, downvoters, re_voters
+            `SELECT upvoters, downvoters, re_voters, downvotes, upvotes
              FROM suggestions
              WHERE server_id = ?
                AND message_id = ?`,
@@ -175,6 +176,8 @@ const setServerLanguage = async (guildId, language) => {
              WHERE server_id = ?`,
             [language, guildId],
             (err, results) => {
+                //console.log(results);
+                //console.log(err);
                 if (err) {
                     reject(err);
                 } else {
@@ -535,16 +538,15 @@ const setSuggestionPending = async (guildId, suggestionId) => {
     });
 }
 
-const addNewSuggestion = async (guildId, suggestionId, channelId, suggestion, authorId) => {
+const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => {
     return new Promise((resolve, reject) => {
         // add a new suggestion to the database only if message_id is not already in the database
         pool.query(
-            `INSERT INTO suggestions (server_id, channel_id, message_id, content, user_id, upvotes, downvotes, upvoters,
+            `INSERT INTO suggestions (server_id, message_id, content, user_id, upvotes, downvotes, upvoters,
                                       downvoters, re_voters, creation_date)
              SELECT *
              FROM (SELECT ? AS server_id,
                           ? AS message_id,
-                          ? AS channel_id,
                           ? AS content,
                           ? AS user_id,
                           ? AS upvotes,
@@ -557,7 +559,7 @@ const addNewSuggestion = async (guildId, suggestionId, channelId, suggestion, au
                      SELECT message_id FROM suggestions WHERE message_id = tmp.message_id
                  )
              LIMIT 1;`,
-            [guildId, suggestionId, channelId, suggestion, authorId, 0, 0, "[]", "[]", "[]", getCurrentDate()],
+            [guildId, suggestionId, suggestion, authorId, 0, 0, "[]", "[]", "[]", getCurrentDate()],
             (err, results) => {
                 if (err) {
                     reject(err);
@@ -575,6 +577,9 @@ const addNewSuggestion = async (guildId, suggestionId, channelId, suggestion, au
 
 const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
     // add a new upvote to the suggestion only if the user has not already upvoted it
+    // console.log(guildId)
+    // console.log(suggestionId)
+    // console.log(userId)
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE suggestions
@@ -589,10 +594,10 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    console.log(results);
-                    console.log(userId);
-                    console.log(guildId);
-                    console.log(suggestionId);
+                    // console.log(results);
+                    // console.log(userId);
+                    // console.log(guildId);
+                    // console.log(suggestionId);
                     if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         resolve(false);
                     } else {
@@ -642,9 +647,7 @@ const addSuggestionUpvoteRevoteDown = async (guildId, suggestionId, userId) => {
                  re_voters  = JSON_ARRAY_APPEND(re_voters, '$', ?),
                  downvoters = JSON_ARRAY_APPEND(downvoters, '$', ?)
              WHERE server_id = ?
-               AND message_id = ?
-               AND JSON_CONTAINS(upvoters, ?)
-               AND NOT JSON_CONTAINS(re_voters, ?);`,
+               AND message_id = ?;`,
             [userId, userId, userId, guildId, suggestionId, userId, userId],
             (err, results) => {
                 if (err) {
@@ -672,11 +675,11 @@ const addSuggestionDownvoteRevoteUp = async (guildId, suggestionId, userId) => {
                  re_voters  = JSON_ARRAY_APPEND(re_voters, '$', ?),
                  upvoters   = JSON_ARRAY_APPEND(upvoters, '$', ?)
              WHERE server_id = ?
-               AND message_id = ?
-               AND JSON_CONTAINS(downvoters, ?)
-               AND NOT JSON_CONTAINS(re_voters, ?);`,
+               AND message_id = ?;`,
             [userId, userId, userId, guildId, suggestionId, userId, userId],
             (err, results) => {
+                // console.log(err);
+                // console.log(results);
                 if (err) {
                     reject(err);
                 } else {

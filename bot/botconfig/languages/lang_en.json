@@ -3,7 +3,7 @@
   "set_suggestion_channel": "The suggestion channel is now",
   "reset_suggestion_channel": "The suggestion channel has been reset.",
   "reset_suggestion_channel_error": "The suggestion channel could not be reset because it could not be found. >:c",
-  "add_suggestion_under": "Write your suggestion under this text.",
+  "add_suggestion_under": "Write your suggestion below this text.",
   "add_suggestion_here": "Add your suggestion here.",
   "suggestion_name": "Suggestion",
   "already_voted": "You have already voted.",

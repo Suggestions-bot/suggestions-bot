@@ -26,7 +26,7 @@ module.exports = {
 
             let language = options.getString("language");
 
-            await db.setServerLanguage(interaction.guild.id, language);
+            await db.setServerLanguage(interaction.guild.id.toString(), language);
 
             const lang = require(`../../botconfig/languages/${language}.json`);
 

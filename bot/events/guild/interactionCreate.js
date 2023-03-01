@@ -33,14 +33,18 @@ module.exports = (client, interaction) => {
 };
 
 async function confirmRevote(interaction, lang) {
-    let edata = db.getServerEmbedData(interaction.guild?.id);
-    let dicon = "👎";
-    let uicon = "👍";
-    if (edata !== null) {
-        dicon = edata["downvote_emoji"];
-        uicon = edata["upvote_emoji"];
+    let edata = await db.getServerEmbedData(interaction.guild.id);
+    let dicon = "<:thumbs_down_bot:1080566077504880761>";
+    let uicon = "<:thumbs_up_bot:1080565677900976242>";
+    if (edata) {
+        dicon = edata.downvote_emoji;
+        uicon = edata.upvote_emoji;
     }
+    // console.log(interaction);
+    // console.log(edata);
+    // console.log(dicon);
 
+    //try {
     await interaction.followUp({
         content: lang.already_voted_rechoice,
         components: [
@@ -59,6 +63,11 @@ async function confirmRevote(interaction, lang) {
         ],
         ephemeral: true,
     });
+    /*} catch (e) {
+        console.log(e);
+        console.log(e.requestData.json.components[0].components);
+    }*/
+
 }
 
 /**
@@ -69,17 +78,19 @@ async function buttons(interaction) {
 
     await interaction.deferUpdate().catch(() => {
     });
+    // .log(interaction.customId);
 
     const language = await db.getServerLanguage(interaction.guild?.id)
     const lang = require(`../../botconfig/languages/${language}.json`);
     let edata = await db.getServerEmbedData(interaction.guild?.id);
-    let dicon = "👎";
+    let dicon = "<:thumbs_down_bot:1080566077504880761>";
     let ecolor = "2C2F33";
-    let uicon = "👍";
-    if (edata !== null) {
-        dicon = edata["downvote_emoji"];
-        ecolor = edata["suggestion_embed_color"];
-        uicon = edata["upvote_emoji"];
+    let uicon = "<:thumbs_up_bot:1080565677900976242>";
+    // console.log(edata);
+    if (edata) {
+        dicon = edata.downvote_emoji;
+        ecolor = edata.suggestion_embed_color;
+        uicon = edata.upvote_emoji;
     }
 
 
@@ -89,23 +100,23 @@ async function buttons(interaction) {
             let embed = message.embeds[0];
             let newNumber = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
-            console.log(voter);
-            if (voter.toString() ===  "") {
+            // console.log(voter);
+            voter = voter[0];
+            // console.log(voter);
+            if (voter.toString() === "") {
                 console.log("voter is null");
                 voter = {
-                    upvoters: [],
-                    downvoters: [],
-                    re_voters: [],
+                    upvoters: [], downvoters: [], re_voters: [],
                 };
             }
-            if (voter["upvoters"].includes(interaction.user.id)) {
+            if (voter["downvoters"].includes(interaction.user.id) || voter["upvoters"].includes(interaction.user.id)) {
+                // console.log(!voter["re_voters"].includes(interaction.user.id));
                 if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);
                     return;
                 } else {
                     await interaction.followUp({
-                        content: lang.already_voted_again,
-                        ephemeral: true,
+                        content: lang.already_voted_again, ephemeral: true,
                     });
                     return;
                 }
@@ -125,7 +136,7 @@ async function buttons(interaction) {
                     embed.fields[1],
                 ],
             };
-            console.log(interaction.user.id);
+            // console.log(interaction.user.id);
             await db.addSuggestionUpvote(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
             await message.edit({
                 components: message.components,
@@ -140,23 +151,22 @@ async function buttons(interaction) {
             let embed = message.embeds[0];
             let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
-            console.log(voter);
-            if (voter.toString() ===  "") {
+            // console.log(voter);
+            voter = voter[0];
+            if (voter.toString() === "") {
                 console.log("voter is null");
                 voter = {
-                    upvoters: [],
-                    downvoters: [],
-                    re_voters: [],
+                    upvoters: [], downvoters: [], re_voters: [],
                 };
             }
-            if (voter["downvoters"].includes(interaction.user.id)) {
+            if (voter["downvoters"].includes(interaction.user.id) || voter["upvoters"].includes(interaction.user.id)) {
+                // console.log(!voter["re_voters"].includes(interaction.user.id));
                 if (!voter["re_voters"].includes(interaction.user.id)) {
                     await confirmRevote(interaction, lang);
                     return;
                 } else {
                     await interaction.followUp({
-                        content: lang.already_voted_again,
-                        ephemeral: true,
+                        content: lang.already_voted_again, ephemeral: true,
                     });
                     return;
                 }
@@ -187,52 +197,50 @@ async function buttons(interaction) {
         case "up-rechoice": {
             let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
-            let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) - 1;
-            let newNumber1 = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
             let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
-            if (
-                !voters["re_voters"].includes(interaction.user.id)
-            ) {
-                if (
-                    voters["upvoters"].includes(interaction.user.id)
-                ) {
+            voters = voters[0];
+            let newNumber = Number(voters["downvotes"]) - 1;
+            let newNumber1 = Number(voters["upvotes"]) + 1;
+            if (!voters["re_voters"].includes(interaction.user.id)) {
+                if (voters["upvoters"].includes(interaction.user.id)) {
                     await interaction.followUp({
-                        content: lang.already_voted_option,
-                        ephemeral: true,
+                        content: lang.already_voted_option, ephemeral: true,
                     });
                     return;
-                } else if (
-                    voters["downvoters"].includes(interaction.user.id)
-                ) {
-                    await db.addSuggestionDownvoteRevoteUp(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
-                    let editedEmbed = {
-                        author: embed.author,
-                        color: embed.color,
-                        timestamp: embed.timestamp,
-                        footer: embed.footer,
-                        description: embed.description,
-                        fields: [
-                            {
+                } else if (voters["downvoters"].includes(interaction.user.id)) {
+                    if (await db.addSuggestionDownvoteRevoteUp(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString())) {
+                        let editedEmbed = {
+                            author: embed.author,
+                            color: embed.color,
+                            timestamp: embed.timestamp,
+                            footer: embed.footer,
+                            description: embed.description,
+                            fields: [{
                                 name: uicon + " " + lang.suggest_upvotes,
                                 value: `\`\`\`\n${newNumber1}\`\`\``,
                                 inline: true,
-                            },
-                            {
+                            }, {
                                 name: dicon + " " + lang.suggest_downvotes,
                                 value: `\`\`\`\n${newNumber}\`\`\``,
                                 inline: true,
-                            },
-                        ],
-                    };
-                    await message.edit({
-                        components: message.components,
-                        embeds: [editedEmbed],
-                    });
-                    await interaction.followUp({
-                        content: lang.revote_success,
-                        ephemeral: true,
-                    });
-                    return;
+                            },],
+                        };
+                        await message.edit({
+                            components: message.components,
+                            embeds: [editedEmbed],
+                        });
+                        await interaction.followUp({
+                            content: lang.revote_success,
+                            ephemeral: true,
+                        });
+                        return;
+                    } else {
+                        await interaction.followUp({
+                            content: lang.already_voted,
+                            ephemeral: true,
+                        });
+                        return;
+                    }
                 } else {
                     await interaction.followUp({
                         content: lang.already_voted,
@@ -252,15 +260,12 @@ async function buttons(interaction) {
         case "down-rechoice": {
             let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
-            let newNumber = Number(embed.fields[1].value.split("```\n")[1].split("```")[0]) + 1;
-            let newNumber1 = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) - 1;
             let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
-            if (
-                !voters["re_voters"].includes(interaction.user.id)
-            ) {
-                if (
-                    voters["downvoters"].includes(interaction.user.id)
-                ) {
+            voters = voters[0];
+            let newNumber = Number(voters["downvotes"]) + 1;
+            let newNumber1 = Number(voters["upvotes"]) - 1;
+            if (!voters["re_voters"].includes(interaction.user.id)) {
+                if (voters["downvoters"].includes(interaction.user.id)) {
                     await interaction.followUp({
                         content: lang.already_voted_option,
                         ephemeral: true,
@@ -269,35 +274,42 @@ async function buttons(interaction) {
                 } else if (
                     voters["upvoters"].includes(interaction.user.id)
                 ) {
-                    await db.addSuggestionUpvoteRevoteDown(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString());
-                    let editedEmbed = {
-                        author: embed.author,
-                        color: embed.color,
-                        timestamp: embed.timestamp,
-                        footer: embed.footer,
-                        description: embed.description,
-                        fields: [
-                            {
-                                name: uicon + " " + lang.suggest_upvotes,
-                                value: `\`\`\`\n${newNumber1}\`\`\``,
-                                inline: true,
-                            },
-                            {
-                                name: dicon + " " + lang.suggest_downvotes,
-                                value: `\`\`\`\n${newNumber}\`\`\``,
-                                inline: true,
-                            },
-                        ],
-                    };
-                    await message.edit({
-                        components: message.components,
-                        embeds: [editedEmbed],
-                    });
-                    await interaction.followUp({
-                        content: lang.revote_success,
-                        ephemeral: true,
-                    });
-                    return;
+                    if (await db.addSuggestionUpvoteRevoteDown(message.guild.id.toString(), message.id.toString(), interaction.user.id.toString())) {
+                        let editedEmbed = {
+                            author: embed.author,
+                            color: embed.color,
+                            timestamp: embed.timestamp,
+                            footer: embed.footer,
+                            description: embed.description,
+                            fields: [
+                                {
+                                    name: uicon + " " + lang.suggest_upvotes,
+                                    value: `\`\`\`\n${newNumber1}\`\`\``,
+                                    inline: true,
+                                },
+                                {
+                                    name: dicon + " " + lang.suggest_downvotes,
+                                    value: `\`\`\`\n${newNumber}\`\`\``,
+                                    inline: true,
+                                },
+                            ],
+                        };
+                        await message.edit({
+                            components: message.components,
+                            embeds: [editedEmbed],
+                        });
+                        await interaction.followUp({
+                            content: lang.revote_success,
+                            ephemeral: true,
+                        });
+                        return;
+                    } else {
+                        await interaction.followUp({
+                            content: lang.already_voted,
+                            ephemeral: true,
+                        });
+                        return;
+                    }
                 } else {
                     await interaction.followUp({
                         content: lang.already_voted,
@@ -346,7 +358,7 @@ async function modalSubmit(client, modal) {
         let res = modal.fields.getTextInputValue("input");
         let value = await db.getServerSuggestionChannel(modal.guild?.id);
         let channel = client.channels.cache.get(value);
-        const badlinks = ["https://", "http://", "www."];
+        /*const badlinks = ["https://", "http://", "www."];
         const nitroscam = [
             "free",
             "nitro",
@@ -356,9 +368,9 @@ async function modalSubmit(client, modal) {
             "minecraft",
             "epic",
             "tiktok", // somehow servers with TikTok etc. in their name are still getting advertised
-        ];
+        ];*/
         const serverdata = await db.getAllServerSettings(modal.guild?.id);
-        let language = serverdata.language;
+        let language = serverdata["language"];
         if (language == null) {
             language = "lang_en";
         }
@@ -385,8 +397,8 @@ async function modalSubmit(client, modal) {
             dicon = "👎";
         }
 
-        //Removes bad links
-        let allowlinks = await db.getServerAllowsLinks(modal.guild?.id);
+        //Removes bad links | disabled for now since bots don't use modals yet
+        /*let allowlinks = await db.getServerAllowsLinks(modal.guild?.id);
         if (badlinks.some((el) => res.includes(el)) === true && allowlinks !== true) {
             modal.reply({content: lang.suggest_badlink, ephemeral: true});
             return;
@@ -405,7 +417,7 @@ async function modalSubmit(client, modal) {
             //logger.error(error);
             modal.reply({content: lang.suggest_badlink, ephemeral: true});
             return;
-        }
+        }*/
 
         //Message for channel not being set
         if (!channel)
@@ -461,7 +473,7 @@ async function modalSubmit(client, modal) {
                 ],
             })
             .then(async (message) => {
-                await db.addNewSuggestion(modal.guild?.id, message.id, modal.user.id);
+                await db.addNewSuggestion(modal.guild?.id, message.id, res, modal.user.id);
             });
     }
 }

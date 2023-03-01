@@ -14,9 +14,9 @@ module.exports = async (client, message) => {
 
     let msg = message;
     // really unoptimized, one db call for each message
-    console.log(msg.guild?.id)
+    // console.log(msg.guild?.id)
     let data2 = await db.getServerSuggestionChannel(msg.guild?.id)
-    console.log(data2)
+    // console.log(data2)
     if (data2 == null) return;
     if (msg.channelId !== data2) return;
 
@@ -25,17 +25,11 @@ module.exports = async (client, message) => {
     let msgAuthor = msg.author;
     let rawEContent = msg["content"];
 
-    const badlinks = ["https://", "http://", "www."];
-    const nitroscam = [
-        "free",
-        "nitro",
-        "steam",
-        "airdrop",
-        "gift",
-        "minecraft",
-        "epic",
-        "tiktok", // somehow servers with TikTok etc. in their name are still getting advertised
-    ];
+    /*const badlinks = ["https://", "http://", "www."];
+    const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic", "tiktok"]; // somehow servers with TikTok etc. in their name are still getting advertised
+    const immedeateDelete = [""];*/
+
+
     const serverdata = await db.getAllServerSettings(msg.guild?.id);
 
     let language = serverdata.language;
@@ -65,8 +59,8 @@ module.exports = async (client, message) => {
         dicon = "👎";
     }
 
-    //Removes bad links
-    let allowlinks = await db.getServerAllowsLinks(msg.guild?.id);
+    //Removes bad links | Disabled for now since server owners can use auto mod
+    /*let allowlinks = await db.getServerAllowsLinks(msg.guild?.id);
     if (badlinks.some((el) => rawEContent.includes(el)) === true && allowlinks !== true) {
         if (badlinks.some((el) => rawEContent.includes(el)) === true) {
             if (msg.deletable) msg.delete();
@@ -95,7 +89,7 @@ module.exports = async (client, message) => {
     } catch (e) {
         if (msg.deletable) msg.delete();
         return;
-    }
+    }*/
 
     if (msg.deletable) msg.delete();
 
@@ -144,7 +138,7 @@ module.exports = async (client, message) => {
             ],
         })
         .then(async (message) => {
-            await db.addNewSuggestion(msg.guild?.id, message.id, message.channel.id, rawEContent, msgAuthor.id);
+            await db.addNewSuggestion(msg.guild?.id, message.id, rawEContent, msgAuthor.id);
         });
 };
 

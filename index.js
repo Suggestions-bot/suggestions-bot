@@ -49,7 +49,6 @@ function validateDatabase() {
                             message_id    bigint    NOT NULL,
                             user_id       bigint    NOT NULL,
                             server_id     bigint    NOT NULL,
-                            channel_id    bigint    NOT NULL,
                             upvotes       int       NULL,
                             upvoters      json      NULL,
                             downvotes     int       NULL,

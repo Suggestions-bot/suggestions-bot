@@ -13,4 +13,7 @@ module.exports = client => {
     process.on('multipleResolves', (type, promise, reason) => {
         Logger.warn(`Multiple Resolves`, `${type}\n${promise}\n${reason}`);
     });
+    process.on('warning', (warning) => {
+        Logger.warn(`Warning`, `${warning}`);
+    });
 }
