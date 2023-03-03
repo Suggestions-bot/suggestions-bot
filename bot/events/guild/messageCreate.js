@@ -25,6 +25,13 @@ module.exports = async (client, message) => {
     let msgAuthor = msg.author;
     let rawEContent = msg["content"];
 
+    if (rawEContent == null || rawEContent == undefined || rawEContent == "") {
+        if (msg.deletable) {
+            msg.delete();
+        }
+        return;
+    }
+
     /*const badlinks = ["https://", "http://", "www."];
     const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic", "tiktok"]; // somehow servers with TikTok etc. in their name are still getting advertised
     const immedeateDelete = [""];*/
