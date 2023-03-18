@@ -35,5 +35,6 @@
   "embed_invalid_color": "El color que ingresó no es válido. Ingrese un color válido. Puede encontrar colores válidos aquí: https://www.hexcolortool.com/",
   "embed_success": "El formateo de incrustaciones se procesó con éxito.",
   "not_valid_option": "No eligió una opción válida. Elija al menos una de las opciones dadas.",
-  "revote_success": "Votaste de nuevo con éxito."
+  "revote_success": "Votaste de nuevo con éxito.",
+  "suggest_comment": "Comentario:"
 }
