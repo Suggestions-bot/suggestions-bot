@@ -32,6 +32,8 @@ module.exports = async (client, message) => {
         return;
     }
 
+    if (msg.type == "THREAD_STARTER_MESSAGE") return;
+
     /*const badlinks = ["https://", "http://", "www."];
     const nitroscam = ["free", "nitro", "steam", "airdrop", "gift", "minecraft", "epic", "tiktok"]; // somehow servers with TikTok etc. in their name are still getting advertised
     const immedeateDelete = [""];*/
