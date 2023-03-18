@@ -35,5 +35,6 @@
   "embed_invalid_color": "De ingevoerde kleur is ongeldig. Voer een geldige kleur in. Geldige kleuren vindt je hier: https://www.hexcolortool.com/",
   "embed_success": "De embed is succesvol gewijzigd.",
   "not_valid_option": "Je hebt geen geldige optie gekozen. Kies ten minste één van de gegeven opties.",
-  "revote_success": "Je stem is succesvol gewijzigd."
+  "revote_success": "Je stem is succesvol gewijzigd.",
+  "suggest_comment": "Opmerking:"
 }

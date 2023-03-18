@@ -26,6 +26,13 @@ module.exports = {
                 choices: [["Accept", "accept"], ["Reject", "reject"], ["Reset", "reset"]]
             }
         },
+        {
+            "String": {
+                name: "comment",
+                description: "A comment for the suggestion that is shown below the embed.",
+                required: false
+            }
+        },
     ],
     run: async (client, interaction) => {
         try {
@@ -74,11 +81,19 @@ module.exports = {
                         embed.fields[0],
                         embed.fields[1],
                         {
-                            name: "**" + lang.suggest_accepted + "** <a:Accept:959143988051468319>",
+                            name: "**" + lang.suggest_accepted + "** <a:accept_bot:1000710815562866759>",
                             value: lang.suggest_accepted_text,
                             inline: false
                         },
                     ]
+                }
+
+                if (options.getString("comment")) {
+                    newEmbed.fields.push({
+                        name: "**" + lang.suggest_comment + "**",
+                        value: options.getString("comment"),
+                        inline: false
+                    })
                 }
 
                 message.edit({
@@ -99,7 +114,7 @@ module.exports = {
                                     .setCustomId("accepted")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_accepted)
-                                    .setEmoji("<a:Accept:959143988051468319>")
+                                    .setEmoji("<a:accept_bot:1000710815562866759>")
                             )
                     ], embeds: [newEmbed]
                 });
@@ -116,11 +131,19 @@ module.exports = {
                         embed.fields[0],
                         embed.fields[1],
                         {
-                            name: "**" + lang.suggest_declined + "** <a:Deny:959143988445716620>",
+                            name: "**" + lang.suggest_declined + "** <a:deny_bot:1000710816980533278>",
                             value: lang.suggest_declined_text,
                             inline: false
                         },
                     ]
+                }
+
+                if (options.getString("comment")) {
+                    newEmbed.fields.push({
+                        name: "**" + lang.suggest_comment + "**",
+                        value: options.getString("comment"),
+                        inline: false
+                    })
                 }
 
                 message.edit({
@@ -141,7 +164,7 @@ module.exports = {
                                     .setCustomId("rejected")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_declined)
-                                    .setEmoji("<a:Deny:959143988445716620>")
+                                    .setEmoji("<a:deny_bot:1000710816980533278> ")
                             )
                     ], embeds: [newEmbed]
                 });
