@@ -36,5 +36,7 @@
   "embed_success": "El formateo de incrustaciones se procesó con éxito.",
   "not_valid_option": "No eligió una opción válida. Elija al menos una de las opciones dadas.",
   "revote_success": "Votaste de nuevo con éxito.",
-  "suggest_comment": "Comentario:"
+  "suggest_comment": "Comentario:",
+  "suggestion_auto_accept_upvotes": "Suggestion has been automatically accepted because it has reached the required number of upvotes.",
+  "suggestion_auto_decline_downvotes": "Suggestion has been automatically declined because it has reached the required number of downvotes."
 }

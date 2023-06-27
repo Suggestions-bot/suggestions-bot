@@ -103,7 +103,7 @@ const getServerSuggestionChannel = async (guildId) => {
 const getServerEmbedData = async (guildId) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            `SELECT suggestion_embed_color, upvote_emoji, downvote_emoji
+            `SELECT suggestion_embed_color, upvote_emoji, downvote_emoji, accepted_emoji, denied_emoji
              FROM servers
              WHERE server_id = ?`,
             [guildId],
@@ -165,6 +165,80 @@ const getServerAllowsLinks = async (guildId) => {
                 }
             }
         );
+    });
+}
+
+const getAcceptUpvotes = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_accept_upvotes
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.auto_accept_upvotes);
+                }
+            }
+        );
+    });
+}
+
+const getDenyDownvotes = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_deny_downvotes
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.auto_deny_downvotes);
+                }
+            }
+        );
+    });
+}
+
+const getNumberOfSuggestions = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT COUNT(*)
+             FROM suggestions`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]["COUNT(*)"]);
+                }
+            }
+        );
+    });
+}
+
+const getGuildsWithMostSuggestions = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT server_id, COUNT(*)
+             FROM suggestions
+             GROUP BY server_id
+             ORDER BY COUNT(*) DESC
+             LIMIT 3`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            }
+        );
+
     });
 }
 
@@ -555,9 +629,9 @@ const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => 
                           ? AS downvoters,
                           ? AS re_voters,
                           ? AS creation_date) AS tmp
-             WHERE NOT EXISTS(
-                     SELECT message_id FROM suggestions WHERE message_id = tmp.message_id
-                 )
+             WHERE NOT EXISTS(SELECT message_id
+                              FROM suggestions
+                              WHERE message_id = tmp.message_id)
              LIMIT 1;`,
             [guildId, suggestionId, suggestion, authorId, 0, 0, "[]", "[]", "[]", getCurrentDate()],
             (err, results) => {
@@ -736,6 +810,10 @@ module.exports = {
     getServerEmbedData,
     getSuggestionVoters,
     getServerAllowsLinks,
+    getAcceptUpvotes,
+    getDenyDownvotes,
+    getNumberOfSuggestions,
+    getGuildsWithMostSuggestions,
 
     setServerLanguage,
     setServerManagerRole,

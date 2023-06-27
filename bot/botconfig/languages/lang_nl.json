@@ -36,5 +36,7 @@
   "embed_success": "De embed is succesvol gewijzigd.",
   "not_valid_option": "Je hebt geen geldige optie gekozen. Kies ten minste één van de gegeven opties.",
   "revote_success": "Je stem is succesvol gewijzigd.",
-  "suggest_comment": "Opmerking:"
+  "suggest_comment": "Opmerking:",
+  "suggestion_auto_accept_upvotes": "Suggestion has been automatically accepted because it has reached the required number of upvotes.",
+  "suggestion_auto_decline_downvotes": "Suggestion has been automatically declined because it has reached the required number of downvotes."
 }

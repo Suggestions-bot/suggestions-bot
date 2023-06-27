@@ -3,7 +3,7 @@ const modals = require("discord-modals");
 const db = require("../../../database");
 
 module.exports = {
-    name: "get_user", //the command name for the Slash Command
+    name: "getuser", //the command name for the Slash Command
     description: "Get suggestions of any user.", //the command description for Slash Command Overview
     cooldown: 5, //the cooldown for the command in seconds (max. 60)
     memberpermissions: ["manage_server"], //Only allow members with specific Permissions to execute a Commmand [OPTIONAL]

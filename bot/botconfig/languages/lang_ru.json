@@ -36,5 +36,7 @@
   "embed_success": "Форматирование вставки было успешно обработано.",
   "not_valid_option": "Вы выбрали неверный вариант. Пожалуйста, выберите хотя бы один из предложенных вариантов.",
   "revote_success": "Ваш голос был успешно изменен.",
-  "suggest_comment": "комментарий:"
+  "suggest_comment": "комментарий:",
+  "suggestion_auto_accept_upvotes": "Suggestion has been automatically accepted because it has reached the required number of upvotes.",
+  "suggestion_auto_decline_downvotes": "Suggestion has been automatically declined because it has reached the required number of downvotes."
 }
