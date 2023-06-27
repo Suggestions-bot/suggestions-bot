@@ -6,7 +6,7 @@ const emojis = require("./reactions");
 const config = require("../botconfig/config.json");
 const ee = require("../botconfig/embed.json");
 const settings = require("../botconfig/settings.json");
-const Logger = require("./logger");
+const Logger = require("../../logger");
 //EXPORT ALL FUNCTIONS
 module.exports.nFormatter = nFormatter;
 module.exports.change_status = change_status;

@@ -1,4 +1,4 @@
-const Logger = require("./logger");
+const Logger = require("../../logger");
 
 module.exports = client => {
     process.on('unhandledRejection', (reason, p) => {

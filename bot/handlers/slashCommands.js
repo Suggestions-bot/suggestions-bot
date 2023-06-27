@@ -1,7 +1,7 @@
 const {readdirSync, lstatSync} = require("fs");
 const {SlashCommandBuilder} = require('@discordjs/builders');
 const config = require("../botconfig/config.json");
-const Logger = require("./logger");
+const Logger = require("../../logger");
 const dirSetup = config.slashCommandsDirs;
 module.exports = (client) => {
     try {
@@ -75,7 +75,7 @@ module.exports = (client) => {
             } else {
                 let pull = require(`../slashCommands/${dir}`);
                 if (pull.name && pull.description) {
-                    let Command = new SlashCommandBuilder().setName(String(pull.name).toLowerCase()).setDescription(pull.description).setDefaultMemberPermissions(pull.memberpermissions).setDMPermission(pull.dmpermission).setCooldown(pull.cooldown);
+                    let Command = new SlashCommandBuilder().setName(String(pull.name).toLowerCase()).setDescription(pull.description)//.setDefaultMemberPermissions(pull.memberpermissions).setDMPermission(pull.dmpermission).setCooldown(pull.cooldown);
                     if (pull.options && pull.options.length > 0) {
                         for (const option of pull.options) {
                             if (option.User && option.User.name && option.User.description) {
@@ -123,11 +123,10 @@ module.exports = (client) => {
 
         //Once the Bot is ready, add all Slas Commands to each guild
         client.on("ready", () => {
-            if (config.loadSlashsGlobal) {
+            if (process.env.STATE === "production") {
                 client.application.commands.set(allCommands)
                     .then(slashCommandsData => {
                         Logger.info(`${slashCommandsData.size} slashCommands (With ${slashCommandsData.map(d => d.options).flat().length} Subcommands) Loaded.`, "");
-                        Logger.info(`Because you are Using Global Settings, it can take up to one hour until the Commands get changed! This is related to the Discord-API and the only way to load them instantly is by specifying a guild.`, "");
                     }).catch((e) => Logger.error("An error occured:", e));
             } else {
                 client.guilds.cache.map(g => g).forEach((guild) => {
@@ -145,7 +144,7 @@ module.exports = (client) => {
         //DISABLE WHEN USING GLOBAL!
         client.on("guildCreate", (guild) => {
             try {
-                if (!config.loadSlashsGlobal) {
+                if (process.env.STATE !== "production") {
                     guild.commands.set(allCommands)
                         .then(slashCommandsData => {
                             Logger.info(`${slashCommandsData.size} slashCommands (With ${slashCommandsData.map(d => d.options).flat().length} Subcommands) Loaded for ${guild.name}.`, "");

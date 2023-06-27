@@ -1,7 +1,7 @@
-const Logger = require("../../handlers/logger");
+const Logger = require("../../../logger");
 const modals = require("discord-modals");
 const db = require("../../../database");
-const logger = require("../../handlers/logger");
+const logger = require("../../../logger");
 
 module.exports = {
     name: "edit", //the command name for the Slash Command
@@ -37,7 +37,6 @@ module.exports = {
             if (udata == null) return interaction.reply(
                 {content: lang.suggest_none, ephemeral: true}
             )
-
 
 
             let messageIdArray = udata.map(x => x.message_id);

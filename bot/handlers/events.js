@@ -1,5 +1,5 @@
 const fs = require("fs");
-const Logger = require("./logger");
+const Logger = require("../../logger");
 const allevents = [];
 module.exports = async (client) => {
     try {

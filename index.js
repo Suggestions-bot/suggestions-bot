@@ -1,4 +1,5 @@
 require("dotenv").config();
+const logger = require("./logger");
 
 const mysql = require("mysql2"),
     fs = require("fs");
@@ -15,7 +16,7 @@ validateDatabase().then(() => {
         if (foundTest && ["test", "testing"].includes(process.env.RUN))
             import("./testing/starttest.js");
     } else {
-        console.log("Bot and dashboard not found");
+        logger.startup("Bot and dashboard not found");
     }
 });
 
@@ -23,7 +24,7 @@ function validateDatabase() {
 
     return new Promise(async (resolve) => {
 
-        console.log(`[MySQL] Connecting to ${process.env.DATABASE_USER}@${process.env.DATABASE_HOST} ...`);
+        logger.db(`Connecting to ${process.env.DATABASE_USER}@${process.env.DATABASE_HOST} ...`);
 
         let connection = mysql.createConnection({
             host: process.env.DATABASE_HOST,
@@ -35,12 +36,12 @@ function validateDatabase() {
         connection.connect(async (err) => {
 
             if (err) {
-                console.log("[MySQL] Connection failed");
-                console.log(err);
+                logger.db("Connection failed");
+                logger.error(err)
                 return;
             }
 
-            console.log("[MySQL] Connected");
+            logger.db("Connection successful");
 
             await new Promise((resolve) => connection.query(`
                         CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.suggestions
@@ -59,7 +60,7 @@ function validateDatabase() {
                             accepted      boolean   NULL,
                             CONSTRAINT suggestion_id PRIMARY KEY (id)
                         );`
-                , (err) => err ? console.log(err) : resolve()));
+                , (err) => err ? logger.error(err) : resolve()));
 
             await new Promise((resolve) => connection.query(`
                         CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.servers
@@ -77,11 +78,11 @@ function validateDatabase() {
                             allow_links            boolean      NULL,
                             CONSTRAINT server_id PRIMARY KEY (id)
                         );`
-                , (err) => err ? console.log(err) : resolve()));
+                , (err) => err ? logger.error(err) : resolve()));
 
             connection.end(() => {
 
-                console.log("[MySQL] Validated");
+                logger.db("Validated");
                 resolve();
 
             });

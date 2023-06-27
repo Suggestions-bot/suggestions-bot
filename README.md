@@ -7,7 +7,7 @@ This bot allows users to make suggestions as well as accept and deny, and revers
 Invite the public bot to your
 server [here](https://discord.com/api/oauth2/authorize?client_id=1067721186357813258&permissions=277562616896&scope=bot%20applications.commands).
 
-### Self hosting a better option for you?
+###  Is self-hosting a better option for you?
 
 ## Installation
 
