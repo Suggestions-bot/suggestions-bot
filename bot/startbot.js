@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const logger
+const logger = require("../logger");
 const client = new Discord.Client({
 
     //fetchAllMembers: false,
@@ -56,4 +56,4 @@ client.aliases = new Discord.Collection();
 
 //Start the Bot
 
-client.login(process.env.DISCORD_TOKEN).then(() => console.log("Started Bot")).catch(e => console.log(e));
+client.login(process.env.DISCORD_TOKEN).then(() => logger.startup("Started Bot")).catch(e => console.log(e));

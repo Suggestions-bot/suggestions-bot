@@ -1,9 +1,10 @@
 const db = require("../database");
+const logger = require("../logger");
 
 
 async function main() {
-    console.log("Starting Dashboard");
+    logger.startup("Starting Dashboard");
 }
 
-main().then(r => console.log("Started Dashboard")).catch(e => console.log(e));
+main().then(r => logger.startup("Started Dashboard")).catch(e => console.log(e));
 

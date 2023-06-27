@@ -22,13 +22,24 @@ function createLogFile() {
     const hour = now.getHours().toString().padStart(2, '0');
     const minute = now.getMinutes().toString().padStart(2, '0');
     const second = now.getSeconds().toString().padStart(2, '0');
-    const formattedDate = `${year}${month}${day}.${hour}${minute}${second}`;
+    const formattedDate = `${year}.${month}.${day}.${hour}.${minute}.${second}`;
+
+    let firstLine = "";
+    if (fs.existsSync('./logs/latest.log')) {
+        const data = fs.readFileSync('./logs/latest.log', 'utf8');
+        const lines = data.split('\n');
+        firstLine = lines[0].split(": ")[1];
+    } else {
+        firstLine = "unknown";
+    }
 
     if (fs.existsSync('./logs/latest.log')) {
-        fs.renameSync('./logs/latest.log', `./logs/${formattedDate}.log`);
+        fs.renameSync('./logs/latest.log', `./logs/${firstLine}.log`);
     }
     fs.writeFileSync('./logs/latest.log', '');
-    fs.writeFileSync('./logs/debug.log', '');
+    //fs.writeFileSync('./logs/debug.log', '');
+    dumpLog("Creation Date: " + formattedDate)
+
 }
 
 function dumpLog(message) {
@@ -53,23 +64,23 @@ createLogFile();
 
 module.exports = {
      startup(text) {
-        const prefix = '{fgCyan}[STARTUP] {reset}';
-        const formattedText = formatText({text: `[TIMESTAMP] ` + prefix + text});
+        const prefix = '[TIMESTAMP] {fgCyan}[STARTUP] {reset}';
+        const formattedText = formatText( prefix + text);
         beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
     info(text) {
         const cprefix = '[TIMESTAMP] {fgGreen}[INFO] {reset}';
-        const cformattedText = formatText(cprefix + text)
-        beautify.log(cformattedText);
+        const formattedText = formatText(cprefix + text)
+        beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
     chunkmessage(text) {
         const cprefix = '[TIMESTAMP] {fgBlue}[INFO] {reset}{fgMagenta}';
-        const cformattedText = formatText(cprefix + text)
-        beautify.log(cformattedText);
+        const formattedText = formatText(cprefix + text)
+        beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
@@ -79,8 +90,8 @@ module.exports = {
             warn = text
             text = ""
         }
-        const cformattedText = formatText(`${cprefix + text}\n{fgYellow}[WARN MESSAGE]: {reset}${warn}`)
-        beautify.log(cformattedText);
+        const formattedText = formatText(`${cprefix + text}\n{fgYellow}[WARN MESSAGE]: {reset}${warn}`)
+        beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
@@ -93,15 +104,15 @@ module.exports = {
             err = text
             text = ""
         }
-        const cformattedText = formatText(`${cprefix + text}\n{fgRed}[ERROR MESSAGE]: {bright}${err}`)
-        beautify.log(cformattedText);
+        const formattedText = formatText(`${cprefix + text}\n{fgRed}[ERROR MESSAGE]: {bright}${err}`)
+        beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
     super_error(text, err) {
         const cprefix = '[TIMESTAMP] {fgRed}{bright}[FATAL ERROR] {bright}';
-        const cformattedText = formatText(`${cprefix + text}\n${err}`)
-        beautify.log(cformattedText);
+        const formattedText = formatText(`${cprefix + text}\n${err}`)
+        beautify.log(formattedText);
         dumpLog(formattedText);
     },
 
@@ -109,14 +120,14 @@ module.exports = {
         if (commands) {
             const cprefix = '[TIMESTAMP] {fgMagenta}[COMMAND] {reset}';
             // eslint-disable-next-line max-len
-            const cformattedText = formatText(`${cprefix + `${ctx.author.tag} (${ctx.author.id}) used the command ${ctx.command.name} in ${ctx.guild.name} (${ctx.guild.id}) in channel ${ctx.channel.name} (${ctx.channel.id})`}`)
-            beautify.log(cformattedText);
+            const formattedText = formatText(`${cprefix + `${ctx.author.tag} (${ctx.author.id}) used the command ${ctx.command.name} in ${ctx.guild.name} (${ctx.guild.id}) in channel ${ctx.channel.name} (${ctx.channel.id})`}`)
+            beautify.log(formattedText);
         }
     },
 
     db(text) {
-        const prefix = '{fgGreen}{bright}[DATABASE] {reset}';
-        const formattedText = formatText({text: `[TIMESTAMP] ` + prefix + text});
+        const prefix = '[TIMESTAMP] {fgGreen}{bright}[DATABASE] {reset}';
+        const formattedText = formatText(prefix + text);
         beautify.log(formattedText);
         dumpLog(formattedText);
     },
