@@ -1,5 +1,5 @@
 const {readdirSync} = require("fs");
-const Logger = require('./logger');
+const Logger = require('../../logger');
 
 Logger.info("Loading YSH");
 module.exports = (client) => {

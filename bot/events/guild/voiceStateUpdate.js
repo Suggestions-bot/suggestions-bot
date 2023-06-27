@@ -1,4 +1,4 @@
-const Logger = require("../../handlers/logger");
+const Logger = require("../../../logger");
 module.exports = async (client, oldState, newState) => {
     if (
         (!oldState.streaming && newState.streaming) ||

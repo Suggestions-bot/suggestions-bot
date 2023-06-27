@@ -4,7 +4,7 @@ const ee = require(`../../botconfig/embed.json`);
 const settings = require(`../../botconfig/settings.json`);
 const {onCoolDown, replacemsg} = require("../../handlers/functions");
 const Discord = require("discord.js");
-const Logger = require("../../handlers/logger");
+const Logger = require("../../../logger");
 const db = require("../../../database");
 
 module.exports = async (client, message) => {
@@ -51,8 +51,7 @@ module.exports = async (client, message) => {
     let dicon;
     let ecolor;
     let uicon;
-    if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "")
-    {
+    if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "") {
         ecolor = serverdata["suggestion_embed_color"];
     } else {
         ecolor = "2C2F33";

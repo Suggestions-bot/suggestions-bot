@@ -1,4 +1,4 @@
-const Logger = require("../../handlers/logger");
+const Logger = require("../../../logger");
 const db = require("../../../database");
 
 module.exports = {

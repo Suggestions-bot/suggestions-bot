@@ -380,8 +380,7 @@ async function modalSubmit(client, modal) {
         let dicon;
         let ecolor;
         let uicon;
-        if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "")
-        {
+        if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "") {
             ecolor = serverdata["suggestion_embed_color"];
         } else {
             ecolor = "2C2F33";
