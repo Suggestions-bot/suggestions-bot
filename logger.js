@@ -34,10 +34,24 @@ function createLogFile() {
     }
 
     if (fs.existsSync('./logs/latest.log')) {
+        const files = fs.readdirSync('./logs');
+        if (files.length > process.env.LOGGING_MAX_FILES) {
+            let oldestFile = files[0];
+            let oldestFileDate = new Date(oldestFile.split(".log")[0].replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1-$2-$3 $4:$5:$6'));
+            for (let i = 1; i < files.length; i++) {
+                const file = files[i];
+                const fileDate = new Date(file.split(".log")[0].replace(/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1-$2-$3 $4:$5:$6'));
+                if (fileDate < oldestFileDate) {
+                    oldestFile = file;
+                    oldestFileDate = fileDate;
+                }
+            }
+            fs.unlinkSync('./logs/' + oldestFile);
+        }
+
         fs.renameSync('./logs/latest.log', `./logs/${firstLine}.log`);
     }
     fs.writeFileSync('./logs/latest.log', '');
-    //fs.writeFileSync('./logs/debug.log', '');
     dumpLog("Creation Date: " + formattedDate)
 
 }
@@ -51,37 +65,36 @@ function dumpLog(message) {
     fs.writeFileSync('./logs/latest.log', text);
 }
 
-function dumpDebugLog(message) {
-    const fs = require('fs');
-    const data = fs.readFileSync('./logs/debug.log', 'utf8');
-    const lines = data.split('\n');
-    lines[lines.length - 1] += message + "\n";
-    const text = lines.join('\n');
-    fs.writeFileSync('./logs/debug.log', text);
+if (!["off"].includes(process.env.LOGGING_LEVEL)) {
+    createLogFile();
 }
-
-createLogFile();
 
 module.exports = {
      startup(text) {
         const prefix = '[TIMESTAMP] {fgCyan}[STARTUP] {reset}';
         const formattedText = formatText( prefix + text);
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off", "error", "warn"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     info(text) {
         const cprefix = '[TIMESTAMP] {fgGreen}[INFO] {reset}';
         const formattedText = formatText(cprefix + text)
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off", "error", "warn"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     chunkmessage(text) {
         const cprefix = '[TIMESTAMP] {fgBlue}[INFO] {reset}{fgMagenta}';
         const formattedText = formatText(cprefix + text)
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off", "error", "warn"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     warn(text, warn) {
@@ -92,7 +105,9 @@ module.exports = {
         }
         const formattedText = formatText(`${cprefix + text}\n{fgYellow}[WARN MESSAGE]: {reset}${warn}`)
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off", "error"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     error(text, err) {
@@ -106,14 +121,18 @@ module.exports = {
         }
         const formattedText = formatText(`${cprefix + text}\n{fgRed}[ERROR MESSAGE]: {bright}${err}`)
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     super_error(text, err) {
         const cprefix = '[TIMESTAMP] {fgRed}{bright}[FATAL ERROR] {bright}';
         const formattedText = formatText(`${cprefix + text}\n${err}`)
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 
     command(ctx) {
@@ -129,6 +148,8 @@ module.exports = {
         const prefix = '[TIMESTAMP] {fgGreen}{bright}[DATABASE] {reset}';
         const formattedText = formatText(prefix + text);
         beautify.log(formattedText);
-        dumpLog(formattedText);
+        if (!["off", "error", "warn"].includes(process.env.LOGGING_LEVEL)) {
+            dumpLog(formattedText);
+        }
     },
 };
