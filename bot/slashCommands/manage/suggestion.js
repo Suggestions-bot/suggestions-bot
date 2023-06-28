@@ -208,9 +208,7 @@ module.exports = {
                                 )
                         ],
                         embeds: [newEmbed]
-                    }
-                )
-                ;
+                });
                 await db.setSuggestionPending(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_reset_to_og_state, ephemeral: true}
