@@ -7,6 +7,8 @@ const pool = mysql.createPool({
     database: process.env.DATABASE_DATABASE,
     enableKeepAlive: true,
     keepAliveInitialDelay: 20000,
+    bigNumberStrings: true,
+    supportBigNumbers: true,
 });
 
 const getCurrentDate = () => {

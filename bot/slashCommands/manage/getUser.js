@@ -10,8 +10,9 @@ module.exports = {
     requiredroles: [], //Only allow specific Users with a Role to execute a Command [OPTIONAL]
     alloweduserids: [], //Only allow specific Users to execute a Command [OPTIONAL]
     options: [
-        {"User": {name: "user", description: "The user you want to get the suggestions from.", required: true}},
+        {"User": {name: "user", description: "The user you want to get the suggestions from", required: true}},
         // {"String": { name: "message-id", description: "If you don't know the user's name or id.", required: false}},
+        {"Integer": {name: "display_amount", description: "The amount of suggestions to display", required: false}},
     ],
     run: async (client, interaction) => {
         try {
@@ -20,22 +21,64 @@ module.exports = {
             const language = await db.getServerLanguage(interaction.guild.id);
             const lang = require(`../../botconfig/languages/${language}.json`);
             const userInfos = options.getUser("user");
+            //console.log(userInfos);
             //const givenMessageString = options.getString("message-id");
+            const givenDisplayAmount = options.getInteger("display_amount") || 10;
 
             if (userInfos != null) {
-                let udata = await db.getAllUserSuggestions(interaction.guild.id, userInfos.id);
+                await interaction.deferReply();
+                let udata = await db.getAllUserSuggestions(interaction.guild.id.toString(), userInfos.id.toString()); // only worts with strings idk why
+                //let udata = await db.getAllUserSuggestions("347871491402235914", "100000000000000001");
+                //console.log(udata);
+                let sugChannel = await db.getServerSuggestionChannel(interaction.guild.id);
 
-                if (udata == null) return interaction.reply(
+                if (udata == null || udata === []) return await interaction.followUp(
                     {
                         content: "<@" + userInfos.id + "> " + lang.user_has_no_suggestions + " **" + interaction.guild?.name + "**",
                         ephemeral: true
                     }
                 )
                 else {
-                    let calSugs = await udata.map((message, index) => `**${index + 1}.** [${lang.to_suggestion}](https://discord.com/channels/${message.server_id}/${message.channel_id}/${message.message_id})\n\`\`\`\n${message.content}\n\`\`\``).join("\n\n");
-                    interaction.reply(
-                        {content: calSugs, ephemeral: true}
-                    )
+                    //let calSugs = await udata.map((message, index) => `**${index + 1}.** [${lang.to_suggestion}](<https://discord.com/channels/${interaction.guild?.id}/${sugChannel}/${message.message_id}>)\n\`\`\`\n${message.content}\n\`\`\``).join("\n\n");
+                    let calSugs = await udata.slice(Math.max(udata.length - givenDisplayAmount, 0)).reverse().map((message, index) => `**${index + 1}.** [${lang.to_suggestion}](<https://discord.com/channels/${interaction.guild.id}/${sugChannel}/${message.message_id}>)\n\`\`\`\n${message.content}\n\`\`\``).join("\n\n");
+
+                    let sugs = null;
+                    //console.log(calSugs.length);
+                    if (calSugs.length > 2000) {
+                        let splitSugs = calSugs.split("\n\n");
+                        sugs = [];
+                        let sugsLength = 0;
+                        let i = 0;
+                        for (const sug of splitSugs) {
+                            if (sugsLength > 1800) {
+                                i++;
+                                sugsLength = sug.length;
+                            } else {
+                                sugsLength += sug.length;
+                            }
+                            if (sugs[i] == null) sugs[i] = "";
+                            sugs[i] += sug + "\n\n";
+                        }
+                    }
+
+                    if (sugs) {
+                        //console.log(sugs[0].length);
+                        await interaction.followUp(
+                            {content: sugs[0], ephemeral: false}
+                        )
+                        for (const sug of sugs) {
+                            if (sug === sugs[0]) continue;
+                            await interaction.followUp(
+                                {content: sug, ephemeral: false}
+                            )
+                            await new Promise(resolve => setTimeout(resolve, 250));
+                        }
+                    } else {
+                        await interaction.followUp(
+                            {content: calSugs, ephemeral: false}
+                        )
+                    }
+
                 }
             }
             /*else if (givenMessageString != null) {
