@@ -83,6 +83,15 @@ function validateDatabase() {
                         );`
                 , (err) => err ? logger.error(err) : resolve()));
 
+            await new Promise((resolve) => connection.query(`
+                        CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.cache
+                        (
+                            id            int auto_increment,
+                            sorted_guilds json null,
+                            constraint cache_id primary key (id)
+                        );`
+                , (err) => err ? logger.error(err) : resolve()));
+
             connection.end(() => {
 
                 logger.db("Validated");
