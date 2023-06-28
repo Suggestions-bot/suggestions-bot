@@ -45,10 +45,10 @@ module.exports = {
                         });
 
                         let addFieldsObject = [];
-                        for (let i = page * 10; i < formattedGuilds.length; i++) {
+                        for (let i = 0; i < formattedGuilds.length; i++) {
                             let guild = formattedGuilds[i];
                             addFieldsObject.push({
-                                name: `Guild ${i + 1}`,
+                                name: `Guild ${page + i + 1}`,
                                 value: guild
                             });
                         }
