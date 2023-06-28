@@ -1,6 +1,3 @@
-//Import Modules
-const ee = require(`../../botconfig/embed.json`);
-const {onCoolDown, replacemsg} = require("../../handlers/functions");
 const Discord = require("discord.js");
 const db = require("../../../database");
 
@@ -70,6 +67,115 @@ async function confirmRevote(interaction, lang) {
 
 }
 
+async function checkForAutoAccept(interaction, message, lang) {
+    //console.log(interaction.guild.id) //696048541830742067
+    const accept_upvotes = await db.getAcceptUpvotes(interaction.guild.id)
+    //console.log(accept_upvotes)
+    if (accept_upvotes) {
+        //console.log(message.id)
+        const voters = await db.getSuggestionVoters(interaction.guild.id, message.id);
+        //console.log(voters)
+        const upvotes = voters[0]?.upvotes;
+        //console.log(upvotes)
+        if (upvotes >= accept_upvotes) {
+            const embedData = await db.getServerEmbedData(interaction.guild.id);
+            //console.log(embedData)
+            let embed = message.embeds[0];
+            let editedEmbed = {
+                author: embed.author,
+                color: embed.color,
+                timestamp: embed.timestamp,
+                footer: embed.footer,
+                description: embed.description,
+                fields: [embed.fields[0], embed.fields[1], {
+                    name: "**" + lang.suggest_accepted + `** ${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`,
+                    value: lang.suggestion_auto_accept_upvotes,
+                    inline: false
+                }],
+            };
+            const uicon = embedData?.upvote_emoji || "<:thumbs_up_bot:1080565677900976242>";
+            const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
+            await message.edit({
+                components: [
+                    new Discord.MessageActionRow()
+                        .addComponents(
+                            new Discord.MessageButton()
+                                .setCustomId("up")
+                                .setStyle("SUCCESS")
+                                .setLabel(lang.suggest_upvote)
+                                .setEmoji(`${uicon}`)
+                                .setDisabled(true),
+                            new Discord.MessageButton()
+                                .setCustomId("down")
+                                .setStyle("DANGER")
+                                .setLabel(lang.suggest_downvote)
+                                .setEmoji(`${dicon}`)
+                                .setDisabled(true),
+                            new Discord.MessageButton()
+                                .setCustomId("accepted")
+                                .setStyle("PRIMARY")
+                                .setLabel(lang.suggest_accepted)
+                                .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
+                        )
+                ], embeds: [editedEmbed]
+            });
+            await db.setSuggestionAccepted(interaction.guild.id, message.id);
+        }
+    }
+}
+
+async function checkForAutoDecline(interaction, message, lang) {
+    const deny_downvotes = await db.getDeclineDownvotes(interaction.guild.id)
+
+    if (deny_downvotes) {
+        const voters = await db.getSuggestionVoters(interaction.guild.id, message.id);
+        const downvotes = voters[0]["downvotes"];
+        if (downvotes >= deny_downvotes) {
+            const embedData = await db.getServerEmbedData(interaction.guild.id);
+            let embed = message.embeds[0];
+            let editedEmbed = {
+                author: embed.author,
+                color: embed.color,
+                timestamp: embed.timestamp,
+                footer: embed.footer,
+                description: embed.description,
+                fields: [embed.fields[0], embed.fields[1], {
+                    name: "**" + lang.suggest_declined + `** ${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`,
+                    value: lang.suggestion_auto_decline_downvotes,
+                }],
+            };
+            const uicon = embedData?.upvote_emoji || "<:thumbs_up_bot:1080565677900976242>";
+            const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
+            await message.edit({
+                components: [
+                    new Discord.MessageActionRow()
+                        .addComponents(
+                            new Discord.MessageButton()
+                                .setCustomId("up")
+                                .setStyle("SUCCESS")
+                                .setLabel(lang.suggest_upvote)
+                                .setEmoji(`${uicon}`)
+                                .setDisabled(true),
+                            new Discord.MessageButton()
+                                .setCustomId("down")
+                                .setStyle("DANGER")
+                                .setLabel(lang.suggest_downvote)
+                                .setEmoji(`${dicon}`)
+                                .setDisabled(true),
+                            new Discord.MessageButton()
+                                .setCustomId("declined")
+                                .setStyle("PRIMARY")
+                                .setLabel(lang.suggest_declined)
+                                .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
+                        )
+                ], embeds: [editedEmbed]
+            });
+            await db.setSuggestionDenied(interaction.guild.id, message.id);
+        }
+    }
+}
+
+
 /**
  *
  * @param {Discord.interaction} interaction
@@ -104,7 +210,7 @@ async function buttons(interaction) {
             voter = voter[0];
             // console.log(voter);
             if (voter.toString() === "") {
-                console.log("voter is null");
+                //console.log("voter is null");
                 voter = {
                     upvoters: [], downvoters: [], re_voters: [],
                 };
@@ -142,6 +248,7 @@ async function buttons(interaction) {
                 components: message.components,
                 embeds: [editedEmbed],
             });
+            await checkForAutoAccept(interaction, message, lang);
         }
             break;
 
@@ -154,7 +261,7 @@ async function buttons(interaction) {
             // console.log(voter);
             voter = voter[0];
             if (voter.toString() === "") {
-                console.log("voter is null");
+                //console.log("voter is null");
                 voter = {
                     upvoters: [], downvoters: [], re_voters: [],
                 };
@@ -191,6 +298,7 @@ async function buttons(interaction) {
                 components: message.components,
                 embeds: [editedEmbed],
             });
+            await checkForAutoDecline(interaction, message, lang);
         }
             break;
 
@@ -233,6 +341,7 @@ async function buttons(interaction) {
                             content: lang.revote_success,
                             ephemeral: true,
                         });
+                        await checkForAutoAccept(interaction, message, lang);
                         return;
                     } else {
                         await interaction.followUp({
@@ -302,6 +411,7 @@ async function buttons(interaction) {
                             content: lang.revote_success,
                             ephemeral: true,
                         });
+                        await checkForAutoDecline(interaction, message, lang);
                         return;
                     } else {
                         await interaction.followUp({
@@ -340,7 +450,7 @@ async function buttons(interaction) {
         }
             break;
 
-        case "rejected": {
+        case "declined": {
             await interaction.followUp({
                 content: lang.already_declined,
                 ephemeral: true,

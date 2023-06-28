@@ -36,5 +36,12 @@
   "embed_success": "Die Embeds Formatierung wurden erfolgreich bearbeitet.",
   "not_valid_option": "Du hast keine gültige Option gewählt. Bitte wähle mindestens eine der angegebenen Optionen.",
   "revote_success": "Deine Stimme wurde erfolgreich geändert.",
-  "suggest_comment": "Kommentar:"
+  "suggest_comment": "Kommentar:",
+  "suggestion_auto_accept_upvotes": "Suggestion has been automatically accepted because it has reached the required number of upvotes.",
+  "suggestion_auto_decline_downvotes": "Suggestion has been automatically declined because it has reached the required number of downvotes.",
+  "reset_auto": "The auto accept/decline settings have been reset.",
+  "reset_auto_error": "The auto accept/decline settings could not be reset. If this error persists, please contact a developer.",
+  "set_auto_accept": "The auto accept settings have been set to {amount}.",
+  "set_auto_decline": "The auto decline settings have been set to {amount}.",
+  "choose_valid_option": "It appears that you haven't chosen any valid option. Please choose at least one of the options given."
 }
