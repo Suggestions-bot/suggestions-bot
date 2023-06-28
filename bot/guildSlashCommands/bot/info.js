@@ -67,7 +67,7 @@ module.exports = {
             const formattedUptime = `${Math.floor(uptime / 86400000)}d ${Math.floor(uptime / 3600000) % 24}h ${Math.floor(uptime / 60000) % 60}m ${Math.floor(uptime / 1000) % 60}s`;
             //console.log(formattedUptime);
 
-            const embed = new discord.MessageEmbed()
+            /*const embed = new discord.MessageEmbed()
                 .setTitle("Info")
                 .setDescription("Stats about the bot")
                 .addField("Guilds", guildAmount.toString(), true)
@@ -79,6 +79,31 @@ module.exports = {
                 .addField("Current Version", gitCommit, true)
                 .addField("Total Suggestions", suggestionsInDB.toString(), true)
                 .addField("Top 3 Guilds with most suggestions", formattedGuildsWithMostSuggestions, false)
+                .setColor("GREEN")
+                .setTimestamp()
+                .setFooter({
+                    text: "Suggestions Bot",
+                });*/
+
+
+            const embed = new discord.MessageEmbed()
+                .setTitle("Info")
+                .setDescription("Stats about the bot")
+                .addFields(
+                    {name: "Guilds", value: guildAmount.toString(), inline: true},
+                    {name: "Users", value: userAmount.toString(), inline: true},
+                    {name: "Users in Cache", value: usersInCache.toString(), inline: true},
+                    {name: "Channels", value: channelAmount.toString(), inline: true},
+                    {name: "Uptime", value: formattedUptime, inline: true},
+                    {name: "Ping", value: `${ping}ms`, inline: true},
+                    {name: "Current Version", value: gitCommit, inline: true},
+                    {name: "Total Suggestions", value: suggestionsInDB.toString(), inline: true},
+                    {
+                        name: "Top 3 Guilds with most suggestions",
+                        value: formattedGuildsWithMostSuggestions,
+                        inline: false
+                    }
+                )
                 .setColor("GREEN")
                 .setTimestamp()
                 .setFooter({
