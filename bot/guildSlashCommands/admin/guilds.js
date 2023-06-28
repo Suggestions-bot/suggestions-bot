@@ -103,7 +103,7 @@ module.exports = {
 
                 const invites = interaction.options.getString("invites");
                 if (invites === "true") {
-                    const inviteTime = guildArray.length * (100 + 200 /*average ping*/);
+                    const inviteTime = guildArray.length * (100 + 350 /*average response time*/);
                     const inviteTimestampUNIX = Date.now() + inviteTime;
                     await responseMessage.edit(`Getting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
                     // get invite for each guild
@@ -118,7 +118,8 @@ module.exports = {
                                 guildArray[i].invite = invite.url;
                             }
                         } catch (e) {
-                            await responseMessage.edit(`Error while getting invite for guild ${guild.guildName} (${guild.guildId})\nGetting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
+                            //await responseMessage.edit(`Error while getting invite for guild ${guild.guildName} (${guild.guildId})\nGetting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
+                            // no perms, ignore
                         }
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
