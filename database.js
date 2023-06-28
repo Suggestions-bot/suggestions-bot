@@ -186,10 +186,10 @@ const getAcceptUpvotes = async (guildId) => {
     });
 }
 
-const getDenyDownvotes = async (guildId) => {
+const getDeclineDownvotes = async (guildId) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            `SELECT auto_deny_downvotes
+            `SELECT auto_decline_downvotes
              FROM servers
              WHERE server_id = ?`,
             [guildId],
@@ -197,7 +197,7 @@ const getDenyDownvotes = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    resolve(results[0]?.auto_deny_downvotes);
+                    resolve(results[0]?.auto_decline_downvotes);
                 }
             }
         );
@@ -612,6 +612,72 @@ const setSuggestionPending = async (guildId, suggestionId) => {
     });
 }
 
+const setServerAutoAccept = async (guildId, autoAccept) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_accept_upvotes = ?
+             WHERE server_id = ?`,
+            [autoAccept, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_accept_upvotes)
+                             VALUES (?, ?)`,
+                            [guildId, autoAccept],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setServerAutoDecline = async (guildId, autoDecline) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_decline_downvotes = ?
+             WHERE server_id = ?`,
+            [autoDecline, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_decline_downvotes)
+                             VALUES (?, ?)`,
+                            [guildId, autoDecline],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
 const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => {
     return new Promise((resolve, reject) => {
         // add a new suggestion to the database only if message_id is not already in the database
@@ -811,7 +877,7 @@ module.exports = {
     getSuggestionVoters,
     getServerAllowsLinks,
     getAcceptUpvotes,
-    getDenyDownvotes,
+    getDeclineDownvotes,
     getNumberOfSuggestions,
     getGuildsWithMostSuggestions,
 
@@ -827,6 +893,8 @@ module.exports = {
     setSuggestionDenied,
     setSuggestionAccepted,
     setSuggestionPending,
+    setServerAutoAccept,
+    setServerAutoDecline,
 
     addNewSuggestion,
     addSuggestionUpvote,

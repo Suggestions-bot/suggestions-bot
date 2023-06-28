@@ -124,8 +124,8 @@ async function checkForAutoAccept(interaction, message, lang) {
     }
 }
 
-async function checkForAutoDeny(interaction, message, lang) {
-    const deny_downvotes = await db.getDenyDownvotes(interaction.guild.id)
+async function checkForAutoDecline(interaction, message, lang) {
+    const deny_downvotes = await db.getDeclineDownvotes(interaction.guild.id)
 
     if (deny_downvotes) {
         const voters = await db.getSuggestionVoters(interaction.guild.id, message.id);
@@ -298,7 +298,7 @@ async function buttons(interaction) {
                 components: message.components,
                 embeds: [editedEmbed],
             });
-            await checkForAutoDeny(interaction, message, lang);
+            await checkForAutoDecline(interaction, message, lang);
         }
             break;
 
@@ -411,7 +411,7 @@ async function buttons(interaction) {
                             content: lang.revote_success,
                             ephemeral: true,
                         });
-                        await checkForAutoDeny(interaction, message, lang);
+                        await checkForAutoDecline(interaction, message, lang);
                         return;
                     } else {
                         await interaction.followUp({

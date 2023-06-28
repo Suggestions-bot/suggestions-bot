@@ -14,7 +14,7 @@ module.exports = {
             "Channel": {
                 name: "channel",
                 description: "Set the channel to send / recieve suggestions in.",
-                required: true
+                required: false
             }
         },
         {
@@ -49,15 +49,21 @@ module.exports = {
                     )
                 }
             } else {
-                await db.setServerSuggestionChannel(interaction.guild?.id, channel)
+
                 if (language == null) {
                     language = "lang_en"
                 }
                 const lang = require(`../../botconfig/languages/${language}.json`);
-
-                interaction.reply(
-                    {content: lang.set_suggestion_channel + " <#" + channel + ">.", ephemeral: true}
-                )
+                if (channel == null) {
+                    await interaction.reply({
+                        content: lang.choose_valid_option,
+                    });
+                } else {
+                    await db.setServerSuggestionChannel(interaction.guild?.id, channel)
+                    interaction.reply(
+                        {content: lang.set_suggestion_channel + " <#" + channel + ">.", ephemeral: true}
+                    )
+                }
             }
         } catch (e) {
             Logger.error(e);
