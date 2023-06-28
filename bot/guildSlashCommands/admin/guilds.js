@@ -45,7 +45,7 @@ module.exports = {
                         });
 
                         let addFieldsObject = [];
-                        for (let i = 0; i < formattedGuilds.length; i++) {
+                        for (let i = page * 10; i < formattedGuilds.length; i++) {
                             let guild = formattedGuilds[i];
                             addFieldsObject.push({
                                 name: `Guild ${i + 1}`,
@@ -92,7 +92,7 @@ module.exports = {
                     guildArray.push(guildObject);
                 });
 
-                await responseMessage.edit("Getting suggestion count for each guild...\nETA: <t:" + Math.ceil((Date.now() + guildAmount * 110 /*average query time*/ ) / 1000) + ":R>");
+                await responseMessage.edit("Getting suggestion count for each guild...\nETA: <t:" + Math.ceil((Date.now() + guildAmount * 110 /*average query time*/) / 1000) + ":R>");
 
                 // get suggestion count for each guild
                 for (let i = 0; i < guildArray.length; i++) {
@@ -111,10 +111,14 @@ module.exports = {
                         let guild = guildArray[i];
                         let guildId = guild.guildId;
                         let guildObject = client.guilds.cache.get(guildId);
-                        let invites = await guildObject.invites.fetch();
-                        let invite = invites.find(invite => invite.guild.id === guildId);
-                        if (invite) {
-                            guildArray[i].invite = invite.url;
+                        try {
+                            let invites = await guildObject.invites.fetch();
+                            let invite = invites.find(invite => invite.guild.id === guildId);
+                            if (invite) {
+                                guildArray[i].invite = invite.url;
+                            }
+                        } catch (e) {
+                            await responseMessage.edit(`Error while getting invite for guild ${guild.guildName} (${guild.guildId})\nGetting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
                         }
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
