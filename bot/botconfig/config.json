@@ -17,8 +17,8 @@
   ],
   "slashCommandsServerDirs": [
     {
-      "Folder": "bot",
-      "CmdName": "bot",
+      "Folder": "admin",
+      "CmdName": "admin",
       "CmdDescription": "Do stuff with the bot",
       "dmpermission": false,
       "activeByDefault": false

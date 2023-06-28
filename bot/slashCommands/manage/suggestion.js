@@ -120,7 +120,7 @@ module.exports = {
                                     .setCustomId("accepted")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_accepted)
-                                    .setEmoji("<a:accept_bot:1000710815562866759>")
+                                    .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
                             )
                     ], embeds: [newEmbed]
                 });
@@ -172,7 +172,7 @@ module.exports = {
                                     .setCustomId("declined")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_declined)
-                                    .setEmoji("<a:deny_bot:1000710816980533278>")
+                                    .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
                             )
                     ], embeds: [newEmbed]
                 });

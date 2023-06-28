@@ -223,6 +223,24 @@ const getNumberOfSuggestions = async () => {
     });
 }
 
+const getNumberOfSuggestionsInGuild = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT COUNT(*)
+             FROM suggestions
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]["COUNT(*)"]);
+                }
+            }
+        );
+    });
+}
+
 const getGuildsWithMostSuggestions = async () => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -510,24 +528,26 @@ const setServerEmbedColor = async (guildId, color) => {
     });
 }
 
-const setServerEmbedSettings = async (guildId, color, downvote, upvote) => {
+const setServerEmbedSettings = async (guildId, color, downvote, upvote, accept, decline) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE servers
              SET suggestion_embed_color = ?,
                  downvote_emoji         = ?,
-                 upvote_emoji           = ?
+                 upvote_emoji           = ?,
+                 accepted_emoji         = ?,
+                 denied_emoji           = ?
              WHERE server_id = ?`,
-            [color, downvote, upvote, guildId],
+            [color, downvote, upvote, accept, decline, guildId],
             (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
                     if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
-                            `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji)
-                             VALUES (?, ?, ?, ?)`,
-                            [guildId, color, downvote, upvote],
+                            `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji, accepted_emoji, denied_emoji)
+                             VALUES (?, ?, ?, ?, ?, ?)`,
+                            [guildId, color, downvote, upvote, accept, decline],
                             (err) => {
                                 if (err) {
                                     reject(err);
@@ -868,6 +888,49 @@ const checkForUserVote = async (guildId, suggestionId, userId) => {
 }
 
 
+const cacheSetSortedGuilds = async (guilds) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE FROM cache WHERE sorted_guilds IS NOT NULL`,
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                }
+            }
+        );
+        
+        pool.query(
+            `INSERT INTO cache (sorted_guilds)
+                VALUES (?)`,
+            [JSON.stringify(guilds)],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
+const cacheGetSortedGuilds = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT sorted_guilds FROM cache;`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(JSON.parse(results[0].sorted_guilds));
+                }
+            }
+        );
+    });
+}
+
+
 module.exports = {
     pool,
     getCurrentDate,
@@ -881,6 +944,7 @@ module.exports = {
     getAcceptUpvotes,
     getDeclineDownvotes,
     getNumberOfSuggestions,
+    getNumberOfSuggestionsInGuild,
     getGuildsWithMostSuggestions,
 
     setServerLanguage,
@@ -904,8 +968,11 @@ module.exports = {
     addSuggestionUpvoteRevoteDown,
     addSuggestionDownvoteRevoteUp,
 
-    checkForUserVote
+    checkForUserVote,
 
 
+    cacheSetSortedGuilds,
+    cacheGetSortedGuilds,
+    
 }
 
