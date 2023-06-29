@@ -11,7 +11,7 @@ module.exports = client => {
             Logger.chunkmessage("")
             Logger.chunkmessage(`     ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓`)
             Logger.chunkmessage(`     ┃ ` + " ".repeat(-1 + stringlength - ` ┃ `.length) + "┃")
-            Logger.chunkmessage(`     ┃ ` + `Discord Bot is logged in!` + " ".repeat(-1 + stringlength - ` ┃ `.length - `Discord Bot is online!`.length) + "┃")
+            Logger.chunkmessage(`     ┃ ` + `Discord Bot is logged in!` + " ".repeat(-1 + stringlength - ` ┃ `.length - `Discord Bot is logged in!`.length) + "┃")
             Logger.chunkmessage(`     ┃ ` + `Botname: ${client.user.tag}` + " ".repeat(-1 + stringlength - ` ┃ `.length - `Botname: ${client.user.tag}`.length) + "┃")
             // Logger.chunkmessage(`     ┃ `+ `BotID: ${client.user.id}`+ " ".repeat(-1+stringlength-` ┃ `.length-`BotID: ${client.user.id}`.length)+ "┃") // noone needs this lmao
             // Logger.chunkmessage(`     ┃ `+ `Prefix: ${config.prefix}`+ " ".repeat(-1+stringlength-` ┃ `.length-`Prefix: ${config.prefix}`.length)+ "┃") // Not Defined
