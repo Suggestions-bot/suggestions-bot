@@ -8,7 +8,7 @@
     "start": "node ."
   },
   "keywords": [],
-  "author": "Faye",
+  "author": "Faye, SleepyYui",
   "license": "MIT",
   "dependencies": {
     "@discordjs/builders": "0.12.0",

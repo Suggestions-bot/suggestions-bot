@@ -2,6 +2,8 @@ const Discord = require("discord.js");
 const db = require("../../../database");
 
 module.exports = (client, interaction) => {
+    if (interaction.channel.type === "dm") return;
+
     const CategoryName = interaction.commandName;
     let command = false;
     try {
@@ -208,6 +210,7 @@ async function buttons(interaction) {
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             // console.log(voter);
             voter = voter[0];
+            if (voter === undefined) return await interaction.followUp({ content: lang.suggest_none_found, ephemeral: true });
             // console.log(voter);
             if (voter.toString() === "") {
                 //console.log("voter is null");
@@ -260,6 +263,7 @@ async function buttons(interaction) {
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             // console.log(voter);
             voter = voter[0];
+            if (voter === undefined) return await interaction.followUp({ content: lang.suggest_none_found, ephemeral: true });
             if (voter.toString() === "") {
                 //console.log("voter is null");
                 voter = {
