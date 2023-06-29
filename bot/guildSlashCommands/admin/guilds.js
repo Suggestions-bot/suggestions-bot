@@ -45,10 +45,11 @@ module.exports = {
                         });
 
                         let addFieldsObject = [];
+                        const startPageNum = (page - 1) * 10;
                         for (let i = 0; i < formattedGuilds.length; i++) {
                             let guild = formattedGuilds[i];
                             addFieldsObject.push({
-                                name: `Guild ${page + i + 1}`,
+                                name: `Guild ${startPageNum + i + 1}`,
                                 value: guild
                             });
                         }
@@ -95,8 +96,8 @@ module.exports = {
                 await responseMessage.edit("Getting suggestion count for each guild...\nETA: <t:" + Math.ceil((Date.now() + guildAmount * 110 /*average query time*/) / 1000) + ":R>");
 
                 // get suggestion count for each guild
-                for (let i = 0; i < guildArray.length; i++) {
-                    guildArray[i].suggestionCount = await db.getNumberOfSuggestionsInGuild(guildArray[i].guildId) || 0;
+                for (const element of guildArray) {
+                    element.suggestionCount = await db.getNumberOfSuggestionsInGuild(element.guildId) || 0;
                     await new Promise(resolve => setTimeout(resolve, 1)); // don't overload the database, just in case
                 }
 
@@ -107,21 +108,25 @@ module.exports = {
                     const inviteTimestampUNIX = Date.now() + inviteTime;
                     await responseMessage.edit(`Getting invite for each guild...\nWill take approximately ${Math.round(inviteTime / 1000)} seconds.\nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
                     // get invite for each guild
-                    for (let i = 0; i < guildArray.length; i++) {
-                        let guild = guildArray[i];
+                    for (const element of guildArray) {
+                        let guild = element;
                         let guildId = guild.guildId;
                         let guildObject = client.guilds.cache.get(guildId);
-                        try {
-                            let invites = await guildObject.invites.fetch();
-                            let invite = invites.find(invite => invite.guild.id === guildId);
-                            if (invite) {
-                                guildArray[i].invite = invite.url;
+                        if (guildObject.vanityURLCode) {
+                            element.invite = `https://discord.gg/${guildObject.vanityURLCode}`;
+                        } else {
+                            try {
+                                let invites = await guildObject.invites.fetch();
+                                let invite = invites.find(invite => invite.guild.id === guildId);
+                                if (invite) {
+                                    element.invite = invite.url;
+                                }
+                            } catch (e) {
+                                //await responseMessage.edit(`Error while getting invite for guild ${guild.guildName} (${guild.guildId})\nGetting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
+                                // no perms, ignore
                             }
-                        } catch (e) {
-                            //await responseMessage.edit(`Error while getting invite for guild ${guild.guildName} (${guild.guildId})\nGetting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
-                            // no perms, ignore
+                            await new Promise(resolve => setTimeout(resolve, 100));
                         }
-                        await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     await responseMessage.edit("Sorting guilds...");
                 } else {
