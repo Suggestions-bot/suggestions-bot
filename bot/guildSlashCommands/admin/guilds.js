@@ -45,10 +45,10 @@ module.exports = {
                         });
 
                         let addFieldsObject = [];
-                        for (let i = page * 10; i < formattedGuilds.length; i++) {
+                        for (let i = 0; i < formattedGuilds.length; i++) {
                             let guild = formattedGuilds[i];
                             addFieldsObject.push({
-                                name: `Guild ${i + 1}`,
+                                name: `Guild ${page + i + 1}`,
                                 value: guild
                             });
                         }
@@ -105,7 +105,7 @@ module.exports = {
                 if (invites === "true") {
                     const inviteTime = guildArray.length * (100 + 350 /*average response time*/);
                     const inviteTimestampUNIX = Date.now() + inviteTime;
-                    await responseMessage.edit(`Getting invite for each guild...\nWill take approximately seconds. (~${Math.round(inviteTime / 1000)}s) \nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
+                    await responseMessage.edit(`Getting invite for each guild...\nWill take approximately ${Math.round(inviteTime / 1000)} seconds.\nETA: <t:${Math.ceil(inviteTimestampUNIX / 1000)}:R>`);
                     // get invite for each guild
                     for (let i = 0; i < guildArray.length; i++) {
                         let guild = guildArray[i];
