@@ -14,5 +14,14 @@
       "dmpermission": false,
       "activeByDefault": false
     }
+  ],
+  "slashCommandsServerDirs": [
+    {
+      "Folder": "admin",
+      "CmdName": "admin",
+      "CmdDescription": "Do stuff with the bot",
+      "dmpermission": false,
+      "activeByDefault": false
+    }
   ]
 }

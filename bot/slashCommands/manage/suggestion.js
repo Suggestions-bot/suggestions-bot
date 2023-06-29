@@ -23,7 +23,7 @@ module.exports = {
                 name: "options",
                 description: "Action you want to do",
                 required: true,
-                choices: [["Accept", "accept"], ["Reject", "reject"], ["Reset", "reset"]]
+                choices: [["Accept", "accept"], ["Decline", "decline"], ["Reset", "reset"]]
             }
         },
         {
@@ -73,6 +73,10 @@ module.exports = {
                 return;
             }
 
+            const embedData = await db.getServerEmbedData(interaction.guild.id);
+            const uicon = embedData?.upvote_emoji || "<:thumbs_up_bot:1080565677900976242>";
+            const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
+
             if (action === "accept") {
                 let embed = message.embeds[0];
                 let newEmbed = {
@@ -96,25 +100,27 @@ module.exports = {
                     })
                 }
 
-                message.edit({
+                await message.edit({
                     components: [
                         new Discord.MessageActionRow()
                             .addComponents(
                                 new Discord.MessageButton()
                                     .setCustomId("up")
                                     .setStyle("SUCCESS")
-                                    .setLabel("👍 " + lang.suggest_upvote)
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("down")
                                     .setStyle("DANGER")
-                                    .setLabel("👎 " + lang.suggest_downvote)
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("accepted")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_accepted)
-                                    .setEmoji("<a:accept_bot:1000710815562866759>")
+                                    .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
                             )
                     ], embeds: [newEmbed]
                 });
@@ -123,7 +129,7 @@ module.exports = {
                     {content: lang.suggest_accepted_text, ephemeral: true}
                 );
 
-            } else if (action === "reject") {
+            } else if (action === "decline") {
                 let embed = message.embeds[0];
                 let newEmbed = {
                     author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
@@ -146,25 +152,27 @@ module.exports = {
                     })
                 }
 
-                message.edit({
+                await message.edit({
                     components: [
                         new Discord.MessageActionRow()
                             .addComponents(
                                 new Discord.MessageButton()
                                     .setCustomId("up")
                                     .setStyle("SUCCESS")
-                                    .setLabel("👍 Upvote")
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("down")
                                     .setStyle("DANGER")
-                                    .setLabel("👎 Downvote")
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
-                                    .setCustomId("rejected")
+                                    .setCustomId("declined")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_declined)
-                                    .setEmoji("<a:deny_bot:1000710816980533278> ")
+                                    .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
                             )
                     ], embeds: [newEmbed]
                 });
@@ -183,20 +191,23 @@ module.exports = {
                     ]
                 }
 
-                message.edit({
-                    components: [
-                        new Discord.MessageActionRow()
-                            .addComponents(
-                                new Discord.MessageButton()
-                                    .setCustomId("up")
-                                    .setStyle("SUCCESS")
-                                    .setLabel("👍 Upvote"),
-                                new Discord.MessageButton()
-                                    .setCustomId("down")
-                                    .setStyle("DANGER")
-                                    .setLabel("👎 Downvote"),
-                            )
-                    ], embeds: [newEmbed]
+                await message.edit({
+                        components: [
+                            new Discord.MessageActionRow()
+                                .addComponents(
+                                    new Discord.MessageButton()
+                                        .setCustomId("up")
+                                        .setStyle("SUCCESS")
+                                        .setLabel(lang.suggest_upvote)
+                                        .setEmoji(`${uicon}`),
+                                    new Discord.MessageButton()
+                                        .setCustomId("down")
+                                        .setStyle("DANGER")
+                                        .setLabel(lang.suggest_downvote)
+                                        .setEmoji(`${dicon}`),
+                                )
+                        ],
+                        embeds: [newEmbed]
                 });
                 await db.setSuggestionPending(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(

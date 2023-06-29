@@ -76,7 +76,19 @@ function validateDatabase() {
                             denied_emoji           varchar(255) NULL,
                             language               varchar(255) NULL,
                             allow_links            boolean      NULL,
+                            allow_attachments      boolean      NULL,
+                            auto_accept_upvotes    int          NULL,
+                            auto_deny_downvotes    int          NULL,
                             CONSTRAINT server_id PRIMARY KEY (id)
+                        );`
+                , (err) => err ? logger.error(err) : resolve()));
+
+            await new Promise((resolve) => connection.query(`
+                        CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.cache
+                        (
+                            id            int auto_increment,
+                            sorted_guilds json null,
+                            constraint cache_id primary key (id)
                         );`
                 , (err) => err ? logger.error(err) : resolve()));
 

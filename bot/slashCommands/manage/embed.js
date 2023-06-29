@@ -3,7 +3,7 @@ const db = require("../../../database");
 
 module.exports = {
     name: "embed", //the command name for the Slash Command
-    description: "Change the looks of the embed.", //the command description for Slash Command Overview
+    description: "Change the looks of the embed. Execute with no options to reset.", //the command description for Slash Command Overview
     cooldown: 5, //the cooldown for the command in seconds (max. 60)
     memberpermissions: ["manage_server"], //Only allow members with specific Permissions to execute a Commmand [OPTIONAL]
     requiredroles: [], //Only allow specific Users with a Role to execute a Command [OPTIONAL]
@@ -13,11 +13,13 @@ module.exports = {
             "String": {
                 name: "color",
                 description: "The color you want the embed to be. (has to be hex e.g. #2c2f33)",
-                required: true
+                required: false
             }
         },
-        {"String": {name: "icon_up", description: "The default is 👍", required: true}},
-        {"String": {name: "icon_down", description: "The default is 👎", required: true}},
+        {"String": {name: "icon_up", description: "The default is 👍", required: false}},
+        {"String": {name: "icon_down", description: "The default is 👎", required: false}},
+        {"String": {name: "icon_accepted", description: "The default is a checkmark", required: false}},
+        {"String": {name: "icon_declined", description: "The default is a cross", required: false}},
     ],
     run: async (client, interaction) => {
         try {
@@ -59,8 +61,26 @@ module.exports = {
                 uicon = "👍"
             }
 
+            let aicon = options.getString("icon_accepted");
+            if (aicon != null) {
+                if (aicon.includes(" ")) {
+                    aicon = aicon.replace(" ", "")
+                }
+            } else {
+                aicon = "<a:accept_bot:1000710815562866759>"
+            }
 
-            await db.setServerEmbedSettings(interaction.guild?.id, gcolor, dicon, uicon)
+            let ricon = options.getString("icon_declined");
+            if (ricon != null) {
+                if (ricon.includes(" ")) {
+                    ricon = ricon.replace(" ", "")
+                }
+            } else {
+                ricon = "<a:deny_bot:1000710816980533278>"
+            }
+
+
+            await db.setServerEmbedSettings(interaction.guild?.id, gcolor, dicon, uicon, aicon, ricon)
 
             interaction.reply(
                 {content: lang.embed_success, ephemeral: true}

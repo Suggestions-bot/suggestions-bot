@@ -17,7 +17,7 @@
     "chalk": "4",
     "colors": "^1.4.0",
     "discord-modals": "1",
-    "discord.js": "^13.1.0",
+    "discord.js": "^13.16.0",
     "dotenv": "^16.0.1",
     "knex": "^2.4.2",
     "moment": "^2.29.1",
