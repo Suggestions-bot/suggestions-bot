@@ -31,15 +31,15 @@ module.exports = {
         try {
             const {options} = interaction;
 
-            let channel = options.getChannel("channel").id;
+            let channel = options.getChannel("channel")?.id;
             let remove = options.getString("remove");
-            let language = await db.getServerLanguage(interaction.guild?.id)
+            let language = await db.getServerLanguage(interaction.guild?.id || 0)
 
             if (remove === "true") {
                 const lang = require(`../../botconfig/languages/${language}.json`);
 
                 try {
-                    await db.setServerSuggestionChannel(interaction.guild?.id, null)
+                    await db.setServerSuggestionChannel(interaction.guild?.id || 0, null)
                     interaction.reply(
                         {content: lang.reset_suggestion_channel, ephemeral: true}
                     )
