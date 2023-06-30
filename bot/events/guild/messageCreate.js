@@ -40,8 +40,8 @@ module.exports = async (client, message) => {
 
 
     const serverdata = await db.getAllServerSettings(msg.guild?.id);
+    let language = await db.getServerLanguage(msg.guild?.id);
 
-    let language = serverdata.language;
     if (language == null) {
         language = "lang_en";
     }

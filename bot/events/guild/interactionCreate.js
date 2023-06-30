@@ -2,7 +2,12 @@ const Discord = require("discord.js");
 const db = require("../../../database");
 
 module.exports = (client, interaction) => {
-    if (interaction.channel.type === "dm") return;
+    if (interaction.channel.type === "dm" || !interaction.guild) {
+        return interaction.reply({
+            content: "This command can only be used in servers.",
+        });
+    }
+
 
     const CategoryName = interaction.commandName;
     let command = false;
@@ -210,7 +215,10 @@ async function buttons(interaction) {
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             // console.log(voter);
             voter = voter[0];
-            if (voter === undefined) return await interaction.followUp({ content: lang.suggest_none_found, ephemeral: true });
+            if (voter === undefined) return await interaction.followUp({
+                content: lang.suggest_none_found,
+                ephemeral: true
+            });
             // console.log(voter);
             if (voter.toString() === "") {
                 //console.log("voter is null");
@@ -263,7 +271,10 @@ async function buttons(interaction) {
             let voter = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
             // console.log(voter);
             voter = voter[0];
-            if (voter === undefined) return await interaction.followUp({ content: lang.suggest_none_found, ephemeral: true });
+            if (voter === undefined) return await interaction.followUp({
+                content: lang.suggest_none_found,
+                ephemeral: true
+            });
             if (voter.toString() === "") {
                 //console.log("voter is null");
                 voter = {
@@ -588,5 +599,65 @@ async function modalSubmit(client, modal) {
             .then(async (message) => {
                 await db.addNewSuggestion(modal.guild?.id, message.id, res, modal.user.id);
             });
+    } else if (modal.customId === "edit") {
+
+        const language = await db.getServerLanguage(modal.guild.id)
+        const lang = require(`../../botconfig/languages/${language}.json`);
+
+        let value = await db.getServerSuggestionChannel(modal.guild.id)
+        let channel = client.channels.cache.get(value);
+        let userID = modal.user.id;
+
+        let givenMessageString = modal.fields.getTextInputValue("message-id");
+        let newMessage = modal.fields.getTextInputValue("input");
+        let givenMessageID;
+
+        if (givenMessageString.includes("/")) {
+            givenMessageID = givenMessageString.split("/")[6];
+        } else {
+            givenMessageID = givenMessageString;
+        }
+
+        let udata = await db.getAllUserSuggestions(modal.guild.id, userID);
+        if (udata == null) return modal.reply(
+            {content: lang.suggest_none, ephemeral: true}
+        );
+        let messageIdArray = udata.map(x => x.message_id);
+        if (!messageIdArray.includes(givenMessageID)) return modal.reply(
+            {content: lang.suggest_none_found, ephemeral: true}
+        );
+
+        // log an error whilst getting the message
+        let message = await channel.messages.fetch(givenMessageID.toString())
+            .catch(err => {
+                modal.reply(
+                    {content: lang.suggest_none_found, ephemeral: true}
+                )
+                return false;
+            });
+
+        if (message === false) return;
+
+        let embed = message.embeds[0];
+
+        if (embed.fields[2] != null) {
+            return modal.reply(
+                {content: lang.suggest_cannot_edit, ephemeral: true}
+            );
+        }
+
+        let editedEmbed = {
+            author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
+            description: newMessage, fields: [
+                embed.fields[0],
+                embed.fields[1],
+            ]
+        }
+
+        message.edit({components: message.components, embeds: [editedEmbed]})
+        modal.reply(
+            {content: lang.suggest_edit_success, ephemeral: true}
+        );
+
     }
 }
