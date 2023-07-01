@@ -552,7 +552,7 @@ async function modalSubmit(client, modal) {
 
         //Sends message to confirm the suggestion
         modal.reply({content: lang.suggest_sent, ephemeral: true});
-        channel
+        let sugMessage = await channel
             .send({
                 embeds: [
                     {
@@ -598,7 +598,27 @@ async function modalSubmit(client, modal) {
             })
             .then(async (message) => {
                 await db.addNewSuggestion(modal.guild?.id, message.id, res, modal.user.id);
+                return message;
             });
+
+            let thread = await db.getServerAutoThread(modal.guild?.id);
+            if (thread == null) return;
+            let starterMessage = res.substring(0, 95);
+            if (starterMessage.includes(". ")) {
+                starterMessage = starterMessage.split(". ")[0];
+            }
+            if (starterMessage.includes("\n")) {
+                starterMessage = starterMessage.split("\n")[0];
+            }
+            if (starterMessage.length > 95) {
+                starterMessage += "...";
+            }
+            if (thread == true) {
+                await sugMessage.startThread({
+                    name: starterMessage,
+                });
+            }
+
     } else if (modal.customId === "edit") {
 
         const language = await db.getServerLanguage(modal.guild.id)

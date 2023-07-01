@@ -45,5 +45,7 @@
   "set_auto_decline": "The auto decline settings have been set to {amount}.",
   "choose_valid_option": "It appears that you haven't chosen any valid option. Please choose at least one of the options given.",
   "suggest_edit_title": "Suggestion Edit",
-  "suggest_edit_message_id": "Message ID:"
+  "suggest_edit_message_id": "Message ID:",
+  "auto_thread_set": "The auto thread settings have been set to {value}.",
+  "auto_thread_error": "The auto thread settings could not be set. If this error persists, please contact a developer."
 }

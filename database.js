@@ -262,6 +262,28 @@ const getGuildsWithMostSuggestions = async () => {
     });
 }
 
+const getServerAutoThread = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_thread
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results[0]?.auto_thread.toString() === "1") {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                }
+            }
+        );
+    });
+}
+
 const setServerLanguage = async (guildId, language) => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -700,6 +722,39 @@ const setServerAutoDecline = async (guildId, autoDecline) => {
     });
 }
 
+const setServerAutoThread = async (guildId, autoThread) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_thread = ?
+             WHERE server_id = ?`,
+            [autoThread, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_thread)
+                             VALUES (?, ?)`,
+                            [guildId, autoThread],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
 const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => {
     return new Promise((resolve, reject) => {
         // add a new suggestion to the database only if message_id is not already in the database
@@ -946,6 +1001,7 @@ module.exports = {
     getNumberOfSuggestions,
     getNumberOfSuggestionsInGuild,
     getGuildsWithMostSuggestions,
+    getServerAutoThread,
 
     setServerLanguage,
     setServerManagerRole,
@@ -961,6 +1017,7 @@ module.exports = {
     setSuggestionPending,
     setServerAutoAccept,
     setServerAutoDecline,
+    setServerAutoThread,
 
     addNewSuggestion,
     addSuggestionUpvote,

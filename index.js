@@ -78,7 +78,8 @@ function validateDatabase() {
                             allow_links            boolean      NULL,
                             allow_attachments      boolean      NULL,
                             auto_accept_upvotes    int          NULL,
-                            auto_decline_downvotes    int          NULL,
+                            auto_decline_downvotes int          NULL,
+                            auto_thread            boolean      NULL,
                             CONSTRAINT server_id PRIMARY KEY (id)
                         );`
                 , (err) => err ? logger.error(err) : resolve()));
