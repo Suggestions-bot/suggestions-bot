@@ -46,6 +46,6 @@
   "choose_valid_option": "Parece que no seleccionó una opción válida. Seleccione al menos una de las opciones dadas.",
   "suggest_edit_title": "Editar sugerencia",
   "suggest_edit_message_id": "Identificación del mensaje:",
-  "auto_thread_set": "La configuración de subprocesos automáticos se ha establecido en {value}.",
-  "auto_thread_error": "No se pudo establecer la configuración de subprocesos automáticos. Si este error persiste, comuníquese con un desarrollador."
+  "auto_thread_set": "La configuración de hilos automáticos se ha establecido en {value}.",
+  "auto_thread_error": "No se pudo establecer la configuración de hilos automáticos. Si este error persiste, comuníquese con un desarrollador."
 }
