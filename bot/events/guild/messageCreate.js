@@ -101,7 +101,7 @@ module.exports = async (client, message) => {
 
     if (msg.deletable) msg.delete();
 
-    channel
+    let sugMessage = await channel
         .send({
             embeds: [
                 {
@@ -147,7 +147,26 @@ module.exports = async (client, message) => {
         })
         .then(async (message) => {
             await db.addNewSuggestion(msg.guild?.id, message.id, rawEContent, msgAuthor.id);
+            return message;
         });
+
+    let thread = await db.getServerAutoThread(msg.guild?.id);
+    if (thread == null) return;
+    let starterMessage = rawEContent.substring(0, 95);
+    if (starterMessage.includes(". ")) {
+        starterMessage = starterMessage.split(". ")[0];
+    }
+    if (starterMessage.includes("\n")) {
+        starterMessage = starterMessage.split("\n")[0];
+    }
+    if (starterMessage.length > 95) {
+        starterMessage += "...";
+    }
+    if (thread == true) {
+        await sugMessage.startThread({
+            name: starterMessage,
+        });
+    }
 };
 
 function escapeRegex(str) {
