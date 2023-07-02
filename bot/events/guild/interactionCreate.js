@@ -601,23 +601,27 @@ async function modalSubmit(client, modal) {
                 return message;
             });
 
-            let thread = await db.getServerAutoThread(modal.guild?.id);
-            if (thread == null) return;
-            let starterMessage = res.substring(0, 95);
-            if (starterMessage.includes(". ")) {
-                starterMessage = starterMessage.split(". ")[0];
-            }
-            if (starterMessage.includes("\n")) {
-                starterMessage = starterMessage.split("\n")[0];
-            }
-            if (starterMessage.length > 95) {
-                starterMessage += "...";
-            }
-            if (thread == true) {
+        let thread = await db.getServerAutoThread(modal.guild?.id);
+        if (thread == null) return;
+        let starterMessage = res.substring(0, 95);
+        if (starterMessage.includes(". ")) {
+            starterMessage = starterMessage.split(". ")[0];
+        }
+        if (starterMessage.includes("\n")) {
+            starterMessage = starterMessage.split("\n")[0];
+        }
+        if (starterMessage.length > 95) {
+            starterMessage += "...";
+        }
+        if (thread == true) {
+            try {
                 await sugMessage.startThread({
                     name: starterMessage,
                 });
+            } catch (e) {
+                e = null;
             }
+        }
 
     } else if (modal.customId === "edit") {
 

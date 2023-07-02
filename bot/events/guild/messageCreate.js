@@ -163,9 +163,13 @@ module.exports = async (client, message) => {
         starterMessage += "...";
     }
     if (thread == true) {
-        await sugMessage.startThread({
-            name: starterMessage,
-        });
+        try {
+            await sugMessage.startThread({
+                name: starterMessage,
+            });
+        } catch (e) {
+            e = null;
+        }
     }
 };
 
