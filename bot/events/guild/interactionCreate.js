@@ -7,6 +7,7 @@ module.exports = (client, interaction) => {
             content: "This command can only be used in servers.",
         });
     }
+    interaction.client = client;
 
 
     const CategoryName = interaction.commandName;
@@ -127,6 +128,19 @@ async function checkForAutoAccept(interaction, message, lang) {
                 ], embeds: [editedEmbed]
             });
             await db.setSuggestionAccepted(interaction.guild.id, message.id);
+            const thread = await db.getSuggestionThread(interaction.guild.id, message.id);
+            if (thread) {
+                try {
+                    // get thread by id
+                    const threadChannel = await interaction.client.channels.fetch(thread);
+                    // make thread private
+                    await threadChannel.setLocked(true, "Suggestion accepted");
+                    // close thread
+                    await threadChannel.setArchived(true);
+                } catch (e) {
+                    e = undefined
+                }
+            }
         }
     }
 }
@@ -178,6 +192,19 @@ async function checkForAutoDecline(interaction, message, lang) {
                 ], embeds: [editedEmbed]
             });
             await db.setSuggestionDenied(interaction.guild.id, message.id);
+            const thread = await db.getSuggestionThread(interaction.guild.id, message.id);
+            if (thread) {
+                try {
+                    // get thread by id
+                    const threadChannel = await interaction.client.channels.fetch(thread);
+                    // make thread private
+                    await threadChannel.setLocked(true, "Suggestion declined");
+                    // close thread
+                    await threadChannel.setArchived(true);
+                } catch (e) {
+                    e = undefined
+                }
+            }
         }
     }
 }
@@ -615,9 +642,10 @@ async function modalSubmit(client, modal) {
         }
         if (thread == true) {
             try {
-                await sugMessage.startThread({
+                let threadChannel = await sugMessage.startThread({
                     name: starterMessage,
                 });
+                await db.setSuggestionThread(sugMessage.id, threadChannel.id);
             } catch (e) {
                 e = null;
             }

@@ -164,9 +164,10 @@ module.exports = async (client, message) => {
     }
     if (thread == true) {
         try {
-            await sugMessage.startThread({
+            let threadChannel = await sugMessage.startThread({
                 name: starterMessage,
             });
+            await db.setSuggestionThread(sugMessage.id, threadChannel.id);
         } catch (e) {
             e = null;
         }

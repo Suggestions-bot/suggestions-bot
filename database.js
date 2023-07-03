@@ -284,6 +284,25 @@ const getServerAutoThread = async (guildId) => {
     });
 }
 
+const getSuggestionThread = async (guildId, messageId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT thread_id
+             FROM suggestions
+             WHERE server_id = ?
+               AND message_id = ?`,
+            [guildId, messageId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.thread_id);
+                }
+            }
+        );
+    });
+}
+
 const setServerLanguage = async (guildId, language) => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -755,6 +774,28 @@ const setServerAutoThread = async (guildId, autoThread) => {
     });
 }
 
+const setSuggestionThread = async (suggestionId, threadId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE suggestions
+             SET thread_id = ?
+             WHERE message_id = ?`,
+            [threadId, suggestionId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
 const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => {
     return new Promise((resolve, reject) => {
         // add a new suggestion to the database only if message_id is not already in the database
@@ -1002,6 +1043,7 @@ module.exports = {
     getNumberOfSuggestionsInGuild,
     getGuildsWithMostSuggestions,
     getServerAutoThread,
+    getSuggestionThread,
 
     setServerLanguage,
     setServerManagerRole,
@@ -1018,6 +1060,7 @@ module.exports = {
     setServerAutoAccept,
     setServerAutoDecline,
     setServerAutoThread,
+    setSuggestionThread,
 
     addNewSuggestion,
     addSuggestionUpvote,
