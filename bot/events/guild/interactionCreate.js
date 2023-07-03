@@ -7,6 +7,7 @@ module.exports = (client, interaction) => {
             content: "This command can only be used in servers.",
         });
     }
+    interaction.client = client;
 
 
     const CategoryName = interaction.commandName;
@@ -127,6 +128,19 @@ async function checkForAutoAccept(interaction, message, lang) {
                 ], embeds: [editedEmbed]
             });
             await db.setSuggestionAccepted(interaction.guild.id, message.id);
+            const thread = await db.getSuggestionThread(interaction.guild.id, message.id);
+            if (thread) {
+                try {
+                    // get thread by id
+                    const threadChannel = await interaction.client.channels.fetch(thread);
+                    // make thread private
+                    await threadChannel.setLocked(true, "Suggestion accepted");
+                    // close thread
+                    await threadChannel.setArchived(true);
+                } catch (e) {
+                    e = undefined
+                }
+            }
         }
     }
 }
@@ -178,6 +192,19 @@ async function checkForAutoDecline(interaction, message, lang) {
                 ], embeds: [editedEmbed]
             });
             await db.setSuggestionDenied(interaction.guild.id, message.id);
+            const thread = await db.getSuggestionThread(interaction.guild.id, message.id);
+            if (thread) {
+                try {
+                    // get thread by id
+                    const threadChannel = await interaction.client.channels.fetch(thread);
+                    // make thread private
+                    await threadChannel.setLocked(true, "Suggestion declined");
+                    // close thread
+                    await threadChannel.setArchived(true);
+                } catch (e) {
+                    e = undefined
+                }
+            }
         }
     }
 }
@@ -601,23 +628,28 @@ async function modalSubmit(client, modal) {
                 return message;
             });
 
-            let thread = await db.getServerAutoThread(modal.guild?.id);
-            if (thread == null) return;
-            let starterMessage = res.substring(0, 95);
-            if (starterMessage.includes(". ")) {
-                starterMessage = starterMessage.split(". ")[0];
-            }
-            if (starterMessage.includes("\n")) {
-                starterMessage = starterMessage.split("\n")[0];
-            }
-            if (starterMessage.length > 95) {
-                starterMessage += "...";
-            }
-            if (thread == true) {
-                await sugMessage.startThread({
+        let thread = await db.getServerAutoThread(modal.guild?.id);
+        if (thread == null) return;
+        let starterMessage = res.substring(0, 95);
+        if (starterMessage.includes(". ")) {
+            starterMessage = starterMessage.split(". ")[0];
+        }
+        if (starterMessage.includes("\n")) {
+            starterMessage = starterMessage.split("\n")[0];
+        }
+        if (starterMessage.length > 95) {
+            starterMessage += "...";
+        }
+        if (thread == true) {
+            try {
+                let threadChannel = await sugMessage.startThread({
                     name: starterMessage,
                 });
+                await db.setSuggestionThread(sugMessage.id, threadChannel.id);
+            } catch (e) {
+                e = null;
             }
+        }
 
     } else if (modal.customId === "edit") {
 

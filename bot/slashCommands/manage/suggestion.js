@@ -129,6 +129,20 @@ module.exports = {
                     {content: lang.suggest_accepted_text, ephemeral: true}
                 );
 
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // make thread private
+                        await threadChannel.setLocked(true, "Suggestion accepted");
+                        // close thread
+                        await threadChannel.setArchived(true);
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
+
             } else if (action === "decline") {
                 let embed = message.embeds[0];
                 let newEmbed = {
@@ -181,6 +195,20 @@ module.exports = {
                     {content: lang.suggest_declined_text, ephemeral: true}
                 );
 
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // make thread private
+                        await threadChannel.setLocked(true, "Suggestion declined");
+                        // close thread
+                        await threadChannel.setArchived(true);
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
+
             } else if (action === "reset") {
                 let embed = message.embeds[0];
                 let newEmbed = {
@@ -192,27 +220,41 @@ module.exports = {
                 }
 
                 await message.edit({
-                        components: [
-                            new Discord.MessageActionRow()
-                                .addComponents(
-                                    new Discord.MessageButton()
-                                        .setCustomId("up")
-                                        .setStyle("SUCCESS")
-                                        .setLabel(lang.suggest_upvote)
-                                        .setEmoji(`${uicon}`),
-                                    new Discord.MessageButton()
-                                        .setCustomId("down")
-                                        .setStyle("DANGER")
-                                        .setLabel(lang.suggest_downvote)
-                                        .setEmoji(`${dicon}`),
-                                )
-                        ],
-                        embeds: [newEmbed]
+                    components: [
+                        new Discord.MessageActionRow()
+                            .addComponents(
+                                new Discord.MessageButton()
+                                    .setCustomId("up")
+                                    .setStyle("SUCCESS")
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`),
+                                new Discord.MessageButton()
+                                    .setCustomId("down")
+                                    .setStyle("DANGER")
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`),
+                            )
+                    ],
+                    embeds: [newEmbed]
                 });
                 await db.setSuggestionPending(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_reset_to_og_state, ephemeral: true}
                 );
+
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // close thread
+                        await threadChannel.setArchived(false);
+                        // make thread private
+                        await threadChannel.setLocked(false, "Suggestion reset");
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
             }
         } catch (e) {
             Logger.error(e);

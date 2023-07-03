@@ -58,6 +58,7 @@ function validateDatabase() {
                             re_voters     json      NULL,
                             creation_date timestamp NOT NULL,
                             accepted      boolean   NULL,
+                            thread_id     bigint    NULL,
                             CONSTRAINT suggestion_id PRIMARY KEY (id)
                         );`
                 , (err) => err ? logger.error(err) : resolve()));
