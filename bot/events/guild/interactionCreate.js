@@ -662,7 +662,7 @@ async function modalSubmit(client, modal) {
 
         let givenMessageString = modal.fields.getTextInputValue("message-id");
         let newMessage = modal.fields.getTextInputValue("input");
-        let givenMessageID;
+        let givenMessageID = "";
 
         if (givenMessageString.includes("/")) {
             givenMessageID = givenMessageString.split("/")[6];
