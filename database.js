@@ -273,7 +273,7 @@ const getServerAutoThread = async (guildId) => {
                 if (err) {
                     reject(err);
                 } else {
-                    if (results[0]?.auto_thread.toString() === "1") {
+                    if (results[0]?.auto_thread?.toString() === "1") {
                         resolve(true);
                     } else {
                         resolve(false);
