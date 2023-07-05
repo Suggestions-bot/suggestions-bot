@@ -99,78 +99,66 @@ module.exports = async (client, message) => {
         return;
     }*/
 
-    if (msg.deletable) msg.delete();
+    try {
+        if (msg.deletable) msg.delete();
+    } catch (e) {
+        e = null;
+    }
 
-    let sugMessage = await channel
-        .send({
-            embeds: [
-                {
+    try {
+        let sugMessage = await channel
+            .send({
+                embeds: [{
                     author: {
-                        name: msgAuthor.username,
-                        iconURL: msgAuthor.avatarURL({dynamic: true}),
-                    },
-                    color: ecolor,
-                    timestamp: new Date(),
-                    footer: {
-                        iconURL: guild.iconURL({dynamic: true}),
-                        text: guild.name,
-                    },
-                    description: rawEContent,
-                    fields: [
-                        {
-                            name: uicon + " " + lang.suggest_upvotes,
-                            value: "```\n0```",
-                            inline: true,
-                        },
-                        {
-                            name: dicon + " " + lang.suggest_downvotes,
-                            value: "```\n0```",
-                            inline: true,
-                        },
-                    ],
-                },
-            ],
-            components: [
-                new Discord.MessageActionRow().addComponents(
-                    new Discord.MessageButton()
-                        .setCustomId("up")
-                        .setStyle("SUCCESS")
-                        .setLabel(lang.suggest_upvote)
-                        .setEmoji(`${uicon}`),
-                    new Discord.MessageButton()
-                        .setCustomId("down")
-                        .setStyle("DANGER")
-                        .setLabel(lang.suggest_downvote)
-                        .setEmoji(`${dicon}`)
-                ),
-            ],
-        })
-        .then(async (message) => {
-            await db.addNewSuggestion(msg.guild?.id, message.id, rawEContent, msgAuthor.id);
-            return message;
-        });
-
-    let thread = await db.getServerAutoThread(msg.guild?.id);
-    if (thread == null) return;
-    let starterMessage = rawEContent.substring(0, 95);
-    if (starterMessage.includes(". ")) {
-        starterMessage = starterMessage.split(". ")[0];
-    }
-    if (starterMessage.includes("\n")) {
-        starterMessage = starterMessage.split("\n")[0];
-    }
-    if (starterMessage.length > 95) {
-        starterMessage += "...";
-    }
-    if (thread == true) {
-        try {
-            let threadChannel = await sugMessage.startThread({
-                name: starterMessage,
+                        name: msgAuthor.username, iconURL: msgAuthor.avatarURL({dynamic: true}),
+                    }, color: ecolor, timestamp: new Date(), footer: {
+                        iconURL: guild.iconURL({dynamic: true}), text: guild.name,
+                    }, description: rawEContent, fields: [{
+                        name: uicon + " " + lang.suggest_upvotes, value: "```\n0```", inline: true,
+                    }, {
+                        name: dicon + " " + lang.suggest_downvotes, value: "```\n0```", inline: true,
+                    },],
+                },], components: [new Discord.MessageActionRow().addComponents(new Discord.MessageButton()
+                    .setCustomId("up")
+                    .setStyle("SUCCESS")
+                    .setLabel(lang.suggest_upvote)
+                    .setEmoji(`${uicon}`), new Discord.MessageButton()
+                    .setCustomId("down")
+                    .setStyle("DANGER")
+                    .setLabel(lang.suggest_downvote)
+                    .setEmoji(`${dicon}`)),],
+            })
+            .then(async (message) => {
+                await db.addNewSuggestion(msg.guild?.id, message.id, rawEContent, msgAuthor.id);
+                return message;
             });
-            await db.setSuggestionThread(sugMessage.id, threadChannel.id);
-        } catch (e) {
-            e = null;
+
+        let thread = await db.getServerAutoThread(msg.guild?.id);
+        if (thread == null) return;
+        let starterMessage = rawEContent.substring(0, 95);
+        if (starterMessage.includes(". ")) {
+            starterMessage = starterMessage.split(". ")[0];
         }
+        if (starterMessage.includes("\n")) {
+            starterMessage = starterMessage.split("\n")[0];
+        }
+        if (starterMessage.length > 95) {
+            starterMessage += "...";
+        }
+        if (thread == true) {
+            try {
+                let threadChannel = await sugMessage.startThread({
+                    name: starterMessage,
+                });
+                await db.setSuggestionThread(sugMessage.id, threadChannel.id);
+            } catch (e) {
+                e = null;
+            }
+        }
+
+    } catch (e) {
+        Logger.error("Error while creating suggestion message (Spam?):");
+        console.log(e);
     }
 };
 

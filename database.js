@@ -303,6 +303,26 @@ const getSuggestionThread = async (guildId, messageId) => {
     });
 }
 
+const getServerSuggestionsSortedByUpvotes = async (guildId, amount) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT message_id, upvotes, downvotes, content
+             FROM suggestions
+             WHERE server_id = ?
+             ORDER BY upvotes DESC
+             LIMIT ?`,
+            [guildId, amount],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            }
+        );
+    });
+}
+
 const setServerLanguage = async (guildId, language) => {
     return new Promise((resolve, reject) => {
         pool.query(
@@ -1026,6 +1046,38 @@ const cacheGetSortedGuilds = async () => {
     });
 }
 
+const deleteServer = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE FROM servers WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
+const deleteSuggestions = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE FROM suggestions WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
 
 module.exports = {
     pool,
@@ -1044,6 +1096,7 @@ module.exports = {
     getGuildsWithMostSuggestions,
     getServerAutoThread,
     getSuggestionThread,
+    getServerSuggestionsSortedByUpvotes,
 
     setServerLanguage,
     setServerManagerRole,
@@ -1073,6 +1126,8 @@ module.exports = {
 
     cacheSetSortedGuilds,
     cacheGetSortedGuilds,
-    
+
+    deleteServer,
+    deleteSuggestions,
 }
 
