@@ -61,7 +61,7 @@ module.exports = {
             const formattedGuildsWithMostSuggestions = "" +
                 "1. " + `${client.guilds.cache.get(guildsWithMostSuggestions[0].guildId)?.name || "Unknown Guild"}` + ` (\`${guildsWithMostSuggestions[0].guildId}\`)` + " - " + guildsWithMostSuggestions[0].numberOfSuggestions + " suggestions\n" +
                 "2. " + `${client.guilds.cache.get(guildsWithMostSuggestions[1].guildId)?.name || "Unknown Guild"}` + ` (\`${guildsWithMostSuggestions[1].guildId}\`)` + " - " + guildsWithMostSuggestions[1].numberOfSuggestions + " suggestions\n" +
-                "3. " + `${client.guilds.cache.get(guildsWithMostSuggestions[2].guildId)?.name || "Unknown Guild"}` + ` (\`${guildsWithMostSuggestions[2].guildId}\`)` + " - " + guildsWithMostSuggestions[2].numberOfSuggestions + " suggestions";
+                "3. " + `${client.guilds.cache.get(guildsWithMostSuggestions[2]?.guildId)?.name || "Unknown Guild"}` + ` (\`${guildsWithMostSuggestions[2]?.guildId}\`)` + " - " + guildsWithMostSuggestions[2]?.numberOfSuggestions + " suggestions";
             //console.log(formattedGuildsWithMostSuggestions);
 
             const formattedUptime = `${Math.floor(uptime / 86400000)}d ${Math.floor(uptime / 3600000) % 24}h ${Math.floor(uptime / 60000) % 60}m ${Math.floor(uptime / 1000) % 60}s`;
@@ -118,6 +118,7 @@ module.exports = {
 
         } catch (e) {
             Logger.error(e);
+            console.trace(e);
         }
     }
 }

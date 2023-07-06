@@ -82,11 +82,13 @@ module.exports = {
                     let memberCount = guild.memberCount;
                     let guildId = guild.id;
                     let guildName = guild.name;
+                    let channelCount = guild.channels.cache.size;
 
                     let guildObject = {
                         guildId: guildId,
                         guildName: guildName,
                         memberCount: memberCount,
+                        channelCount: channelCount,
                         suggestionCount: undefined,
                         invite: undefined
                     }
@@ -161,7 +163,7 @@ module.exports = {
                 await responseMessage.edit("Formatting guilds...");
 
                 const formattedGuilds = pageOneGuilds.map(guild => {
-                    return `GuildName: \`${guild.guildName}\`\nGuildId: \`${guild.guildId}\`\nMemberCount: \`${guild.memberCount}\`\nSuggestionCount: \`${guild.suggestionCount}\`\nInvite: ${guild.invite || "none"}`;
+                    return `GuildName: \`${guild.guildName}\`\nGuildId: \`${guild.guildId}\`\nMemberCount: \`${guild.memberCount}\`\nChannelCount (Cache): \`${guild.channelCount}\`\nSuggestionCount: \`${guild.suggestionCount}\`\nInvite: ${guild.invite || "none"}`;
                 });
 
                 let addFieldsObject = [];
