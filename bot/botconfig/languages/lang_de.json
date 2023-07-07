@@ -48,9 +48,9 @@
   "suggest_edit_message_id": "Nachrichten ID:",
   "auto_thread_set": "Die Einstellungen für den automatischen Thread wurden auf {value} gesetzt.",
   "auto_thread_error": "Die Auto-Thread-Einstellungen konnten nicht festgelegt werden. Wenn dieser Fehler weiterhin besteht, wende dich bitte an einen Entwickler.",
-  "suggest_embed_title": "Suggest Something!",
-  "suggest_embed_desc": "Click the button below this message to suggest something!",
-  "suggest_embed_button": "Suggest",
+  "suggest_embed_title": "Schlag etwas vor",
+  "suggest_embed_desc": "Klicke auf den Knopf unter dieser Nachricht, um etwas vorzuschlagen.",
+  "suggest_embed_button": "Vorschlagen",
   "suggest_error_deleting": "Der Vorschlag konnte nicht gelöscht werden. Bitte gehe sicher dass der Bot die nötigen Berechtigungen hat.",
-  "suggest_deleted": "The suggestion has been deleted."
+  "suggest_deleted": "Der Vorschlag wurde gelöscht."
 }

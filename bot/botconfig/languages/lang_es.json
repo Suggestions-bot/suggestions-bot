@@ -48,9 +48,9 @@
   "suggest_edit_message_id": "Identificación del mensaje:",
   "auto_thread_set": "La configuración de hilos automáticos se ha establecido en {value}.",
   "auto_thread_error": "No se pudo establecer la configuración de hilos automáticos. Si este error persiste, comuníquese con un desarrollador.",
-  "suggest_embed_title": "Suggest Something!",
-  "suggest_embed_desc": "Click the button below this message to suggest something!",
-  "suggest_embed_button": "Suggest",
-  "suggest_error_deleting": "An error occurred while deleting the suggestion. Please make sure the bot has the required permissions.",
-  "suggest_deleted": "The suggestion has been deleted."
+  "suggest_embed_title": "¡Sugiere algo!",
+  "suggest_embed_desc": "Haga clic en el botón debajo de este mensaje para sugerir algo",
+  "suggest_embed_button": "Sugerir",
+  "suggest_error_deleting": "Ocurrió un error al eliminar la sugerencia. Asegúrese de que el bot tenga los permisos necesarios.",
+  "suggest_deleted": "La sugerencia ha sido eliminada."
 }
