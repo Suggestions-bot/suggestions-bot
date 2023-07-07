@@ -47,5 +47,10 @@
   "suggest_edit_title": "Редактировать предложение",
   "suggest_edit_message_id": "Идентификатор сообщения:",
   "auto_thread_set": "Настройки автоматического нить были установлены на {value}.",
-  "auto_thread_error": "Не удалось установить автоматические настройки нить. Если эта ошибка повторится, обратитесь к разработчику."
+  "auto_thread_error": "Не удалось установить автоматические настройки нить. Если эта ошибка повторится, обратитесь к разработчику.",
+  "suggest_embed_title": "Suggest Something!",
+  "suggest_embed_desc": "Click the button below this message to suggest something!",
+  "suggest_embed_button": "Suggest",
+  "suggest_error_deleting": "An error occurred while deleting the suggestion. Please make sure the bot has the required permissions.",
+  "suggest_deleted": "The suggestion has been deleted."
 }
