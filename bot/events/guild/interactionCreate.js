@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const db = require("../../../database");
+const modals = require("discord-modals");
 
 module.exports = (client, interaction) => {
     if (interaction.channel.type === "dm" || !interaction.guild) {
@@ -216,8 +217,7 @@ async function checkForAutoDecline(interaction, message, lang) {
  */
 async function buttons(interaction) {
 
-    await interaction.deferUpdate().catch(() => {
-    });
+
     // .log(interaction.customId);
 
     const language = await db.getServerLanguage(interaction.guild?.id)
@@ -236,6 +236,8 @@ async function buttons(interaction) {
 
     switch (interaction.customId) {
         case "up": {
+            await interaction.deferUpdate().catch(() => {
+            });
             let message = interaction.message;
             let embed = message.embeds[0];
             let newNumber = Number(embed.fields[0].value.split("```\n")[1].split("```")[0]) + 1;
@@ -291,6 +293,8 @@ async function buttons(interaction) {
             break;
 
         case "down": {
+            await interaction.deferUpdate().catch(() => {
+            });
             // logger.info(`${interaction.member.user.tag} used ${interaction.commandName}`, "info");
             let message = interaction.message;
             let embed = message.embeds[0];
@@ -345,6 +349,8 @@ async function buttons(interaction) {
             break;
 
         case "up-rechoice": {
+            await interaction.deferUpdate().catch(() => {
+            });
             let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
             let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
@@ -409,6 +415,8 @@ async function buttons(interaction) {
         }
 
         case "down-rechoice": {
+            await interaction.deferUpdate().catch(() => {
+            });
             let message = await interaction.message.channel.messages.fetch(interaction.message.reference.messageId);
             let embed = message.embeds[0];
             let voters = await db.getSuggestionVoters(message.guild.id.toString(), message.id.toString());
@@ -478,13 +486,40 @@ async function buttons(interaction) {
             }
         }
 
+        case "suggest": {
+            const modal = new modals.Modal()
+                .setCustomId('send')
+                .setTitle(lang.add_suggestion_under)
+                .addComponents(
+                    new modals.TextInputComponent()
+                        .setCustomId('input')
+                        .setLabel(lang.suggestion_name)
+                        .setStyle('LONG')
+                        .setMinLength(3)
+                        .setMaxLength(1024)
+                        .setPlaceholder(lang.add_suggestion_here)
+                        .setRequired(true)
+                );
+
+            await modals.showModal(modal, {
+                client: interaction.client,
+                interaction: interaction
+            });
+            break;
+
+        }
+
         case "info": {
+            await interaction.deferUpdate().catch(() => {
+            });
             let voters = await db.getSuggestionVoters(interaction.guild.id.toString(), interaction.message.id.toString());
             interaction.followUp({content: voters, ephemeral: true});
         }
             break;
 
         case "accepted": {
+            await interaction.deferUpdate().catch(() => {
+            });
             await interaction.followUp({
                 content: lang.already_accepted,
                 ephemeral: true,
@@ -493,6 +528,8 @@ async function buttons(interaction) {
             break;
 
         case "declined": {
+            await interaction.deferUpdate().catch(() => {
+            });
             await interaction.followUp({
                 content: lang.already_declined,
                 ephemeral: true,
@@ -650,6 +687,34 @@ async function modalSubmit(client, modal) {
                 e = null;
             }
         }
+        let suggestMessageId = await db.getSuggestMessage(modal.guild?.id);
+        let suggestMessage = await channel.messages.fetch(suggestMessageId);
+        // delete the old suggestion message
+        if (suggestMessage) {
+            try {
+                await suggestMessage.delete();
+            } catch (e) {
+                e = null;
+            }
+        }
+        // create an embed with a blue button that says suggest
+        let suggestEmbed = new Discord.MessageEmbed()
+            .setTitle(lang.suggest_embed_title)
+            .setDescription(lang.suggest_embed_desc)
+            .setColor(ecolor);
+        let suggestButton = new Discord.MessageButton()
+            .setCustomId("suggest")
+            .setStyle("PRIMARY")
+            .setLabel(lang.suggest_embed_button)
+            .setEmoji("📝");
+        let suggestActionRow = new Discord.MessageActionRow().addComponents(
+            suggestButton
+        );
+        // send the embed
+        suggestMessage = await channel.send({embeds: [suggestEmbed], components: [suggestActionRow]});
+        // set the message id in the database
+        await db.setSuggestMessage(modal.guild?.id, suggestMessage.id);
+
 
     } else if (modal.customId === "edit") {
 

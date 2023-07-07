@@ -23,7 +23,7 @@ module.exports = {
                 name: "options",
                 description: "Action you want to do",
                 required: true,
-                choices: [["Accept", "accept"], ["Decline", "decline"], ["Reset", "reset"]]
+                choices: [["Accept", "accept"], ["Decline", "decline"], ["Reset", "reset"], ["Delete", "delete"]]
             }
         },
         {
@@ -255,6 +255,19 @@ module.exports = {
                         e = undefined
                     }
                 }
+            } else if (action === "delete") {
+                try {
+                    await message.delete();
+                } catch (e) {
+                    await interaction.reply({content: lang.suggest_error_deleting, ephemeral: true});
+                }
+
+                await db.setDeleteSuggestion(interaction.guild.id, givenMessageID.toString());
+                interaction.reply(
+                    {content: lang.suggest_deleted, ephemeral: true}
+                );
+
+
             }
         } catch (e) {
             Logger.error(e);
