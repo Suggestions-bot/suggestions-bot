@@ -7,6 +7,8 @@ const pool = mysql.createPool({
     database: process.env.DATABASE_DATABASE,
     enableKeepAlive: true,
     keepAliveInitialDelay: 20000,
+    bigNumberStrings: true,
+    supportBigNumbers: true,
 });
 
 const getCurrentDate = () => {
@@ -103,7 +105,7 @@ const getServerSuggestionChannel = async (guildId) => {
 const getServerEmbedData = async (guildId) => {
     return new Promise((resolve, reject) => {
         pool.query(
-            `SELECT suggestion_embed_color, upvote_emoji, downvote_emoji
+            `SELECT suggestion_embed_color, upvote_emoji, downvote_emoji, accepted_emoji, denied_emoji
              FROM servers
              WHERE server_id = ?`,
             [guildId],
@@ -162,6 +164,177 @@ const getServerAllowsLinks = async (guildId) => {
                             resolve(false)
                         }
                     }
+                }
+            }
+        );
+    });
+}
+
+const getAcceptUpvotes = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_accept_upvotes
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.auto_accept_upvotes);
+                }
+            }
+        );
+    });
+}
+
+const getDeclineDownvotes = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_decline_downvotes
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.auto_decline_downvotes);
+                }
+            }
+        );
+    });
+}
+
+const getNumberOfSuggestions = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT COUNT(*)
+             FROM suggestions`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]["COUNT(*)"]);
+                }
+            }
+        );
+    });
+}
+
+const getNumberOfSuggestionsInGuild = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT COUNT(*)
+             FROM suggestions
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]["COUNT(*)"]);
+                }
+            }
+        );
+    });
+}
+
+const getGuildsWithMostSuggestions = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT server_id, COUNT(*)
+             FROM suggestions
+             GROUP BY server_id
+             ORDER BY COUNT(*) DESC
+             LIMIT 3`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            }
+        );
+
+    });
+}
+
+const getServerAutoThread = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT auto_thread
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results[0]?.auto_thread?.toString() === "1") {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const getSuggestionThread = async (guildId, messageId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT thread_id
+             FROM suggestions
+             WHERE server_id = ?
+               AND message_id = ?`,
+            [guildId, messageId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.thread_id);
+                }
+            }
+        );
+    });
+}
+
+const getServerSuggestionsSortedByUpvotes = async (guildId, amount) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT message_id, upvotes, downvotes, content
+             FROM suggestions
+             WHERE server_id = ?
+             ORDER BY upvotes DESC
+             LIMIT ?`,
+            [guildId, amount],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results);
+                }
+            }
+        );
+    });
+}
+
+const getSuggestMessage = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT suggest_message_id
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(results[0]?.suggest_message_id);
                 }
             }
         );
@@ -434,24 +607,27 @@ const setServerEmbedColor = async (guildId, color) => {
     });
 }
 
-const setServerEmbedSettings = async (guildId, color, downvote, upvote) => {
+const setServerEmbedSettings = async (guildId, color, downvote, upvote, accept, decline) => {
     return new Promise((resolve, reject) => {
         pool.query(
             `UPDATE servers
              SET suggestion_embed_color = ?,
                  downvote_emoji         = ?,
-                 upvote_emoji           = ?
+                 upvote_emoji           = ?,
+                 accepted_emoji         = ?,
+                 denied_emoji           = ?
              WHERE server_id = ?`,
-            [color, downvote, upvote, guildId],
+            [color, downvote, upvote, accept, decline, guildId],
             (err, results) => {
                 if (err) {
                     reject(err);
                 } else {
                     if (results.affectedRows === 0 || results.affectedRows === undefined) {
                         pool.query(
-                            `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji)
-                             VALUES (?, ?, ?, ?)`,
-                            [guildId, color, downvote, upvote],
+                            `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji,
+                                                  accepted_emoji, denied_emoji)
+                             VALUES (?, ?, ?, ?, ?, ?)`,
+                            [guildId, color, downvote, upvote, accept, decline],
                             (err) => {
                                 if (err) {
                                     reject(err);
@@ -538,6 +714,182 @@ const setSuggestionPending = async (guildId, suggestionId) => {
     });
 }
 
+const setServerAutoAccept = async (guildId, autoAccept) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_accept_upvotes = ?
+             WHERE server_id = ?`,
+            [autoAccept, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_accept_upvotes)
+                             VALUES (?, ?)`,
+                            [guildId, autoAccept],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setServerAutoDecline = async (guildId, autoDecline) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_decline_downvotes = ?
+             WHERE server_id = ?`,
+            [autoDecline, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_decline_downvotes)
+                             VALUES (?, ?)`,
+                            [guildId, autoDecline],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setServerAutoThread = async (guildId, autoThread) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET auto_thread = ?
+             WHERE server_id = ?`,
+            [autoThread, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, auto_thread)
+                             VALUES (?, ?)`,
+                            [guildId, autoThread],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setSuggestionThread = async (suggestionId, threadId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE suggestions
+             SET thread_id = ?
+             WHERE message_id = ?`,
+            [threadId, suggestionId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setSuggestMessage = async (guildId, messageId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `UPDATE servers
+             SET suggest_message_id = ?
+             WHERE server_id = ?`,
+            [messageId, guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        pool.query(
+                            `INSERT INTO servers (server_id, suggest_message_id)
+                             VALUES (?, ?)`,
+                            [guildId, messageId],
+                            (err) => {
+                                if (err) {
+                                    reject(err);
+                                } else {
+                                    resolve(true);
+                                }
+                            }
+                        );
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        );
+    });
+}
+
+const setDeleteSuggestion = async (guildId, deleteSuggestion) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE
+             FROM suggestions
+             WHERE server_id = ?
+               AND message_id = ?`,
+            [guildId, deleteSuggestion],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    if (results.affectedRows === 0 || results.affectedRows === undefined) {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            });
+    });
+}
+
 const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => {
     return new Promise((resolve, reject) => {
         // add a new suggestion to the database only if message_id is not already in the database
@@ -555,9 +907,9 @@ const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId) => 
                           ? AS downvoters,
                           ? AS re_voters,
                           ? AS creation_date) AS tmp
-             WHERE NOT EXISTS(
-                     SELECT message_id FROM suggestions WHERE message_id = tmp.message_id
-                 )
+             WHERE NOT EXISTS(SELECT message_id
+                              FROM suggestions
+                              WHERE message_id = tmp.message_id)
              LIMIT 1;`,
             [guildId, suggestionId, suggestion, authorId, 0, 0, "[]", "[]", "[]", getCurrentDate()],
             (err, results) => {
@@ -726,6 +1078,88 @@ const checkForUserVote = async (guildId, suggestionId, userId) => {
 }
 
 
+const cacheSetSortedGuilds = async (guilds) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE
+             FROM cache
+             WHERE sorted_guilds IS NOT NULL`,
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                }
+            }
+        );
+
+        pool.query(
+            `INSERT INTO cache (sorted_guilds)
+             VALUES (?)`,
+            [JSON.stringify(guilds)],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
+const cacheGetSortedGuilds = async () => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `SELECT sorted_guilds
+             FROM cache;`,
+            [],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(JSON.parse(results[0].sorted_guilds));
+                }
+            }
+        );
+    });
+}
+
+const deleteServer = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE
+             FROM servers
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
+const deleteSuggestions = async (guildId) => {
+    return new Promise((resolve, reject) => {
+        pool.query(
+            `DELETE
+             FROM suggestions
+             WHERE server_id = ?`,
+            [guildId],
+            (err, results) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(true);
+                }
+            }
+        );
+    });
+}
+
+
 module.exports = {
     pool,
     getCurrentDate,
@@ -736,6 +1170,15 @@ module.exports = {
     getServerEmbedData,
     getSuggestionVoters,
     getServerAllowsLinks,
+    getAcceptUpvotes,
+    getDeclineDownvotes,
+    getNumberOfSuggestions,
+    getNumberOfSuggestionsInGuild,
+    getGuildsWithMostSuggestions,
+    getServerAutoThread,
+    getSuggestionThread,
+    getServerSuggestionsSortedByUpvotes,
+    getSuggestMessage,
 
     setServerLanguage,
     setServerManagerRole,
@@ -749,6 +1192,12 @@ module.exports = {
     setSuggestionDenied,
     setSuggestionAccepted,
     setSuggestionPending,
+    setServerAutoAccept,
+    setServerAutoDecline,
+    setServerAutoThread,
+    setSuggestionThread,
+    setSuggestMessage,
+    setDeleteSuggestion,
 
     addNewSuggestion,
     addSuggestionUpvote,
@@ -756,8 +1205,13 @@ module.exports = {
     addSuggestionUpvoteRevoteDown,
     addSuggestionDownvoteRevoteUp,
 
-    checkForUserVote
+    checkForUserVote,
 
 
+    cacheSetSortedGuilds,
+    cacheGetSortedGuilds,
+
+    deleteServer,
+    deleteSuggestions,
 }
 

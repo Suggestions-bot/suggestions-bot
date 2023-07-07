@@ -103,6 +103,7 @@ module.exports = {
             warn = text
             text = ""
         }
+        try {warn = JSON.stringify(warn)} catch (e) {warn = "No warn-message provided"}
         const formattedText = formatText(`${cprefix + text}\n{fgYellow}[WARN MESSAGE]: {reset}${warn}`)
         beautify.log(formattedText);
         if (!["off", "error"].includes(process.env.LOGGING_LEVEL)) {
@@ -119,6 +120,7 @@ module.exports = {
             err = text
             text = ""
         }
+        try {err = JSON.stringify(err)} catch (e) {err = "No error-message provided"}
         const formattedText = formatText(`${cprefix + text}\n{fgRed}[ERROR MESSAGE]: {bright}${err}`)
         beautify.log(formattedText);
         if (!["off"].includes(process.env.LOGGING_LEVEL)) {
@@ -128,6 +130,7 @@ module.exports = {
 
     super_error(text, err) {
         const cprefix = '[TIMESTAMP] {fgRed}{bright}[FATAL ERROR] {bright}';
+        try {err = JSON.stringify(err)} catch (e) {err = "No error-message provided"}
         const formattedText = formatText(`${cprefix + text}\n${err}`)
         beautify.log(formattedText);
         if (!["off"].includes(process.env.LOGGING_LEVEL)) {

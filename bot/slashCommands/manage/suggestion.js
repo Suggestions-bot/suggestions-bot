@@ -23,7 +23,7 @@ module.exports = {
                 name: "options",
                 description: "Action you want to do",
                 required: true,
-                choices: [["Accept", "accept"], ["Reject", "reject"], ["Reset", "reset"]]
+                choices: [["Accept", "accept"], ["Decline", "decline"], ["Reset", "reset"], ["Delete", "delete"]]
             }
         },
         {
@@ -73,6 +73,10 @@ module.exports = {
                 return;
             }
 
+            const embedData = await db.getServerEmbedData(interaction.guild.id);
+            const uicon = embedData?.upvote_emoji || "<:thumbs_up_bot:1080565677900976242>";
+            const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
+
             if (action === "accept") {
                 let embed = message.embeds[0];
                 let newEmbed = {
@@ -96,25 +100,27 @@ module.exports = {
                     })
                 }
 
-                message.edit({
+                await message.edit({
                     components: [
                         new Discord.MessageActionRow()
                             .addComponents(
                                 new Discord.MessageButton()
                                     .setCustomId("up")
                                     .setStyle("SUCCESS")
-                                    .setLabel("👍 " + lang.suggest_upvote)
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("down")
                                     .setStyle("DANGER")
-                                    .setLabel("👎 " + lang.suggest_downvote)
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("accepted")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_accepted)
-                                    .setEmoji("<a:accept_bot:1000710815562866759>")
+                                    .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
                             )
                     ], embeds: [newEmbed]
                 });
@@ -123,7 +129,21 @@ module.exports = {
                     {content: lang.suggest_accepted_text, ephemeral: true}
                 );
 
-            } else if (action === "reject") {
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // make thread private
+                        await threadChannel.setLocked(true, "Suggestion accepted");
+                        // close thread
+                        await threadChannel.setArchived(true);
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
+
+            } else if (action === "decline") {
                 let embed = message.embeds[0];
                 let newEmbed = {
                     author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
@@ -146,25 +166,27 @@ module.exports = {
                     })
                 }
 
-                message.edit({
+                await message.edit({
                     components: [
                         new Discord.MessageActionRow()
                             .addComponents(
                                 new Discord.MessageButton()
                                     .setCustomId("up")
                                     .setStyle("SUCCESS")
-                                    .setLabel("👍 Upvote")
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
                                     .setCustomId("down")
                                     .setStyle("DANGER")
-                                    .setLabel("👎 Downvote")
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`)
                                     .setDisabled(true),
                                 new Discord.MessageButton()
-                                    .setCustomId("rejected")
+                                    .setCustomId("declined")
                                     .setStyle("PRIMARY")
                                     .setLabel(lang.suggest_declined)
-                                    .setEmoji("<a:deny_bot:1000710816980533278> ")
+                                    .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
                             )
                     ], embeds: [newEmbed]
                 });
@@ -172,6 +194,20 @@ module.exports = {
                 interaction.reply(
                     {content: lang.suggest_declined_text, ephemeral: true}
                 );
+
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // make thread private
+                        await threadChannel.setLocked(true, "Suggestion declined");
+                        // close thread
+                        await threadChannel.setArchived(true);
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
 
             } else if (action === "reset") {
                 let embed = message.embeds[0];
@@ -183,25 +219,55 @@ module.exports = {
                     ]
                 }
 
-                message.edit({
+                await message.edit({
                     components: [
                         new Discord.MessageActionRow()
                             .addComponents(
                                 new Discord.MessageButton()
                                     .setCustomId("up")
                                     .setStyle("SUCCESS")
-                                    .setLabel("👍 Upvote"),
+                                    .setLabel(lang.suggest_upvote)
+                                    .setEmoji(`${uicon}`),
                                 new Discord.MessageButton()
                                     .setCustomId("down")
                                     .setStyle("DANGER")
-                                    .setLabel("👎 Downvote"),
+                                    .setLabel(lang.suggest_downvote)
+                                    .setEmoji(`${dicon}`),
                             )
-                    ], embeds: [newEmbed]
+                    ],
+                    embeds: [newEmbed]
                 });
                 await db.setSuggestionPending(givenMessageID.toString(), interaction.guild.id);
                 interaction.reply(
                     {content: lang.suggest_reset_to_og_state, ephemeral: true}
                 );
+
+                const thread = await db.getSuggestionThread(interaction.guild.id, givenMessageID.toString());
+                if (thread) {
+                    try {
+                        // get thread by id
+                        const threadChannel = await client.channels.fetch(thread);
+                        // close thread
+                        await threadChannel.setArchived(false);
+                        // make thread private
+                        await threadChannel.setLocked(false, "Suggestion reset");
+                    } catch (e) {
+                        e = undefined
+                    }
+                }
+            } else if (action === "delete") {
+                try {
+                    await message.delete();
+                } catch (e) {
+                    await interaction.reply({content: lang.suggest_error_deleting, ephemeral: true});
+                }
+
+                await db.setDeleteSuggestion(interaction.guild.id, givenMessageID.toString());
+                interaction.reply(
+                    {content: lang.suggest_deleted, ephemeral: true}
+                );
+
+
             }
         } catch (e) {
             Logger.error(e);
