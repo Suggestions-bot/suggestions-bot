@@ -688,7 +688,12 @@ async function modalSubmit(client, modal) {
             }
         }
         let suggestMessageId = await db.getSuggestMessage(modal.guild?.id);
-        let suggestMessage = await channel.messages.fetch(suggestMessageId);
+        let suggestMessage;
+        try {
+            suggestMessage = await channel.messages.fetch(suggestMessageId);
+        } catch (e) {
+            suggestMessage = null;
+        }
         // delete the old suggestion message
         if (suggestMessage) {
             try {
