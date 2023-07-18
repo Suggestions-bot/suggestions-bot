@@ -53,5 +53,7 @@
   "suggest_embed_button": "Sugerir",
   "suggest_error_deleting": "Ocurrió un error al eliminar la sugerencia. Asegúrese de que el bot tenga los permisos necesarios.",
   "suggest_deleted": "La sugerencia ha sido eliminada.",
-  "max_suggestion_channels": "Se ha alcanzado el número máximo de canales de sugerencias. Elimine un canal de sugerencia antes de agregar uno nuevo."
+  "max_suggestion_channels": "Se ha alcanzado el número máximo de canales de sugerencias. Elimine un canal de sugerencia antes de agregar uno nuevo.",
+  "set_suggestion_channel_error": "No se pudo establecer el canal de sugerencias. Asegúrese de que el bot tenga los permisos necesarios.",
+  "message_could_not_send_no_perns": "No se pudo enviar el mensaje. Asegúrese de que el bot tenga los permisos necesarios."
 }

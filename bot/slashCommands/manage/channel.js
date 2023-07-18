@@ -124,9 +124,15 @@ module.exports = {
           .setEmoji("📝");
         let suggestActionRow = new Discord.MessageActionRow().addComponents(suggestButton);
         // send the embed
-        suggestMessage = await channel.send({embeds: [suggestEmbed], components: [suggestActionRow]});
-        // set the message id in the database
-        await db.setSuggestMessage(channel.id, suggestMessage.id);
+        try {
+          suggestMessage = await channel.send({embeds: [suggestEmbed], components: [suggestActionRow]});
+          // set the message id in the database
+          await db.setSuggestMessage(channel.id, suggestMessage.id);
+        } catch (e) {
+          await interaction.reply({
+            content: lang.set_suggestion_channel_error, ephemeral: true
+          });
+        }
       }
     } catch (e) {
       Logger.error(e);

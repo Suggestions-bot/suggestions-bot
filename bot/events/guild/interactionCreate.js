@@ -666,56 +666,64 @@ async function modalSubmit(client, modal) {
         ephemeral: true,
       });
 
-    //Sends message to confirm the suggestion
-    modal.reply({content: lang.suggest_sent, ephemeral: true});
-    let sugMessage = await channel
-      .send({
-        embeds: [
-          {
-            author: {
-              name: modal.user.username,
-              iconURL: modal.user.avatarURL({dynamic: true}),
-            },
-            color: ecolor,
-            timestamp: new Date(),
-            footer: {
-              iconURL: modal.guild?.iconURL({dynamic: true}),
-              text: modal.guild?.name,
-            },
-            description: res,
-            fields: [
-              {
-                name: uicon + " " + lang.suggest_upvotes,
-                value: "```\n0```",
-                inline: true,
+
+    let sugMessage;
+    try {
+      sugMessage = await channel
+        .send({
+          embeds: [
+            {
+              author: {
+                name: modal.user.username,
+                iconURL: modal.user.avatarURL({dynamic: true}),
               },
-              {
-                name: dicon + " " + lang.suggest_downvotes,
-                value: "```\n0```",
-                inline: true,
+              color: ecolor,
+              timestamp: new Date(),
+              footer: {
+                iconURL: modal.guild?.iconURL({dynamic: true}),
+                text: modal.guild?.name,
               },
-            ],
-          },
-        ],
-        components: [
-          new Discord.MessageActionRow().addComponents(
-            new Discord.MessageButton()
-              .setCustomId("up")
-              .setStyle("SUCCESS")
-              .setLabel(lang.suggest_upvote)
-              .setEmoji(`${uicon}`),
-            new Discord.MessageButton()
-              .setCustomId("down")
-              .setStyle("DANGER")
-              .setLabel(lang.suggest_downvote)
-              .setEmoji(`${dicon}`)
-          ),
-        ],
-      })
-      .then(async (message) => {
-        await db.addNewSuggestion(modal.guild?.id, message.id, res, modal.user.id, channel.id);
-        return message;
+              description: res,
+              fields: [
+                {
+                  name: uicon + " " + lang.suggest_upvotes,
+                  value: "```\n0```",
+                  inline: true,
+                },
+                {
+                  name: dicon + " " + lang.suggest_downvotes,
+                  value: "```\n0```",
+                  inline: true,
+                },
+              ],
+            },
+          ],
+          components: [
+            new Discord.MessageActionRow().addComponents(
+              new Discord.MessageButton()
+                .setCustomId("up")
+                .setStyle("SUCCESS")
+                .setLabel(lang.suggest_upvote)
+                .setEmoji(`${uicon}`),
+              new Discord.MessageButton()
+                .setCustomId("down")
+                .setStyle("DANGER")
+                .setLabel(lang.suggest_downvote)
+                .setEmoji(`${dicon}`)
+            ),
+          ],
+        })
+        .then(async (message) => {
+          await db.addNewSuggestion(modal.guild?.id, message.id, res, modal.user.id, channel.id);
+          return message;
+        });
+    } catch (e) {
+      return await interaction.reply({
+        content: lang.message_could_not_send_no_perns, ephemeral: true
       });
+    }
+    modal.reply({content: lang.suggest_sent, ephemeral: true});
+
 
     let thread = await db.getServerAutoThread(modal.guild?.id);
     if (thread == null) return;
