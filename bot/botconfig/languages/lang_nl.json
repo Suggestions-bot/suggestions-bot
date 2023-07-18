@@ -52,5 +52,6 @@
   "suggest_embed_desc": "Klik op de knop onder dit bericht om iets voor te stellen!",
   "suggest_embed_button": "Stel voor",
   "suggest_error_deleting": "Er is een fout opgetreden tijdens het verwijderen van de suggestie. Controleer of de bot de vereiste rechten heeft.",
-  "suggest_deleted": "De suggestie is verwijderd."
+  "suggest_deleted": "De suggestie is verwijderd.",
+  "max_suggestion_channels": "Het maximale aantal suggestiekanalen is bereikt. Verwijder een suggestiekanaal voordat je een nieuwe toevoegt."
 }
