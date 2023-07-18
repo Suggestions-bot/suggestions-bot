@@ -37,7 +37,7 @@ module.exports = {
           });
         } else {
           await interaction.followUp({
-            content: "You repeated the correct Number.\nDo you really want to delete **EVERYTHIN**?\nThis cannot be undone.\n\nPlease type `Yes I am sure!` to confirm.",
+            content: "You repeated the correct Number.\nDo you really want to delete **EVERYTHING**?\nThis cannot be undone.\n\nPlease type `Yes I am sure!` to confirm.",
             ephemeral: false
           });
 
@@ -63,6 +63,7 @@ module.exports = {
             await new Promise(r => setTimeout(r, 3000));
             await db.deleteServer(interaction.guild?.id || 0);
             await db.deleteSuggestions(interaction.guild?.id || 0);
+            await db.deleteSuggestMessageIDs(interaction.guild?.id || 0);
 
             await interaction.followUp({
               content: "Done. Everything is deleted.",

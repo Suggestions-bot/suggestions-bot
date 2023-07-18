@@ -107,8 +107,8 @@ const getServerSuggestionChannels = async (guildId) => {
     pool.query(
       // get from channels table the channel_id_array row where server_id = guildId
       `SELECT channel_id_array
-        FROM channels
-        WHERE server_id = ?`,
+       FROM channels
+       WHERE server_id = ?`,
       [guildId],
       (err, results) => {
         if (err) {
@@ -538,8 +538,9 @@ const setServerSuggestionChannels = async (guildId, channelId) => {
     if (channelId == null) {
       // drop the row
       pool.query(
-        `DELETE FROM channels
-          WHERE server_id = ?`,
+        `DELETE
+         FROM channels
+         WHERE server_id = ?`,
         [guildId],
         (err) => {
           if (err) {
@@ -553,8 +554,8 @@ const setServerSuggestionChannels = async (guildId, channelId) => {
     }
     pool.query(
       `UPDATE channels
-        SET channel_id_array = ?
-        WHERE server_id = ?`,
+       SET channel_id_array = ?
+       WHERE server_id = ?`,
       [JSON.stringify(channelId), guildId],
       (err, results) => {
         if (err) {
@@ -563,7 +564,7 @@ const setServerSuggestionChannels = async (guildId, channelId) => {
           if (results.affectedRows === 0 || results.affectedRows === undefined) {
             pool.query(
               `INSERT INTO channels (server_id, channel_id_array)
-                VALUES (?, ?)`,
+               VALUES (?, ?)`,
               [guildId, JSON.stringify(channelId)],
               (err) => {
                 if (err) {
@@ -1290,6 +1291,43 @@ const deleteSuggestions = async (guildId) => {
   });
 }
 
+const deleteSuggestMessageIDs = async (guildId) => {
+  return new Promise(async (resolve, reject) => {
+    // get all IDs from channels table
+    let channels = await getServerSuggestionChannels(guildId);
+    for (let i = 0; i < channels.length; i++) {
+      let channel = channels[i];
+      pool.query(
+        `DELETE
+         FROM suggest_message_ids
+         WHERE channel_id = ?`,
+        [channel],
+        (err, results) => {
+          if (err) {
+            console.log(err);
+            resolve(false);
+          }
+        }
+      );
+    }
+    pool.query(
+      `DELETE
+        FROM channels
+        WHERE server_id = ?`,
+      [guildId],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      }
+    );
+    resolve(true);
+  });
+}
+
 
 module.exports = {
   pool,
@@ -1347,5 +1385,6 @@ module.exports = {
 
   deleteServer,
   deleteSuggestions,
+  deleteSuggestMessageIDs,
 }
 
