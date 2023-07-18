@@ -53,5 +53,7 @@
   "suggest_embed_button": "Vorschlagen",
   "suggest_error_deleting": "Der Vorschlag konnte nicht gelöscht werden. Bitte gehe sicher dass der Bot die nötigen Berechtigungen hat.",
   "suggest_deleted": "Der Vorschlag wurde gelöscht.",
-  "max_suggestion_channels": "Die maximale Anzahl an Vorschlagskanälen wurde erreicht. Lösche einen Vorschlagskanal, bevor du einen neuen hinzufügst."
+  "max_suggestion_channels": "Die maximale Anzahl an Vorschlagskanälen wurde erreicht. Lösche einen Vorschlagskanal, bevor du einen neuen hinzufügst.",
+  "set_suggestion_channel_error": "Der Vorschlagskanal konnte nicht gesetzt werden. Bitte gehe sicher, dass der Bot die nötigen Berechtigungen hat.",
+  "message_could_not_send_no_perns": "Die Nachricht konnte nicht gesendet werden, da der Bot nicht die nötigen Berechtigungen hat.",
 }

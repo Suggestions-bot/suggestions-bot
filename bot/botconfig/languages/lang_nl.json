@@ -53,5 +53,7 @@
   "suggest_embed_button": "Stel voor",
   "suggest_error_deleting": "Er is een fout opgetreden tijdens het verwijderen van de suggestie. Controleer of de bot de vereiste rechten heeft.",
   "suggest_deleted": "De suggestie is verwijderd.",
-  "max_suggestion_channels": "Het maximale aantal suggestiekanalen is bereikt. Verwijder een suggestiekanaal voordat je een nieuwe toevoegt."
+  "max_suggestion_channels": "Het maximale aantal suggestiekanalen is bereikt. Verwijder een suggestiekanaal voordat je een nieuwe toevoegt.",
+  "set_suggestion_channel_error": "Het suggestiekanaal kon niet worden ingesteld. Zorg ervoor dat de bot de vereiste rechten heeft.",
+  "message_could_not_send_no_perns": "Het bericht kon niet worden verzonden omdat de bot geen rechten heeft om berichten te verzenden in het suggestiekanaal."
 }

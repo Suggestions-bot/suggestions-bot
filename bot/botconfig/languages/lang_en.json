@@ -53,5 +53,7 @@
   "suggest_embed_button": "Suggest",
   "suggest_error_deleting": "An error occurred while deleting the suggestion. Please make sure the bot has the required permissions.",
   "suggest_deleted": "The suggestion has been deleted.",
-  "max_suggestion_channels": "You have reached the maximum number of suggestion channels. Please delete one before adding another."
+  "max_suggestion_channels": "You have reached the maximum number of suggestion channels. Please delete one before adding another.",
+  "set_suggestion_channel_error": "The suggestion channel could not be set. Please make sure the bot has the required permissions.",
+  "message_could_not_send_no_perns": "The message could not be sent because the bot does not have the required permissions."
 }
