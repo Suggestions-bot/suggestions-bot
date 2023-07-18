@@ -227,10 +227,14 @@ async function buttons(interaction) {
   let ecolor = "2C2F33";
   let uicon = "<:thumbs_up_bot:1080565677900976242>";
   // console.log(edata);
-  if (edata) {
-    dicon = edata.downvote_emoji;
-    ecolor = edata.suggestion_embed_color;
-    uicon = edata.upvote_emoji;
+  try {
+    if (edata) {
+      dicon = edata.downvote_emoji;
+      ecolor = edata.suggestion_embed_color;
+      uicon = edata.upvote_emoji;
+    }
+  } catch (e) {
+    e = null;
   }
 
 
@@ -570,7 +574,10 @@ async function modalSubmit(client, modal) {
         try {
           modalChannel = channels[0];
         } catch (e) {
-          modalChannel = await db.getServerSuggestionChannel(modal.guild?.id);
+          return await modal.reply({
+            content: "Please ask an adminstrator to reset the suggestion channels!\nThis is due to a big change in the suggestion system which enables multiple suggestion channels.",
+            ephemeral: true,
+          });
         }
       }
     }
@@ -587,7 +594,12 @@ async function modalSubmit(client, modal) {
         "tiktok", // somehow servers with TikTok etc. in their name are still getting advertised
     ];*/
     const serverdata = await db.getAllServerSettings(modal.guild?.id);
-    let language = serverdata["language"];
+    let language;
+    try {
+      language = serverdata["language"];
+    } catch (e) {
+      language = "lang_en";
+    }
     if (language == null) {
       language = "lang_en";
     }
@@ -597,19 +609,31 @@ async function modalSubmit(client, modal) {
     let dicon;
     let ecolor;
     let uicon;
-    if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "") {
-      ecolor = serverdata["suggestion_embed_color"];
-    } else {
+    try {
+      if (serverdata["suggestion_embed_color"] !== null && serverdata["suggestion_embed_color"] !== undefined && serverdata["suggestion_embed_color"] !== "") {
+        ecolor = serverdata["suggestion_embed_color"];
+      } else {
+        ecolor = "2C2F33";
+      }
+    } catch (e) {
       ecolor = "2C2F33";
     }
-    if (serverdata["upvote_emoji"] !== null && serverdata["upvote_emoji"] !== undefined && serverdata["upvote_emoji"] !== "") {
-      uicon = serverdata["upvote_emoji"];
-    } else {
+    try {
+      if (serverdata["upvote_emoji"] !== null && serverdata["upvote_emoji"] !== undefined && serverdata["upvote_emoji"] !== "") {
+        uicon = serverdata["upvote_emoji"];
+      } else {
+        uicon = "👍";
+      }
+    } catch (e) {
       uicon = "👍";
     }
-    if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
-      dicon = serverdata["downvote_emoji"];
-    } else {
+    try {
+      if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
+        dicon = serverdata["downvote_emoji"];
+      } else {
+        dicon = "👎";
+      }
+    } catch (e) {
       dicon = "👎";
     }
 

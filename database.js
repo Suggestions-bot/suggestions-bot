@@ -139,10 +139,14 @@ const getServerEmbedData = async (guildId) => {
         if (err) {
           reject(err);
         } else {
-          if (resolve.length === 0 || results[0]["suggestion_embed_color"] === null) {
+          try {
+            if (resolve.length === 0 || results[0]["suggestion_embed_color"] === null) {
+              resolve(undefined);
+            } else {
+              resolve(results[0]);
+            }
+          } catch (error) {
             resolve(undefined);
-          } else {
-            resolve(results[0]);
           }
         }
       }
@@ -1369,8 +1373,8 @@ const deleteSuggestMessageIDs = async (guildId) => {
     }
     pool.query(
       `DELETE
-        FROM channels
-        WHERE server_id = ?`,
+       FROM channels
+       WHERE server_id = ?`,
       [guildId],
       (err, results) => {
         if (err) {
