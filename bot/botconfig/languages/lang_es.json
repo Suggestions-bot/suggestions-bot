@@ -52,5 +52,6 @@
   "suggest_embed_desc": "Haga clic en el botón debajo de este mensaje para sugerir algo",
   "suggest_embed_button": "Sugerir",
   "suggest_error_deleting": "Ocurrió un error al eliminar la sugerencia. Asegúrese de que el bot tenga los permisos necesarios.",
-  "suggest_deleted": "La sugerencia ha sido eliminada."
+  "suggest_deleted": "La sugerencia ha sido eliminada.",
+  "max_suggestion_channels": "Se ha alcanzado el número máximo de canales de sugerencias. Elimine un canal de sugerencia antes de agregar uno nuevo."
 }

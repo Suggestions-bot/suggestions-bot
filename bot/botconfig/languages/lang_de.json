@@ -52,5 +52,6 @@
   "suggest_embed_desc": "Klicke auf den Knopf unter dieser Nachricht, um etwas vorzuschlagen.",
   "suggest_embed_button": "Vorschlagen",
   "suggest_error_deleting": "Der Vorschlag konnte nicht gelöscht werden. Bitte gehe sicher dass der Bot die nötigen Berechtigungen hat.",
-  "suggest_deleted": "Der Vorschlag wurde gelöscht."
+  "suggest_deleted": "Der Vorschlag wurde gelöscht.",
+  "max_suggestion_channels": "Die maximale Anzahl an Vorschlagskanälen wurde erreicht. Lösche einen Vorschlagskanal, bevor du einen neuen hinzufügst."
 }

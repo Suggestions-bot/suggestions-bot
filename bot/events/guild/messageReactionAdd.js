@@ -8,13 +8,13 @@ const ee = require("../../botconfig/embed.json"); //Loading all embed settings l
 const Discord = require("discord.js"); //this is the official discord.js wrapper for the Discord Api, which we use!
 //here the event starts
 module.exports = async (client, reaction, user) => {
-    //logs when a reaction appears
-    /*if (reaction.message.partial) await reaction.message.fetch();
-    if (reaction.partial) await reaction.fetch();
-    if (user.bot) return;
-    if (!reaction.message.guild) {
-        //REST OF THE CODE HERE
-    }*/
-    // disabled for now
+  //logs when a reaction appears
+  /*if (reaction.message.partial) await reaction.message.fetch();
+  if (reaction.partial) await reaction.fetch();
+  if (user.bot) return;
+  if (!reaction.message.guild) {
+      //REST OF THE CODE HERE
+  }*/
+  // disabled for now
 }
 

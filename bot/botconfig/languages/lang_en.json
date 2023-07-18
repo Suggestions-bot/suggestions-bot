@@ -52,5 +52,6 @@
   "suggest_embed_desc": "Click the button below this message to suggest something!",
   "suggest_embed_button": "Suggest",
   "suggest_error_deleting": "An error occurred while deleting the suggestion. Please make sure the bot has the required permissions.",
-  "suggest_deleted": "The suggestion has been deleted."
+  "suggest_deleted": "The suggestion has been deleted.",
+  "max_suggestion_channels": "You have reached the maximum number of suggestion channels. Please delete one before adding another."
 }
