@@ -366,6 +366,30 @@ const getSuggestMessage = async (channelId) => {
   });
 }
 
+const getServerMaxChannels = async (guildId) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `SELECT max_channels
+       FROM server_max_channels
+       WHERE server_id = ?`,
+      [guildId],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          let channels = results[0]?.max_channels;
+          if (channels === undefined) {
+            channels = 2;
+          } else {
+            channels = parseInt(channels);
+          }
+          resolve(channels);
+        }
+      }
+    );
+  });
+}
+
 const setServerLanguage = async (guildId, language) => {
   return new Promise((resolve, reject) => {
     pool.query(
@@ -965,6 +989,39 @@ const setDeleteSuggestion = async (guildId, deleteSuggestion) => {
   });
 }
 
+const setServerMaxChannels = async (guildId, maxChannels) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `UPDATE server_max_channels
+       SET max_channels = ?
+       WHERE server_id = ?`,
+      [maxChannels, guildId],
+      (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+            pool.query(
+              `INSERT INTO server_max_channels (server_id, max_channels)
+               VALUES (?, ?)`,
+              [guildId, maxChannels],
+              (err) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  resolve(true);
+                }
+              }
+            );
+          } else {
+            resolve(true);
+          }
+        }
+      }
+    );
+  });
+}
+
 const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId, channelId) => {
   return new Promise((resolve, reject) => {
     // add a new suggestion to the database only if message_id is not already in the database
@@ -1349,6 +1406,7 @@ module.exports = {
   getSuggestionThread,
   getServerSuggestionsSortedByUpvotes,
   getSuggestMessage,
+  getServerMaxChannels,
 
   setServerLanguage,
   setServerManagerRole,
@@ -1369,6 +1427,7 @@ module.exports = {
   setSuggestMessage,
   setDeleteSuggestion,
   setServerSuggestionChannels,
+  setServerMaxChannels,
 
   addNewSuggestion,
   addSuggestionUpvote,

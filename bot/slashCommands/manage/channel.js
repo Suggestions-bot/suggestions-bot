@@ -71,7 +71,7 @@ module.exports = {
         } else {
           // make sure that the server does not have the max limit of suggestion channels
           let channels = await db.getServerSuggestionChannels(interaction.guild?.id || 0)
-          if (channels.length > 2) {
+          if (channels?.length >= await db.getServerMaxChannels(interaction.guild?.id || 0)) {
             await interaction.reply({
               content: lang.max_suggestion_channels, ephemeral: true
             });

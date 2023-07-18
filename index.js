@@ -116,6 +116,15 @@ function validateDatabase() {
           );
       `, (err) => err ? logger.error(err) : resolve()));
 
+      await new Promise((resolve) => connection.query(`
+          CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.server_max_channels
+          (
+              server_id    BIGINT NOT NULL,
+              max_channels INT    NULL,
+              CONSTRAINT server_max_channels_id PRIMARY KEY (server_id)
+          );
+      `, (err) => err ? logger.error(err) : resolve()));
+
       connection.end(() => {
 
         logger.db("Validated");
