@@ -566,7 +566,12 @@ async function modalSubmit(client, modal) {
         }
       }
       if (!found) {
-        modalChannel = channels[0];
+        // replace with just modalChannel = channels[0]; when legacy support is dropped
+        try {
+          modalChannel = channels[0];
+        } catch (e) {
+          modalChannel = await db.getServerSuggestionChannel(modal.guild?.id);
+        }
       }
     }
     let channel = modal.guild?.channels.cache.get(modalChannel);
