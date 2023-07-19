@@ -9,7 +9,7 @@ validateDatabase().then(() => {
     foundTest = fs.existsSync(`${__dirname}/testing/starttest.js`);
   if (foundBot || foundDashboard || foundTest) {
     if (foundBot && ["both", "bot"].includes(process.env.RUN)) require("./bot/startbot.js");
-    if (foundDashboard && ["both", "dashboard", "web"].includes(process.env.RUN)) import("./web/startweb.js");
+    //if (foundDashboard && ["both", "dashboard", "web"].includes(process.env.RUN)) import("./web/startweb.js");
     if (foundTest && ["test", "testing"].includes(process.env.RUN)) import("./testing/starttest.js");
   } else {
     logger.startup("Bot and dashboard not found");
