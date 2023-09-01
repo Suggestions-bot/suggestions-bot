@@ -585,8 +585,8 @@ async function swap_pages(client, message, description, TITLE) {
       .setTitle(`${emoji.msg.ERROR} No Content added to the SWAP PAGES Function`)
       .setColor(ee.wrongcolor)
       .setFooter(ee.footertext, ee.footericon)]
-  }).catch(e => Logger.super_error("YAC - Module of YSH prevented following crash:", e))
-  if (embeds.length === 1) return message.channel.send({embeds: [embeds[0]]}).catch(e => Logger.super_error("YAC - Module of YSH prevented following crash:", e))
+  }).catch(e => Logger.fatal("YAC - Module of YSH prevented following crash:", e))
+  if (embeds.length === 1) return message.channel.send({embeds: [embeds[0]]}).catch(e => Logger.fatal("YAC - Module of YSH prevented following crash:", e))
 
   let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji(emojis.sign_arrow_backward).setLabel("Back")
   let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
@@ -649,7 +649,7 @@ async function swap_pages(client, message, description, TITLE) {
 async function swap_pages2(client, message, embeds) {
   let currentPage = 0;
   let cmduser = message.author;
-  if (embeds.length === 1) return message.channel.send({embeds: [embeds[0]]}).catch(e => Logger.super_error("YAC - Module of YSH prevented following crash:", e))
+  if (embeds.length === 1) return message.channel.send({embeds: [embeds[0]]}).catch(e => Logger.fatal("YAC - Module of YSH prevented following crash:", e))
   let button_back = new MessageButton().setStyle('SUCCESS').setCustomId('1').setEmoji(emojis.sign_arrow_backward).setLabel("Back")
   let button_home = new MessageButton().setStyle('DANGER').setCustomId('2').setEmoji("🏠").setLabel("Home")
   let button_forward = new MessageButton().setStyle('SUCCESS').setCustomId('3').setEmoji(emojis.sign_arrow_forward).setLabel("Forward")

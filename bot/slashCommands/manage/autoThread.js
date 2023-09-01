@@ -49,7 +49,7 @@ module.exports = {
         )
       }
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e, e.stack);
     }
   }
 }

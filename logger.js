@@ -110,7 +110,7 @@ function sendWebhookMessage(message, status) {
     }
     const embed = {
       "title": status.toUpperCase() + " LOG",
-      "description": `[${String(new Date).split(" ", 5).join(" ")}]\n\`\`\`json\n${message}\n\`\`\``,
+      "description": `[${String(new Date).split(" ", 5).join(" ")}]\n\`\`\`${message}\`\`\``,
       "color": ecolor,
       "timestamp": new Date(),
     }
@@ -206,12 +206,12 @@ module.exports = {
     const formattedText = formatText(`${cprefix + text}\n{fgRed}[ERROR MESSAGE]: {bright}${err}`)
     beautify.log(formattedText);
     if (!["off"].includes(process.env.LOGGING_LEVEL)) {
-      sendWebhookMessage(text, "error");
+      sendWebhookMessage(text + "\n" + err, "error");
       dumpLog(formattedText);
     }
   },
 
-  super_error(text, err) {
+  fatal(text, err) {
     const cprefix = '[TIMESTAMP] {fgRed}{bright}[FATAL ERROR] {bright}';
     try {
       err = JSON.stringify(err)

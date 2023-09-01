@@ -24,7 +24,7 @@ function validateDatabase() {
 
       if (err) {
         logger.db("Connection failed");
-        logger.error(err)
+        logger.error(err, err.stack)
         return;
       }
 
@@ -97,7 +97,7 @@ function validateDatabase() {
               message_id BIGINT NOT NULL,
               CONSTRAINT suggest_message_id PRIMARY KEY (id)
           );
-      `, (err) => err ? logger.error(err) : resolve()));
+      `, (err) => err ? logger.error(err, err.stack) : resolve()));
 
       await new Promise((resolve) => connection.query(`
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.server_max_channels
@@ -106,7 +106,7 @@ function validateDatabase() {
               max_channels INT    NULL,
               CONSTRAINT server_max_channels_id PRIMARY KEY (server_id)
           );
-      `, (err) => err ? logger.error(err) : resolve()));
+      `, (err) => err ? logger.error(err, err.stack) : resolve()));
 
       connection.end(() => {
 

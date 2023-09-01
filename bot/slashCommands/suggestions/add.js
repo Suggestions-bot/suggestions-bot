@@ -36,7 +36,7 @@ module.exports = {
       });
       modalData;
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e, e.stack);
     }
   }
 }

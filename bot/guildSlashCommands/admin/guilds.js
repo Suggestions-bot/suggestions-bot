@@ -191,7 +191,7 @@ module.exports = {
         await responseMessage.edit({embeds: [embed], content: null});
       }
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e, e.stack);
     }
   }
 }

@@ -18,7 +18,7 @@ module.exports = {
 
         const randomNumber = Math.floor(Math.random() * 100) + 1;
         await interaction.followUp({
-          content: `Please repeat the following Number: ${randomNumber}`,
+          content: `Please reply to this message (mention turned on) with the following Number: ${randomNumber}`,
           ephemeral: false
         });
 
@@ -31,12 +31,12 @@ module.exports = {
         });
 
         if (collected.first().content !== randomNumber.toString()) {
-          await interaction.followUp({
+          await collected.first().reply({
             content: "You did not repeat the correct Number. Didn't delete anything.",
             ephemeral: false
           });
         } else {
-          await interaction.followUp({
+          await collected.first().reply({
             content: "You repeated the correct Number.\nDo you really want to delete **EVERYTHING**?\nThis cannot be undone.\n\nPlease type `Yes I am sure!` to confirm.",
             ephemeral: false
           });
@@ -81,7 +81,7 @@ module.exports = {
       }
 
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e, e.stack);
     }
   }
 }

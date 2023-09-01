@@ -34,7 +34,7 @@ module.exports = {
         {content: lang.change_language, ephemeral: true}
       )
     } catch (e) {
-      Logger.error(e);
+      Logger.error(e, e.stack);
     }
   }
 }
