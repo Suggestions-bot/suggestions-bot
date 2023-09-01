@@ -48,7 +48,7 @@ client.aliases = new Discord.Collection();
 
 //Require the Handlers                  Add the antiCrash file too, if its enabled
 
-["events", /*"commands",*/ "slashCommands", process.env.BOT_ANTI_CRASH ? "antiCrash" : null]
+["events", "slashCommands", process.env.BOT_ANTI_CRASH ? "antiCrash" : null]
   .filter(Boolean)
   .forEach(h => {
     require(`./handlers/${h}`)(client);

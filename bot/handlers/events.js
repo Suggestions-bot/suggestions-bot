@@ -3,11 +3,7 @@ const Logger = require("../../logger");
 const allevents = [];
 module.exports = async (client) => {
   try {
-    try {
-      Logger.chunkmessage("{reset} YSH loaded successfully!");
-    } catch (e) {
-      Logger.error("Error printing startup message", e)
-    }
+    Logger.info("Loading YSH");
     let amount = 0;
     const load_dir = (dir) => {
       const event_files = fs.readdirSync(`./bot/events/${dir}`).filter((file) => file.endsWith(".js"));
@@ -23,9 +19,9 @@ module.exports = async (client) => {
         }
       }
     }
+    Logger.info("YSH loaded successfully!");
     ["client", "guild"].forEach(e => load_dir(e));
     Logger.info(`Loaded ${amount} events.`);
-
   } catch (e) {
     Logger.error(`Error loading events.`, `${e}`);
   }
