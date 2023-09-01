@@ -211,7 +211,7 @@ module.exports = {
     }
   },
 
-  super_error(text, err) {
+  fatal(text, err) {
     const cprefix = '[TIMESTAMP] {fgRed}{bright}[FATAL ERROR] {bright}';
     try {
       err = JSON.stringify(err)
