@@ -41,7 +41,7 @@ module.exports = {
 
             await responseMessage.edit("Formatting guilds...");
             const formattedGuilds = guilds.map(guild => {
-              return `GuildName: \`${guild.guildName}\`\nGuildId: \`${guild.guildId}\`\nMemberCount: \`${guild.memberCount}\`\nSuggestionCount: \`${guild.suggestionCount}\`\nInvite: ${guild.invite || "none"}`;
+              return `GuildName: \`${guild.guildName}\`\nGuildId: \`${guild.guildId}\`\nMemberCount: \`${guild.memberCount}\`\nChannelCount (Cache): \`${guild.channelCount}\`\nSuggestionCount: \`${guild.suggestionCount}\`\nInvite: ${guild.invite || "none"}`;
             });
 
             let addFieldsObject = [];
