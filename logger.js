@@ -82,6 +82,10 @@ function sendWebhookMessage(message, status) {
       ecolor = 0xff0000;
       mcontent = process.env.DISCORD_WEBHOOK_ERROR_MESSAGE;
       break;
+    case "fatal":
+      ecolor = 0xff0000;
+      mcontent = process.env.DISCORD_WEBHOOK_FATAL_MESSAGE;
+      break;
     case "warn":
       ecolor = 0xffff00;
       break;
@@ -221,7 +225,7 @@ module.exports = {
     const formattedText = formatText(`${cprefix + text}\n${err}`)
     beautify.log(formattedText);
     if (!["off"].includes(process.env.LOGGING_LEVEL)) {
-      sendWebhookMessage(text, "error");
+      sendWebhookMessage(text + "\n" + err, "fatal");
       dumpLog(formattedText);
     }
   },
