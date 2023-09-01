@@ -28,6 +28,8 @@ module.exports = {
     try {
       const {options} = interaction;
 
+      await interaction.deferReply({ephemeral: true});
+
       let channel = options.getChannel("channel")?.id;
       let remove = options.getString("remove");
       let language = await db.getServerLanguage(interaction.guild?.id || 0)
@@ -38,7 +40,7 @@ module.exports = {
         try {
           if (channel == null) {
             await db.setServerSuggestionChannels(interaction.guild?.id || 0, null)
-            interaction.reply({content: lang.reset_suggestion_channel, ephemeral: true})
+            interaction.followUp({content: lang.reset_suggestion_channel, ephemeral: true})
           } else {
             let channels = await db.getServerSuggestionChannels(interaction.guild?.id || 0)
             if (channels.includes(channel)) {
@@ -46,9 +48,9 @@ module.exports = {
               let channelObject = {}
               channelObject["channel_id_array"] = channels
               await db.setServerSuggestionChannels(interaction.guild?.id || 0, channelObject)
-              interaction.reply({content: lang.reset_suggestion_channel, ephemeral: true})
+              interaction.followUp({content: lang.reset_suggestion_channel, ephemeral: true})
             } else {
-              await interaction.reply({
+              await interaction.followUp({
                 content: lang.choose_valid_option, ephemeral: true
               });
             }
@@ -56,7 +58,7 @@ module.exports = {
         } catch (e) {
           Logger.error(e)
           console.log(e.stack)
-          interaction.reply({content: lang.reset_suggestion_channel_error, ephemeral: true})
+          interaction.followUp({content: lang.reset_suggestion_channel_error, ephemeral: true})
         }
       } else {
 
@@ -65,25 +67,25 @@ module.exports = {
         }
         const lang = require(`../../botconfig/languages/${language}.json`);
         if (channel == null) {
-          await interaction.reply({
+          await interaction.followUp({
             content: lang.choose_valid_option, ephemeral: true
           });
         } else {
           // make sure that the server does not have the max limit of suggestion channels
           let channels = await db.getServerSuggestionChannels(interaction.guild?.id || 0)
           if (channels?.length >= await db.getServerMaxChannels(interaction.guild?.id || 0)) {
-            await interaction.reply({
+            await interaction.followUp({
               content: lang.max_suggestion_channels, ephemeral: true
             });
             return;
           }
           await db.addServerSuggestionChannel(interaction.guild?.id, channel)
-          interaction.reply({content: lang.set_suggestion_channel + " <#" + channel + ">.", ephemeral: true})
+          interaction.followUp({content: lang.set_suggestion_channel + " <#" + channel + ">.", ephemeral: true})
         }
 
         // get channel by id
         channel = await interaction.guild?.channels.cache.get(channel);
-        let suggestMessageId = await db.getSuggestMessage(channel.id);
+        let suggestMessageId = await db.getSuggestMessage(channel?.id);
         let suggestMessage;
         try {
           suggestMessage = await channel.messages.fetch(suggestMessageId);
@@ -127,9 +129,9 @@ module.exports = {
         try {
           suggestMessage = await channel.send({embeds: [suggestEmbed], components: [suggestActionRow]});
           // set the message id in the database
-          await db.setSuggestMessage(channel.id, suggestMessage.id);
+          await db.setSuggestMessage(channel?.id, suggestMessage?.id);
         } catch (e) {
-          await interaction.reply({
+          await interaction.followUp({
             content: lang.set_suggestion_channel_error, ephemeral: true
           });
         }

@@ -4,16 +4,7 @@ const logger = require("./logger");
 const mysql = require("mysql2"), fs = require("fs");
 
 validateDatabase().then(() => {
-  let foundBot = fs.existsSync(`${__dirname}/bot/startbot.js`),
-    foundDashboard = fs.existsSync(`${__dirname}/web/startweb.js`),
-    foundTest = fs.existsSync(`${__dirname}/testing/starttest.js`);
-  if (foundBot || foundDashboard || foundTest) {
-    if (foundBot && ["both", "bot"].includes(process.env.RUN)) require("./bot/startbot.js");
-    if (foundDashboard && ["both", "dashboard", "web"].includes(process.env.RUN)) import("./web/startweb.js");
-    if (foundTest && ["test", "testing"].includes(process.env.RUN)) import("./testing/starttest.js");
-  } else {
-    logger.startup("Bot and dashboard not found");
-  }
+  require("./bot/startbot.js");
 });
 
 function validateDatabase() {
