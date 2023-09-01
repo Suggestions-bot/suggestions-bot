@@ -43,7 +43,7 @@ module.exports = {
             interaction.followUp({content: lang.reset_suggestion_channel, ephemeral: true})
           } else {
             let channels = await db.getServerSuggestionChannels(interaction.guild?.id || 0)
-            if (channels.includes(channel)) {
+            if (channels?.includes(channel)) {
               channels.splice(channels.indexOf(channel), 1);
               let channelObject = {}
               channelObject["channel_id_array"] = channels

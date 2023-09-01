@@ -1215,10 +1215,13 @@ const addServerSuggestionChannel = async (guildId, channelId) => {
             );
           } else {
             let suggestionChannels = JSON.parse(results[0]?.channel_id_array);
-            if (suggestionChannels?.channel_id_array.includes(channelId.toString())) {
+            if (suggestionChannels?.channel_id_array?.includes(channelId.toString())) {
               resolve(false);
             } else {
               suggestionChannels?.channel_id_array.push(channelId);
+              if (!suggestionChannels) {
+                suggestionChannels = channelIDObject;
+              }
               pool.query(
                 `UPDATE channels
                  SET channel_id_array = ?
