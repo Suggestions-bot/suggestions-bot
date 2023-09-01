@@ -39,8 +39,7 @@ module.exports = {
 
 
     } catch (e) {
-      Logger.error(e);
-      console.trace(e);
+      Logger.error(e, e.stack);
     }
   }
 }

@@ -56,8 +56,7 @@ module.exports = {
             }
           }
         } catch (e) {
-          Logger.error(e)
-          console.log(e.stack)
+          Logger.error(e, e.stack)
           interaction.followUp({content: lang.reset_suggestion_channel_error, ephemeral: true})
         }
       } else {
@@ -137,8 +136,7 @@ module.exports = {
         }
       }
     } catch (e) {
-      Logger.error(e);
-      Logger.error(e.stack)
+      Logger.error(e, e.stack);
     }
   }
 }

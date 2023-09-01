@@ -94,8 +94,7 @@ module.exports = {
         }
       }
     } catch (e) {
-      Logger.error(e);
-      Logger.error(e.stack);
+      Logger.error(e, e.stack);
     }
   }
 }

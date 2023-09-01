@@ -140,9 +140,7 @@ module.exports = {
 
 
     } catch (e) {
-      Logger.error(e);
-      console.log(e);
-      console.log(e.stack);
+      Logger.error(e, e.stack);
     }
   }
 }
