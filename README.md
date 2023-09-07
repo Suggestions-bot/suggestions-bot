@@ -11,7 +11,7 @@ server [here](https://discord.com/api/oauth2/authorize?client_id=106772118635781
 
 ## Installation
 
-Use `node i`
+Use `node i` or `npm i`
 
 Rename `_.env` to `.env` and fill in the blanks
 
@@ -21,4 +21,4 @@ Put token in `.env`
 
 ## To start
 
-Use `node index.js`
+Use `node index.js` or `npm run start`
