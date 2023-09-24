@@ -622,19 +622,19 @@ async function modalSubmit(client, modal) {
       if (serverdata["upvote_emoji"] !== null && serverdata["upvote_emoji"] !== undefined && serverdata["upvote_emoji"] !== "") {
         uicon = serverdata["upvote_emoji"];
       } else {
-        uicon = "👍";
+        uicon = "<:thumbs_up_bot:1080565677900976242>";
       }
     } catch (e) {
-      uicon = "👍";
+      uicon = "<:thumbs_down_bot:1080566077504880761>";
     }
     try {
       if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
         dicon = serverdata["downvote_emoji"];
       } else {
-        dicon = "👎";
+        dicon = "<:thumbs_up_bot:1080565677900976242>";
       }
     } catch (e) {
-      dicon = "👎";
+      dicon = "<:thumbs_down_bot:1080566077504880761>";
     }
 
     //Removes bad links | disabled for now since bots don't use modals yet
