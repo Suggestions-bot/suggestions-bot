@@ -89,7 +89,7 @@ module.exports = {
       if (action === "accept") {
         let embed = message.embeds[0];
         let newEmbed = {
-          author: embed.author, color: embed.color, timestamp: embed.timestamp, footer: embed.footer,
+          author: embed?.author, color: embed?.color, timestamp: embed?.timestamp, footer: embed?.footer,
           description: embed.description, fields: [
             embed.fields[0],
             embed.fields[1],
