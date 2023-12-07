@@ -34,7 +34,7 @@ module.exports = (client, interaction) => {
   }
   if (interaction.isButton()) return buttons(interaction);
 
-  if (interaction.type.toString() === "MODAL_SUBMIT")
+  if (interaction.type === 5) // MODAL_SUBMIT
     return modalSubmit(client, interaction);
 };
 
@@ -54,15 +54,15 @@ async function confirmRevote(interaction, lang) {
   await interaction.followUp({
     content: lang.already_voted_rechoice,
     components: [
-      new Discord.MessageActionRow().addComponents(
-        new Discord.MessageButton()
+      new Discord.ActionRowBuilder().addComponents(
+        new Discord.ButtonBuilder()
           .setCustomId("up-rechoice")
-          .setStyle("SUCCESS")
+          .setStyle("Success")
           .setLabel(lang.suggest_upvote)
           .setEmoji(`${uicon}`),
-        new Discord.MessageButton()
+        new Discord.ButtonBuilder()
           .setCustomId("down-rechoice")
-          .setStyle("DANGER")
+          .setStyle("Danger")
           .setLabel(lang.suggest_downvote)
           .setEmoji(`${dicon}`)
       ),
@@ -106,23 +106,23 @@ async function checkForAutoAccept(interaction, message, lang) {
       const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
       await message.edit({
         components: [
-          new Discord.MessageActionRow()
+          new Discord.ActionRowBuilder()
             .addComponents(
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("up")
-                .setStyle("SUCCESS")
+                .setStyle("Success")
                 .setLabel(lang.suggest_upvote)
                 .setEmoji(`${uicon}`)
                 .setDisabled(true),
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("down")
-                .setStyle("DANGER")
+                .setStyle("Danger")
                 .setLabel(lang.suggest_downvote)
                 .setEmoji(`${dicon}`)
                 .setDisabled(true),
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("accepted")
-                .setStyle("PRIMARY")
+                .setStyle("Primary")
                 .setLabel(lang.suggest_accepted)
                 .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
             )
@@ -170,23 +170,23 @@ async function checkForAutoDecline(interaction, message, lang) {
       const dicon = embedData?.downvote_emoji || "<:thumbs_down_bot:1080566077504880761>";
       await message.edit({
         components: [
-          new Discord.MessageActionRow()
+          new Discord.ActionRowBuilder()
             .addComponents(
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("up")
-                .setStyle("SUCCESS")
+                .setStyle("Success")
                 .setLabel(lang.suggest_upvote)
                 .setEmoji(`${uicon}`)
                 .setDisabled(true),
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("down")
-                .setStyle("DANGER")
+                .setStyle("Danger")
                 .setLabel(lang.suggest_downvote)
                 .setEmoji(`${dicon}`)
                 .setDisabled(true),
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("declined")
-                .setStyle("PRIMARY")
+                .setStyle("Primary")
                 .setLabel(lang.suggest_declined)
                 .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
             )
@@ -668,6 +668,10 @@ async function modalSubmit(client, modal) {
 
 
     let sugMessage;
+
+    // convert ecolor to int
+    ecolor = parseInt(ecolor, 16);
+
     try {
       sugMessage = await channel
         .send({
@@ -699,15 +703,15 @@ async function modalSubmit(client, modal) {
             },
           ],
           components: [
-            new Discord.MessageActionRow().addComponents(
-              new Discord.MessageButton()
+            new Discord.ActionRowBuilder().addComponents(
+              new Discord.ButtonBuilder()
                 .setCustomId("up")
-                .setStyle("SUCCESS")
+                .setStyle("Success")
                 .setLabel(lang.suggest_upvote)
                 .setEmoji(`${uicon}`),
-              new Discord.MessageButton()
+              new Discord.ButtonBuilder()
                 .setCustomId("down")
-                .setStyle("DANGER")
+                .setStyle("Danger")
                 .setLabel(lang.suggest_downvote)
                 .setEmoji(`${dicon}`)
             ),
@@ -718,7 +722,9 @@ async function modalSubmit(client, modal) {
           return message;
         });
     } catch (e) {
-      return await interaction.reply({
+      console.log(e);
+      console.log(e.stack);
+      return await modal.reply({
         content: lang.message_could_not_send_no_perns, ephemeral: true
       });
     }
@@ -763,16 +769,16 @@ async function modalSubmit(client, modal) {
       }
     }
     // create an embed with a blue button that says suggest
-    let suggestEmbed = new Discord.MessageEmbed()
+    let suggestEmbed = new Discord.EmbedBuilder()
       .setTitle(lang.suggest_embed_title)
       .setDescription(lang.suggest_embed_desc)
       .setColor(ecolor);
-    let suggestButton = new Discord.MessageButton()
+    let suggestButton = new Discord.ButtonBuilder()
       .setCustomId("suggest")
-      .setStyle("PRIMARY")
+      .setStyle("Primary")
       .setLabel(lang.suggest_embed_button)
       .setEmoji("📝");
-    let suggestActionRow = new Discord.MessageActionRow().addComponents(
+    let suggestActionRow = new Discord.ActionRowBuilder().addComponents(
       suggestButton
     );
     // send the embed
