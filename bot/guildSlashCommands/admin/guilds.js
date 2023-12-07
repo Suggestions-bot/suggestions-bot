@@ -54,7 +54,7 @@ module.exports = {
               });
             }
 
-            let embed = new discord.MessageEmbed()
+            let embed = new discord.EmbedBuilder()
               .setTitle(`Guilds the bot is in (${guildAmount})`)
               .setDescription(`Page ${page} of ${cachedGuilds.length} | ${guildAmount} guilds in total | Sorted by memberCount`)
               .setColor("BLUE")
@@ -177,7 +177,7 @@ module.exports = {
 
 
         // create embed
-        let embed = new discord.MessageEmbed()
+        let embed = new discord.EmbedBuilder()
           .setTitle(`Guilds the bot is in (${guildAmount})`)
           .setDescription(`Page 1 of ${guildChunks.length} | ${guildAmount} guilds in total | Sorted by memberCount`)
           .setColor("BLUE")

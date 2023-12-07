@@ -46,7 +46,7 @@ module.exports = {
         }
 
         // embed
-        let embed = new discord.MessageEmbed()
+        let embed = new discord.EmbedBuilder()
           .setTitle(`Guild ${guildName}`)
           .setDescription(`GuildId: \`${guildId}\`\nOwner: <@${guildOwner}>\nMemberCount: \`${guildMemberCount}\`\nSuggestionCount: \`${guildSuggestionCount}\`\nInvite: ${guildInvite || "none"}`)
           .setColor("BLUE")
