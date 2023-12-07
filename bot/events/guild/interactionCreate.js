@@ -625,13 +625,13 @@ async function modalSubmit(client, modal) {
         uicon = "<:thumbs_up_bot:1080565677900976242>";
       }
     } catch (e) {
-      uicon = "<:thumbs_down_bot:1080566077504880761>";
+      uicon = "<:thumbs_up_bot:1080565677900976242>";
     }
     try {
       if (serverdata["downvote_emoji"] !== null && serverdata["downvote_emoji"] !== undefined && serverdata["downvote_emoji"] !== "") {
         dicon = serverdata["downvote_emoji"];
       } else {
-        dicon = "<:thumbs_up_bot:1080565677900976242>";
+        dicon = "<:thumbs_down_bot:1080566077504880761>";
       }
     } catch (e) {
       dicon = "<:thumbs_down_bot:1080566077504880761>";
