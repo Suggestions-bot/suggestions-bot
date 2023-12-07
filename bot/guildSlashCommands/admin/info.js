@@ -86,7 +86,7 @@ module.exports = {
           });*/
 
 
-      const embed = new discord.MessageEmbed()
+      const embed = new discord.EmbedBuilder()
         .setTitle("Info")
         .setDescription("Stats about the bot")
         .addFields(
