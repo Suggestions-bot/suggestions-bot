@@ -74,6 +74,7 @@ module.exports = {
       );
 
       if (message === false) return;
+      console.log(message);
 
       if (message.author.id.toString() !== client.user.id.toString()) {
         interaction.reply(
@@ -88,6 +89,7 @@ module.exports = {
 
       if (action === "accept") {
         let embed = message.embeds[0];
+        console.log(embed);
         let newEmbed = {
           author: embed?.author, color: embed?.color, timestamp: embed?.timestamp, footer: embed?.footer,
           description: embed.description, fields: [
