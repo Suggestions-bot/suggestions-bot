@@ -104,7 +104,7 @@ module.exports = {
             inline: false
           }
         )
-        .setColor("GREEN")
+        .setColor(0x00ff00)
         .setTimestamp()
         .setFooter({
           text: "Suggestions Bot",

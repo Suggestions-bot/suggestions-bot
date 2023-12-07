@@ -49,7 +49,7 @@ module.exports = {
         let embed = new discord.EmbedBuilder()
           .setTitle(`Guild ${guildName}`)
           .setDescription(`GuildId: \`${guildId}\`\nOwner: <@${guildOwner}>\nMemberCount: \`${guildMemberCount}\`\nSuggestionCount: \`${guildSuggestionCount}\`\nInvite: ${guildInvite || "none"}`)
-          .setColor("BLUE")
+          .setColor(0x0000ff)
           .setFooter({
             text: "SuggestionBot",
             icon_url: client.user.avatarURL()

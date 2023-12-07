@@ -57,7 +57,7 @@ module.exports = {
             let embed = new discord.EmbedBuilder()
               .setTitle(`Guilds the bot is in (${guildAmount})`)
               .setDescription(`Page ${page} of ${cachedGuilds.length} | ${guildAmount} guilds in total | Sorted by memberCount`)
-              .setColor("BLUE")
+              .setColor(0x0000ff)
               .setTimestamp()
               .setFooter({
                 text: `Page ${page} of ${cachedGuilds.length}`,
@@ -180,7 +180,7 @@ module.exports = {
         let embed = new discord.EmbedBuilder()
           .setTitle(`Guilds the bot is in (${guildAmount})`)
           .setDescription(`Page 1 of ${guildChunks.length} | ${guildAmount} guilds in total | Sorted by memberCount`)
-          .setColor("BLUE")
+          .setColor(0x0000ff)
           .setTimestamp()
           .setFooter({
             text: `Page 1 of ${guildChunks.length}`,
