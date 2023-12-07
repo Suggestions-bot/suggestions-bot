@@ -113,23 +113,23 @@ module.exports = {
 
         await message.edit({
           components: [
-            new Discord.MessageActionRow()
+            new Discord.ActionRowBuilder()
               .addComponents(
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("up")
-                  .setStyle("SUCCESS")
+                  .setStyle("Success")
                   .setLabel(lang.suggest_upvote)
                   .setEmoji(`${uicon}`)
                   .setDisabled(true),
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("down")
-                  .setStyle("DANGER")
+                  .setStyle("Danger")
                   .setLabel(lang.suggest_downvote)
                   .setEmoji(`${dicon}`)
                   .setDisabled(true),
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("accepted")
-                  .setStyle("PRIMARY")
+                  .setStyle("Primary")
                   .setLabel(lang.suggest_accepted)
                   .setEmoji(`${embedData?.accepted_emoji || "<a:accept_bot:1000710815562866759>"}`)
               )
@@ -179,23 +179,23 @@ module.exports = {
 
         await message.edit({
           components: [
-            new Discord.MessageActionRow()
+            new Discord.ActionRowBuilder()
               .addComponents(
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("up")
-                  .setStyle("SUCCESS")
+                  .setStyle("Success")
                   .setLabel(lang.suggest_upvote)
                   .setEmoji(`${uicon}`)
                   .setDisabled(true),
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("down")
-                  .setStyle("DANGER")
+                  .setStyle("Danger")
                   .setLabel(lang.suggest_downvote)
                   .setEmoji(`${dicon}`)
                   .setDisabled(true),
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("declined")
-                  .setStyle("PRIMARY")
+                  .setStyle("Primary")
                   .setLabel(lang.suggest_declined)
                   .setEmoji(`${embedData?.denied_emoji || "<a:deny_bot:1000710816980533278>"}`)
               )
@@ -232,16 +232,16 @@ module.exports = {
 
         await message.edit({
           components: [
-            new Discord.MessageActionRow()
+            new Discord.ActionRowBuilder()
               .addComponents(
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("up")
-                  .setStyle("SUCCESS")
+                  .setStyle("Success")
                   .setLabel(lang.suggest_upvote)
                   .setEmoji(`${uicon}`),
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                   .setCustomId("down")
-                  .setStyle("DANGER")
+                  .setStyle("Danger")
                   .setLabel(lang.suggest_downvote)
                   .setEmoji(`${dicon}`),
               )
