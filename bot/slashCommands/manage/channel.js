@@ -114,16 +114,16 @@ module.exports = {
         }
 
         // create an embed with a blue button that says suggest
-        let suggestEmbed = new Discord.MessageEmbed()
+        let suggestEmbed = new Discord.EmbedBuilder()
           .setTitle(lang.suggest_embed_title)
           .setDescription(lang.suggest_embed_desc)
           .setColor(ecolor);
-        let suggestButton = new Discord.MessageButton()
+        let suggestButton = new Discord.ButtonBuilder()
           .setCustomId("suggest")
-          .setStyle("PRIMARY")
+          .setStyle("Primary")
           .setLabel(lang.suggest_embed_button)
           .setEmoji("📝");
-        let suggestActionRow = new Discord.MessageActionRow().addComponents(suggestButton);
+        let suggestActionRow = new Discord.ActionRowBuilder().addComponents(suggestButton);
         // send the embed
         try {
           suggestMessage = await channel.send({embeds: [suggestEmbed], components: [suggestActionRow]});
