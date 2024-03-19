@@ -33,7 +33,6 @@
     "ora": "5",
     "prettier": "^3.2.5",
     "require-all": "^3.0.0",
-    "typescript": "^5.4.2",
     "utf-8-validate": "^6.0.3"
   }
 }
