@@ -6,7 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node .",
-    "dev": "node . --trace-deprecation"
+    "dev": "node . --trace-deprecation",
+    "format": "prettier --write ."
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true
   },
   "keywords": [],
   "author": "Faye, SleepyYui",
@@ -15,17 +22,17 @@
     "@discordjs/builders": "0.12.0",
     "beautify.log": "^3.0.4",
     "bufferutil": "^4.0.6",
-    "chalk": "4",
+    "chalk": "5",
     "colors": "^1.4.0",
-    "discord-modals": "1",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.1",
     "knex": "^2.4.2",
     "moment": "^2.29.1",
-    "mysql2": "^3.0.1",
+    "mysql2": "^3.9.2",
     "node-gyp": "^9.1.0",
     "ora": "5",
+    "prettier": "^3.2.5",
     "require-all": "^3.0.0",
-    "utf-8-validate": "^5.0.9"
+    "utf-8-validate": "^6.0.3"
   }
 }
