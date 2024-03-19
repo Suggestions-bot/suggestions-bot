@@ -1,4 +1,4 @@
-const mysql = require("mysql2");
+const mysql = require('mysql2')
 
 const pool = mysql.createPool({
   host: process.env.DATABASE_HOST,
@@ -9,10 +9,10 @@ const pool = mysql.createPool({
   keepAliveInitialDelay: 20000,
   bigNumberStrings: true,
   supportBigNumbers: true,
-});
+})
 
 const getCurrentDate = () => {
-  return new Date().toISOString().slice(0, 19).replace("T", " ");
+  return new Date().toISOString().slice(0, 19).replace('T', ' ')
 }
 
 const getServerLanguage = async (guildId) => {
@@ -24,17 +24,17 @@ const getServerLanguage = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.length === 0 || results[0]["language"] === null) {
-            resolve("lang_en");
+          if (results.length === 0 || results[0]['language'] === null) {
+            resolve('lang_en')
           } else {
-            resolve(results[0]["language"]);
+            resolve(results[0]['language'])
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getAllServerSettings = async (guildId) => {
@@ -46,17 +46,17 @@ const getAllServerSettings = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           if (results.length === 0) {
-            resolve(null);
+            resolve(null)
           } else {
-            resolve(results[0]);
+            resolve(results[0])
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getAllUserSuggestions = async (guildId, userId) => {
@@ -69,13 +69,13 @@ const getAllUserSuggestions = async (guildId, userId) => {
       [guildId, userId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results);
+          resolve(results)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerSuggestionChannel = async (guildId) => {
@@ -87,19 +87,22 @@ const getServerSuggestionChannel = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           // console.log(results);
-          if (results.length === 0 || results[0]["suggestion_channel"] === null) {
-            resolve(null);
+          if (
+            results.length === 0 ||
+            results[0]['suggestion_channel'] === null
+          ) {
+            resolve(null)
           } else {
             // console.log(results[0]["suggestion_channel"]);
-            resolve(results[0]["suggestion_channel"]);
+            resolve(results[0]['suggestion_channel'])
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerSuggestionChannels = async (guildId) => {
@@ -112,19 +115,19 @@ const getServerSuggestionChannels = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           // console.log(results);
           if (results.length === 0 || results[0]?.channel_id_array === null) {
-            resolve(null);
+            resolve(null)
           } else {
             // console.log(results[0]["channel_id_array"]);
-            resolve(JSON.parse(results[0]?.channel_id_array)?.channel_id_array);
+            resolve(JSON.parse(results[0]?.channel_id_array)?.channel_id_array)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerEmbedData = async (guildId) => {
@@ -137,21 +140,24 @@ const getServerEmbedData = async (guildId) => {
       (err, results) => {
         //console.log(results);
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           try {
-            if (resolve.length === 0 || results[0]["suggestion_embed_color"] === null) {
-              resolve(undefined);
+            if (
+              resolve.length === 0 ||
+              results[0]['suggestion_embed_color'] === null
+            ) {
+              resolve(undefined)
             } else {
-              resolve(results[0]);
+              resolve(results[0])
             }
           } catch (error) {
-            resolve(undefined);
+            resolve(undefined)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getSuggestionVoters = async (serverId, messageId) => {
@@ -164,13 +170,13 @@ const getSuggestionVoters = async (serverId, messageId) => {
       [serverId, messageId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results);
+          resolve(results)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerAllowsLinks = async (guildId) => {
@@ -182,12 +188,15 @@ const getServerAllowsLinks = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(null);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(null)
           } else {
-            if (results[0]["allow_links"] === 1) {
+            if (results[0]['allow_links'] === 1) {
               resolve(true)
             } else {
               resolve(false)
@@ -195,8 +204,8 @@ const getServerAllowsLinks = async (guildId) => {
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getAcceptUpvotes = async (guildId) => {
@@ -208,13 +217,13 @@ const getAcceptUpvotes = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]?.auto_accept_upvotes);
+          resolve(results[0]?.auto_accept_upvotes)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getDeclineDownvotes = async (guildId) => {
@@ -226,13 +235,13 @@ const getDeclineDownvotes = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]?.auto_decline_downvotes);
+          resolve(results[0]?.auto_decline_downvotes)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getNumberOfSuggestions = async () => {
@@ -243,13 +252,13 @@ const getNumberOfSuggestions = async () => {
       [],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]["COUNT(*)"]);
+          resolve(results[0]['COUNT(*)'])
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getNumberOfSuggestionsInGuild = async (guildId) => {
@@ -261,13 +270,13 @@ const getNumberOfSuggestionsInGuild = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]["COUNT(*)"]);
+          resolve(results[0]['COUNT(*)'])
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getGuildsWithMostSuggestions = async () => {
@@ -281,14 +290,13 @@ const getGuildsWithMostSuggestions = async () => {
       [],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results);
+          resolve(results)
         }
       }
-    );
-
-  });
+    )
+  })
 }
 
 const getServerAutoThread = async (guildId) => {
@@ -300,17 +308,17 @@ const getServerAutoThread = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results[0]?.auto_thread?.toString() === "1") {
-            resolve(true);
+          if (results[0]?.auto_thread?.toString() === '1') {
+            resolve(true)
           } else {
-            resolve(false);
+            resolve(false)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getSuggestionThread = async (guildId, messageId) => {
@@ -323,13 +331,13 @@ const getSuggestionThread = async (guildId, messageId) => {
       [guildId, messageId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]?.thread_id);
+          resolve(results[0]?.thread_id)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerSuggestionsSortedByUpvotes = async (guildId, amount) => {
@@ -343,13 +351,13 @@ const getServerSuggestionsSortedByUpvotes = async (guildId, amount) => {
       [guildId, amount],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results);
+          resolve(results)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getSuggestMessage = async (channelId) => {
@@ -361,13 +369,13 @@ const getSuggestMessage = async (channelId) => {
       [channelId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(results[0]?.message_id);
+          resolve(results[0]?.message_id)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const getServerMaxChannels = async (guildId) => {
@@ -379,19 +387,19 @@ const getServerMaxChannels = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          let channels = results[0]?.max_channels;
+          let channels = results[0]?.max_channels
           if (channels === undefined) {
-            channels = 2;
+            channels = 2
           } else {
-            channels = parseInt(channels);
+            channels = parseInt(channels)
           }
-          resolve(channels);
+          resolve(channels)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerLanguage = async (guildId, language) => {
@@ -405,28 +413,31 @@ const setServerLanguage = async (guildId, language) => {
         //console.log(results);
         //console.log(err);
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, language)
                VALUES (?, ?)`,
               [guildId, language],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerManagerRole = async (guildId, roleId) => {
@@ -438,28 +449,31 @@ const setServerManagerRole = async (guildId, roleId) => {
       [roleId, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, manager_role)
                VALUES (?, ?)`,
               [guildId, roleId],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerUpvoteEmoji = async (guildId, emoji) => {
@@ -471,28 +485,31 @@ const setServerUpvoteEmoji = async (guildId, emoji) => {
       [emoji, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, upvote_emoji)
                VALUES (?, ?)`,
               [guildId, emoji],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerDownvoteEmoji = async (guildId, emoji) => {
@@ -504,28 +521,31 @@ const setServerDownvoteEmoji = async (guildId, emoji) => {
       [emoji, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, downvote_emoji)
                VALUES (?, ?)`,
               [guildId, emoji],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerSuggestionChannel = async (guildId, channelId) => {
@@ -537,28 +557,31 @@ const setServerSuggestionChannel = async (guildId, channelId) => {
       [channelId, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, suggestion_channel)
                VALUES (?, ?)`,
               [guildId, channelId],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerSuggestionChannels = async (guildId, channelId) => {
@@ -572,13 +595,13 @@ const setServerSuggestionChannels = async (guildId, channelId) => {
         [guildId],
         (err) => {
           if (err) {
-            reject(err);
+            reject(err)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
-      );
-      resolve(true);
+      )
+      resolve(true)
     }
     pool.query(
       `UPDATE channels
@@ -587,28 +610,31 @@ const setServerSuggestionChannels = async (guildId, channelId) => {
       [JSON.stringify(channelId), guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO channels (server_id, channel_id_array)
                VALUES (?, ?)`,
               [guildId, JSON.stringify(channelId)],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerAcceptedEmoji = async (guildId, emoji) => {
@@ -620,28 +646,31 @@ const setServerAcceptedEmoji = async (guildId, emoji) => {
       [emoji, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, accepted_emoji)
                VALUES (?, ?)`,
               [guildId, emoji],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerDeniedEmoji = async (guildId, emoji) => {
@@ -653,28 +682,31 @@ const setServerDeniedEmoji = async (guildId, emoji) => {
       [emoji, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, denied_emoji)
                VALUES (?, ?)`,
               [guildId, emoji],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerEmbedColor = async (guildId, color) => {
@@ -686,31 +718,41 @@ const setServerEmbedColor = async (guildId, color) => {
       [color, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, suggestion_embed_color)
                VALUES (?, ?)`,
               [guildId, color],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
-const setServerEmbedSettings = async (guildId, color, downvote, upvote, accept, decline) => {
+const setServerEmbedSettings = async (
+  guildId,
+  color,
+  downvote,
+  upvote,
+  accept,
+  decline
+) => {
   return new Promise((resolve, reject) => {
     pool.query(
       `UPDATE servers
@@ -723,9 +765,12 @@ const setServerEmbedSettings = async (guildId, color, downvote, upvote, accept, 
       [color, downvote, upvote, accept, decline, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, suggestion_embed_color, downvote_emoji, upvote_emoji,
                                     accepted_emoji, denied_emoji)
@@ -733,19 +778,19 @@ const setServerEmbedSettings = async (guildId, color, downvote, upvote, accept, 
               [guildId, color, downvote, upvote, accept, decline],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setSuggestionDenied = async (guildId, suggestionId) => {
@@ -758,17 +803,20 @@ const setSuggestionDenied = async (guildId, suggestionId) => {
       [false, guildId, suggestionId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setSuggestionAccepted = async (guildId, suggestionId) => {
@@ -781,17 +829,20 @@ const setSuggestionAccepted = async (guildId, suggestionId) => {
       [true, guildId, suggestionId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setSuggestionPending = async (guildId, suggestionId) => {
@@ -804,17 +855,20 @@ const setSuggestionPending = async (guildId, suggestionId) => {
       [null, guildId, suggestionId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerAutoAccept = async (guildId, autoAccept) => {
@@ -826,28 +880,31 @@ const setServerAutoAccept = async (guildId, autoAccept) => {
       [autoAccept, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, auto_accept_upvotes)
                VALUES (?, ?)`,
               [guildId, autoAccept],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerAutoDecline = async (guildId, autoDecline) => {
@@ -859,28 +916,31 @@ const setServerAutoDecline = async (guildId, autoDecline) => {
       [autoDecline, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, auto_decline_downvotes)
                VALUES (?, ?)`,
               [guildId, autoDecline],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setServerAutoThread = async (guildId, autoThread) => {
@@ -892,28 +952,31 @@ const setServerAutoThread = async (guildId, autoThread) => {
       [autoThread, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO servers (server_id, auto_thread)
                VALUES (?, ?)`,
               [guildId, autoThread],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setSuggestionThread = async (suggestionId, threadId) => {
@@ -925,17 +988,20 @@ const setSuggestionThread = async (suggestionId, threadId) => {
       [threadId, suggestionId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setSuggestMessage = async (channelId, messageId) => {
@@ -947,28 +1013,31 @@ const setSuggestMessage = async (channelId, messageId) => {
       [messageId, channelId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO suggest_message_ids (message_id, channel_id)
                VALUES (?, ?)`,
               [messageId, channelId],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const setDeleteSuggestion = async (guildId, deleteSuggestion) => {
@@ -981,16 +1050,20 @@ const setDeleteSuggestion = async (guildId, deleteSuggestion) => {
       [guildId, deleteSuggestion],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
-      });
-  });
+      }
+    )
+  })
 }
 
 const setServerMaxChannels = async (guildId, maxChannels) => {
@@ -1002,31 +1075,40 @@ const setServerMaxChannels = async (guildId, maxChannels) => {
       [maxChannels, guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
             pool.query(
               `INSERT INTO server_max_channels (server_id, max_channels)
                VALUES (?, ?)`,
               [guildId, maxChannels],
               (err) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
-const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId, channelId) => {
+const addNewSuggestion = async (
+  guildId,
+  suggestionId,
+  suggestion,
+  authorId,
+  channelId
+) => {
   return new Promise((resolve, reject) => {
     // add a new suggestion to the database only if message_id is not already in the database
     pool.query(
@@ -1048,20 +1130,35 @@ const addNewSuggestion = async (guildId, suggestionId, suggestion, authorId, cha
                         FROM suggestions
                         WHERE message_id = tmp.message_id)
        LIMIT 1;`,
-      [guildId, suggestionId, channelId, suggestion, authorId, 0, 0, "[]", "[]", "[]", getCurrentDate()],
+      [
+        guildId,
+        suggestionId,
+        channelId,
+        suggestion,
+        authorId,
+        0,
+        0,
+        '[]',
+        '[]',
+        '[]',
+        getCurrentDate(),
+      ],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
@@ -1081,21 +1178,24 @@ const addSuggestionUpvote = async (guildId, suggestionId, userId) => {
       [userId, guildId, suggestionId, userId, userId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           // console.log(results);
           // console.log(userId);
           // console.log(guildId);
           // console.log(suggestionId);
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const addSuggestionDownvote = async (guildId, suggestionId, userId) => {
@@ -1112,17 +1212,20 @@ const addSuggestionDownvote = async (guildId, suggestionId, userId) => {
       [userId, guildId, suggestionId, userId, userId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const addSuggestionUpvoteRevoteDown = async (guildId, suggestionId, userId) => {
@@ -1140,17 +1243,20 @@ const addSuggestionUpvoteRevoteDown = async (guildId, suggestionId, userId) => {
       [userId, userId, userId, guildId, suggestionId, userId, userId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const addSuggestionDownvoteRevoteUp = async (guildId, suggestionId, userId) => {
@@ -1170,25 +1276,28 @@ const addSuggestionDownvoteRevoteUp = async (guildId, suggestionId, userId) => {
         // console.log(err);
         // console.log(results);
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          if (results.affectedRows === 0 || results.affectedRows === undefined) {
-            resolve(false);
+          if (
+            results.affectedRows === 0 ||
+            results.affectedRows === undefined
+          ) {
+            resolve(false)
           } else {
-            resolve(true);
+            resolve(true)
           }
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const addServerSuggestionChannel = async (guildId, channelId) => {
   return new Promise((resolve, reject) => {
-    let channelIdArray = [];
-    channelIdArray.push(channelId);
+    let channelIdArray = []
+    channelIdArray.push(channelId)
     let channelIDObject = {
-      channel_id_array: channelIdArray
+      channel_id_array: channelIdArray,
     }
     // get the current suggestion channel array from the channels table, and add it to the array
     pool.query(
@@ -1198,7 +1307,7 @@ const addServerSuggestionChannel = async (guildId, channelId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           if (results.length === 0) {
             pool.query(
@@ -1207,20 +1316,24 @@ const addServerSuggestionChannel = async (guildId, channelId) => {
               [guildId, JSON.stringify(channelIDObject)],
               (err, results) => {
                 if (err) {
-                  reject(err);
+                  reject(err)
                 } else {
-                  resolve(true);
+                  resolve(true)
                 }
               }
-            );
+            )
           } else {
-            let suggestionChannels = JSON.parse(results[0]?.channel_id_array);
-            if (suggestionChannels?.channel_id_array?.includes(channelId.toString())) {
-              resolve(false);
+            let suggestionChannels = JSON.parse(results[0]?.channel_id_array)
+            if (
+              suggestionChannels?.channel_id_array?.includes(
+                channelId.toString()
+              )
+            ) {
+              resolve(false)
             } else {
-              suggestionChannels?.channel_id_array.push(channelId);
+              suggestionChannels?.channel_id_array.push(channelId)
               if (!suggestionChannels) {
-                suggestionChannels = channelIDObject;
+                suggestionChannels = channelIDObject
               }
               pool.query(
                 `UPDATE channels
@@ -1229,17 +1342,18 @@ const addServerSuggestionChannel = async (guildId, channelId) => {
                 [JSON.stringify(suggestionChannels), guildId],
                 (err, results) => {
                   if (err) {
-                    reject(err);
+                    reject(err)
                   } else {
-                    resolve(true);
+                    resolve(true)
                   }
                 }
-              );
+              )
             }
           }
         }
-      });
-  });
+      }
+    )
+  })
 }
 
 const checkForUserVote = async (guildId, suggestionId, userId) => {
@@ -1253,26 +1367,25 @@ const checkForUserVote = async (guildId, suggestionId, userId) => {
       [userId, userId, guildId, suggestionId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
           if (results.length === 0) {
-            resolve(false);
+            resolve(false)
           } else {
-            const {downvoted, upvoted} = results[0];
+            const { downvoted, upvoted } = results[0]
             if (upvoted === 1) {
-              resolve("up");
+              resolve('up')
             } else if (downvoted === 1) {
-              resolve("down");
+              resolve('down')
             } else {
-              resolve(false);
+              resolve(false)
             }
           }
         }
       }
-    );
-  });
+    )
+  })
 }
-
 
 const cacheSetSortedGuilds = async (guilds) => {
   return new Promise((resolve, reject) => {
@@ -1282,10 +1395,10 @@ const cacheSetSortedGuilds = async (guilds) => {
        WHERE sorted_guilds IS NOT NULL`,
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         }
       }
-    );
+    )
 
     pool.query(
       `INSERT INTO cache (sorted_guilds)
@@ -1293,13 +1406,13 @@ const cacheSetSortedGuilds = async (guilds) => {
       [JSON.stringify(guilds)],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(true);
+          resolve(true)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const cacheGetSortedGuilds = async () => {
@@ -1310,13 +1423,13 @@ const cacheGetSortedGuilds = async () => {
       [],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(JSON.parse(results[0].sorted_guilds));
+          resolve(JSON.parse(results[0].sorted_guilds))
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const deleteServer = async (guildId) => {
@@ -1328,13 +1441,13 @@ const deleteServer = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(true);
+          resolve(true)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const deleteSuggestions = async (guildId) => {
@@ -1346,21 +1459,21 @@ const deleteSuggestions = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          reject(err);
+          reject(err)
         } else {
-          resolve(true);
+          resolve(true)
         }
       }
-    );
-  });
+    )
+  })
 }
 
 const deleteSuggestMessageIDs = async (guildId) => {
   return new Promise(async (resolve, reject) => {
     // get all IDs from channels table
-    let channels = await getServerSuggestionChannels(guildId);
+    let channels = await getServerSuggestionChannels(guildId)
     for (let i = 0; i < channels.length; i++) {
-      let channel = channels[i];
+      let channel = channels[i]
       pool.query(
         `DELETE
          FROM suggest_message_ids
@@ -1368,11 +1481,11 @@ const deleteSuggestMessageIDs = async (guildId) => {
         [channel],
         (err, results) => {
           if (err) {
-            console.log(err);
-            resolve(false);
+            console.log(err)
+            resolve(false)
           }
         }
-      );
+      )
     }
     pool.query(
       `DELETE
@@ -1381,17 +1494,16 @@ const deleteSuggestMessageIDs = async (guildId) => {
       [guildId],
       (err, results) => {
         if (err) {
-          console.log(err);
-          resolve(false);
+          console.log(err)
+          resolve(false)
         } else {
-          resolve(true);
+          resolve(true)
         }
       }
-    );
-    resolve(true);
-  });
+    )
+    resolve(true)
+  })
 }
-
 
 module.exports = {
   pool,
@@ -1445,7 +1557,6 @@ module.exports = {
 
   checkForUserVote,
 
-
   cacheSetSortedGuilds,
   cacheGetSortedGuilds,
 
@@ -1453,4 +1564,3 @@ module.exports = {
   deleteSuggestions,
   deleteSuggestMessageIDs,
 }
-

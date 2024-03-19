@@ -32,7 +32,7 @@ module.exports = {
         .setMaxLength(1024)
         .setPlaceholder(lang.add_suggestion_here)
         .setRequired(true)
-      
+
       const firstActionRow = new ActionRowBuilder().addComponents(inputField)
 
       modal.addComponents(firstActionRow)

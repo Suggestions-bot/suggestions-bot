@@ -1,7 +1,6 @@
-const Discord = require("discord.js");
-const logger = require("../logger");
+const Discord = require('discord.js')
+const logger = require('../logger')
 const client = new Discord.Client({
-
   // {
   //   '1': 'Guilds',
   //   '2': 'GuildMembers',
@@ -44,7 +43,7 @@ const client = new Discord.Client({
   //   AutoModerationExecution: 2097152
   // }
 
-  shards: "auto",
+  shards: 'auto',
   allowedMentions: {
     parse: [],
     repliedUser: false,
@@ -59,28 +58,30 @@ const client = new Discord.Client({
   presence: {
     activity: {
       name: `Suggestions`,
-      type: "WATCHING",
+      type: 'WATCHING',
     },
-    status: "online"
-  }
-});
+    status: 'online',
+  },
+})
 
 //Define some Global Collections
 
-client.commands = new Discord.Collection();
-client.cooldowns = new Discord.Collection();
-client.slashCommands = new Discord.Collection();
-client.aliases = new Discord.Collection();
-
+client.commands = new Discord.Collection()
+client.cooldowns = new Discord.Collection()
+client.slashCommands = new Discord.Collection()
+client.aliases = new Discord.Collection()
 
 //Require the Handlers                  Add the antiCrash file too, if its enabled
 
-["events", "slashCommands", process.env.BOT_ANTI_CRASH ? "antiCrash" : null]
+;['events', 'slashCommands', process.env.BOT_ANTI_CRASH ? 'antiCrash' : null]
   .filter(Boolean)
-  .forEach(h => {
-    require(`./handlers/${h}`)(client);
+  .forEach((h) => {
+    require(`./handlers/${h}`)(client)
   })
 
 //Start the Bot
 
-client.login(process.env.DISCORD_TOKEN).then(() => logger.startup("Started Bot")).catch(e => console.log(e));
+client
+  .login(process.env.DISCORD_TOKEN)
+  .then(() => logger.startup('Started Bot'))
+  .catch((e) => console.log(e))
