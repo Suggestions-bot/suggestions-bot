@@ -24,7 +24,6 @@
     "bufferutil": "^4.0.6",
     "chalk": "5",
     "colors": "^1.4.0",
-    "discord-modals": "1",
     "discord.js": "^14.14.1",
     "dotenv": "^16.0.1",
     "knex": "^2.4.2",

@@ -1,6 +1,11 @@
 const Logger = require('../../../logger')
-const modals = require('discord-modals')
 const db = require('../../../database')
+const {
+  ActionRowBuilder,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle,
+} = require('discord.js')
 
 module.exports = {
   name: 'edit', //the command name for the Slash Command
@@ -82,63 +87,75 @@ module.exports = {
           // content is the suggestion
           const content = message.embeds[0].description
           // create a modal
-          const modal = new modals.Modal()
+          const modal = new ModalBuilder()
             .setCustomId('edit')
             .setTitle(lang.suggest_edit_title)
-            .addComponents(
-              new modals.TextInputComponent()
-                .setCustomId('message-id')
-                .setLabel(lang.suggest_edit_message_id)
-                .setStyle('SHORT')
-                .setMinLength(10)
-                .setMaxLength(256)
-                .setDefaultValue(givenMessageID.toString())
-                .setRequired(true),
-              new modals.TextInputComponent()
-                .setCustomId('input')
-                .setLabel(lang.suggestion_name)
-                .setPlaceholder(lang.add_suggestion_here)
-                .setStyle('LONG')
-                .setMinLength(3)
-                .setMaxLength(1024)
-                .setDefaultValue(content)
-                .setRequired(true)
-            )
 
-          let modalData = await modals.showModal(modal, {
+          // add components to modal
+          const messageID = new TextInputBuilder()
+            .setCustomId('message-id')
+            .setLabel(lang.suggest_edit_message_id)
+            .setStyle(TextInputStyle.Short)
+            .setMinLength(10)
+            .setMaxLength(256)
+            .setValue(givenMessageID.toString())
+            .setRequired(true)
+
+          const input = new TextInputBuilder()
+            .setCustomId('input')
+            .setLabel(lang.suggestion_name)
+            .setPlaceholder(lang.add_suggestion_here)
+            .setStyle(TextInputStyle.Paragraph)
+            .setMinLength(3)
+            .setMaxLength(1024)
+            .setRequired(true)
+
+          modal.addComponents(
+            new ActionRowBuilder().addComponents(messageID),
+            new ActionRowBuilder().addComponents(input)
+          )
+
+          // show the modal
+
+          await interaction.showModal(modal, {
             client: client,
             interaction: interaction,
           })
-          modalData
         }
       } else {
         // create a modal
-        const modal = new modals.Modal()
+        const modal = new ModalBuilder()
           .setCustomId('edit')
           .setTitle(lang.suggest_edit_title)
-          .addComponents(
-            new modals.TextInputComponent()
-              .setCustomId('message-id')
-              .setLabel(lang.suggest_edit_message_id)
-              .setStyle('SHORT')
-              .setMinLength(10)
-              .setMaxLength(256)
-              .setRequired(true),
-            new modals.TextInputComponent()
-              .setCustomId('input')
-              .setLabel(lang.suggestion_name)
-              .setPlaceholder(lang.add_suggestion_here)
-              .setStyle('LONG')
-              .setMinLength(3)
-              .setMaxLength(1024)
-              .setRequired(true)
-          )
 
-        let modalData = await modals.showModal(modal, {
+        // add components to modal
+        const messageID = new TextInputBuilder()
+          .setCustomId('message-id')
+          .setLabel(lang.suggest_edit_message_id)
+          .setStyle(TextInputStyle.Short)
+          .setMinLength(10)
+          .setMaxLength(256)
+          .setRequired(true)
+
+        const input = new TextInputBuilder()
+          .setCustomId('input')
+          .setLabel(lang.suggestion_name)
+          .setPlaceholder(lang.add_suggestion_here)
+          .setStyle(TextInputStyle.Paragraph)
+          .setMinLength(3)
+          .setMaxLength(1024)
+          .setRequired(true)
+
+        modal.addComponents(
+          new ActionRowBuilder().addComponents(messageID),
+          new ActionRowBuilder().addComponents(input)
+        )
+
+        // show the modal
+        await interaction.showModal(modal, {
           client: client,
           interaction: interaction,
         })
-        modalData
       }
     } catch (e) {
       Logger.error(e, e.stack)
