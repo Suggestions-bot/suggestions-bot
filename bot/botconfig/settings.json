@@ -1,8 +1,6 @@
 {
   "_information_": "Don't bother editing this file, it's not in use anymore. Please configure the bot in the botconfig.json file.",
-  "ownerIDS": [
-    "123456789"
-  ],
+  "ownerIDS": ["123456789"],
   "default_cooldown_in_sec": 1.5,
   "antiCrash": true,
   "ping_message": true,

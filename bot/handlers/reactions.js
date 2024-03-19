@@ -247,5 +247,4 @@ module.exports = {
   sign_musical_note: '🎶',
   sign_infinity: '♾',
   sign_deny: '❌',
-
-};
+}

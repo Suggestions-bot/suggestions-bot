@@ -1,36 +1,38 @@
-require("dotenv").config();
-const logger = require("./logger");
+require('dotenv').config()
+const logger = require('./logger')
 
-const mysql = require("mysql2"), fs = require("fs");
+const mysql = require('mysql2'),
+  fs = require('fs')
 
 validateDatabase().then(() => {
-  require("./bot/startbot.js");
-});
+  require('./bot/startbot.js')
+})
 
 function validateDatabase() {
-
   return new Promise(async (resolve) => {
-
-    logger.db(`Connecting to ${process.env.DATABASE_USER}@${process.env.DATABASE_HOST} ...`);
+    logger.db(
+      `Connecting to ${process.env.DATABASE_USER}@${process.env.DATABASE_HOST} ...`
+    )
 
     let connection = mysql.createConnection({
       host: process.env.DATABASE_HOST,
       user: process.env.DATABASE_USER,
       password: process.env.DATABASE_PASSWORD,
-      database: process.env.DATABASE_DATABASE
-    });
+      database: process.env.DATABASE_DATABASE,
+    })
 
     connection.connect(async (err) => {
-
       if (err) {
-        logger.db("Connection failed");
+        logger.db('Connection failed')
         logger.error(err, err.stack)
-        return;
+        return
       }
 
-      logger.db("Connection successful");
+      logger.db('Connection successful')
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.suggestions
           (
               id            BIGINT AUTO_INCREMENT,
@@ -48,9 +50,14 @@ function validateDatabase() {
               accepted      BOOLEAN   NULL,
               thread_id     BIGINT    NULL,
               CONSTRAINT suggestion_id PRIMARY KEY (id)
-          );`, (err) => err ? logger.error(err) : resolve()));
+          );`,
+          (err) => (err ? logger.error(err) : resolve())
+        )
+      )
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.servers
           (
               id                     BIGINT AUTO_INCREMENT,
@@ -70,26 +77,41 @@ function validateDatabase() {
               auto_thread            BOOLEAN      NULL,
               suggest_message_id     BIGINT       NULL,
               CONSTRAINT server_id PRIMARY KEY (id)
-          );`, (err) => err ? logger.error(err) : resolve()));
+          );`,
+          (err) => (err ? logger.error(err) : resolve())
+        )
+      )
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.cache
           (
               id            INT AUTO_INCREMENT,
               sorted_guilds JSON NULL,
               CONSTRAINT cache_id PRIMARY KEY (id)
-          );`, (err) => err ? logger.error(err) : resolve()));
+          );`,
+          (err) => (err ? logger.error(err) : resolve())
+        )
+      )
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.channels
           (
               id               BIGINT AUTO_INCREMENT,
               server_id        BIGINT NOT NULL,
               channel_id_array JSON   NULL,
               CONSTRAINT channel_array_id PRIMARY KEY (id)
-          );`, (err) => err ? logger.error(err) : resolve()));
+          );`,
+          (err) => (err ? logger.error(err) : resolve())
+        )
+      )
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.suggest_message_ids
           (
               id         BIGINT AUTO_INCREMENT,
@@ -97,26 +119,29 @@ function validateDatabase() {
               message_id BIGINT NOT NULL,
               CONSTRAINT suggest_message_id PRIMARY KEY (id)
           );
-      `, (err) => err ? logger.error(err, err.stack) : resolve()));
+      `,
+          (err) => (err ? logger.error(err, err.stack) : resolve())
+        )
+      )
 
-      await new Promise((resolve) => connection.query(`
+      await new Promise((resolve) =>
+        connection.query(
+          `
           CREATE TABLE IF NOT EXISTS ${process.env.DATABASE_DATABASE}.server_max_channels
           (
               server_id    BIGINT NOT NULL,
               max_channels INT    NULL,
               CONSTRAINT server_max_channels_id PRIMARY KEY (server_id)
           );
-      `, (err) => err ? logger.error(err, err.stack) : resolve()));
+      `,
+          (err) => (err ? logger.error(err, err.stack) : resolve())
+        )
+      )
 
       connection.end(() => {
-
-        logger.db("Validated");
-        resolve();
-
-      });
-
-    });
-
-  });
-
+        logger.db('Validated')
+        resolve()
+      })
+    })
+  })
 }
